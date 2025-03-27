@@ -6,6 +6,7 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
@@ -85,6 +86,12 @@ export default function HomeScreen() {
       </View>
 
       {/* Navigation Tabs */}
+      <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false} // 스크롤바 숨김
+      contentContainerStyle={styles.tabsContainer}
+      style={{ maxHeight: 50 }}
+      >
       <View style={styles.tabs}>
         <TouchableOpacity style={styles.tab}>
           <Ionicons name="heart-outline" size={18} color="#333" />
@@ -102,7 +109,14 @@ export default function HomeScreen() {
           <Ionicons name="people-outline" size={18} color="#333" />
           <Text style={styles.tabText}>People</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={styles.tab}
+          onPress={() => navigation.navigate("People")}
+        >
+          <Ionicons name="chatbubbles-outline" size={18} color="#333" />
+          <Text style={styles.tabText}>Message</Text>
+        </TouchableOpacity>
       </View>
+      </ScrollView>
 
        {/* Map Section */}
        <View style={styles.mapSection}>
@@ -116,7 +130,7 @@ export default function HomeScreen() {
           <MapView
             style={styles.map}
             region={currentLocation} // 현재 위치를 지도에 반영
-            showsUserLocation={true} // 사용자 위치 표시
+            showsUserLocation={false} // 사용자 위치 표시
           >
             {/* 현재 사용자 마커 */}
             {currentLocation && (
@@ -157,6 +171,8 @@ export default function HomeScreen() {
           horizontal
           data={peopleData}
           keyExtractor={(item) => item.id}
+          showsHorizontalScrollIndicator = { false }
+          showsVerticalScrollIndicator = { false }
           renderItem={({ item }) => (
             <View style={styles.personCard}>
               <Image source={item.image} style={styles.personImage} />
@@ -209,6 +225,10 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  tabsContainer: {
+    flexDirection: "row",
+    paddingHorizontal: 10,
+  },
   container: {
     flex: 1,
     backgroundColor: "#fff",
@@ -241,10 +261,11 @@ const styles = StyleSheet.create({
     flexDirection: "row", // 아이콘과 텍스트를 가로로 배치
     alignItems: "center", // 세로 정렬
     paddingVertical: 5,
-    paddingHorizontal: 20,
+    paddingHorizontal: 15,
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 20,
+    marginHorizontal: 5,
   },
   tabText: {
     fontSize: 14,

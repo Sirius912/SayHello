@@ -1,15 +1,17 @@
-import React, { useState, useEffect, useRef } from "react";
-import { View, StyleSheet, Text, TextInput, TouchableOpacity } from "react-native";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { View, StyleSheet, Text, TextInput, TouchableOpacity, Image } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
-import BottomSheet from "@gorhom/bottom-sheet";
+import { BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { fetchWeatherData } from "../api";
 
 export default function MapScreen() {
   const [location, setLocation] = useState(null); // 현재 위치 저장
   const [errorMsg, setErrorMsg] = useState(null); // 오류 메시지
   const [searchQuery, setSearchQuery] = useState(""); // 검색어 상태
   const [selectedMarker, setSelectedMarker] = useState(null); // 선택된 Marker 정보
-  const bottomSheetRef = useRef(null); // Bottom Sheet 참조
+  const [weatherData, setWeatherData] = useState(null); // 날씨 데이터 상태
+  const bottomSheetModalRef = useRef(null);
 
   // 샘플 데이터 (나중에 수정해야함)
   const markers = [
@@ -67,105 +69,142 @@ export default function MapScreen() {
     })();
   }, []);
 
-  const handleMarkerPress = (marker) => {
+  const handleSheetChanges = useCallback((index) => {
+    if (index === -1) {
+      setSelectedMarker(null);
+      setWeatherData(null);
+    }
+  }, []);
+
+  
+  const handleMarkerPress = async (marker) => {
     setSelectedMarker(marker);
-    bottomSheetRef.current?.snapToIndex(0); // Bottom Sheet 열기
+    const data = await fetchWeatherData(
+      location.latitude + marker.latitudeOffset,
+      location.longitude + marker.longitudeOffset
+    );
+    // console.log(data);
+    setWeatherData(data);
+    // console.log(weatherData);
+    bottomSheetModalRef.current?.present(); // BottomSheetModal 열기
   };
 
   return (
-    <View style={styles.container}>
-      {/* 검색창 및 필터/정렬 */}
-      <View style={styles.searchContainer}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search for person or map"
-          value={searchQuery}
-          onChangeText={(text) => setSearchQuery(text)}
-        />
-        <TouchableOpacity style={styles.filterButton}>
-          <Text style={styles.filterButtonText}>Filter</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.sortButton}>
-          <Text style={styles.sortButtonText}>Sort</Text>
-        </TouchableOpacity>
-        <Text style={styles.resultCount}>{filteredMarkers.length} results</Text>
-      </View>
-
-      {/* 지도 표시 */}
-      {location ? (
-        <MapView
-          style={{ flex: selectedMarker ? 0.6 : 1 }} // Marker 선택 여부에 따라 지도 크기 조정
-          initialRegion={location}
-          showsUserLocation={true} // 현재 위치 표시
-          onPress={() => bottomSheetRef.current?.close()} // 지도 클릭시 Bottom Sheet 닫기
-        >
-          {/* Marker 렌더링 */}
-          {filteredMarkers.map((marker) => (
-            <Marker
-              key={marker.id}
-              coordinate={{
-                latitude: location.latitude + marker.latitudeOffset,
-                longitude: location.longitude + marker.longitudeOffset,
-              }}
-              title={marker.title}
-              description={marker.description}
-              onPress={() => handleMarkerPress(marker)} // Marker 클릭 시 정보 저장
-            >
-              {/* 커스텀 Marker 스타일 */}
-              <View style={[styles.markerContainer, marker.id === "1" && styles.currentUserMarker]}>
-                <Text style={[styles.markerText, marker.id === "1" && styles.currentUserText]}>
-                  {marker.title}
-                </Text>
-              </View>
-            </Marker>
-          ))}
-        </MapView>
-      ) : (
-        <Text>{errorMsg || "Loading..."}</Text>
-      )}
-
-      
-
-      {/* 선택된 Marker 정보 표시 */}
-      {/* {selectedMarker && (
-        <View style={styles.infoContainer}>
-          <Text style={styles.infoTitle}>{selectedMarker.title}</Text>
-          <Text style={styles.infoDescription}>{selectedMarker.description}</Text>
-          <TouchableOpacity style={styles.selectButton}>
-            <Text style={styles.selectButtonText}>Select</Text>
+    <BottomSheetModalProvider>
+      <View style={styles.container}>
+        {/* 검색창 및 필터/정렬 */}
+        <View style={styles.searchContainer}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search for person or map"
+            value={searchQuery}
+            onChangeText={(text) => setSearchQuery(text)}
+          />
+          <TouchableOpacity style={styles.filterButton}>
+            <Text style={styles.filterButtonText}>Filter</Text>
           </TouchableOpacity>
+          <TouchableOpacity style={styles.sortButton}>
+            <Text style={styles.sortButtonText}>Sort</Text>
+          </TouchableOpacity>
+          <Text style={styles.resultCount}>{filteredMarkers.length} results</Text>
         </View>
-      )} */}
 
-      {/* Bottom Sheet */}
-      <BottomSheet
-        ref={bottomSheetRef} 
-        index={0} 
-        snapPoints={["25%", "50%"]}
-        enablePanDownToClose={true}
-        onChange={(index) => {
-          console.log("BottomSheet index changed:", index);
-          if (index === -1) console.log("Bottom Sheet is closed");
-          else console.log("Bottom Sheet is open");
-        }}
-      >
-        <View style={styles.contentContainer}>
-          {selectedMarker ? (
-            <>
-              <Text style={styles.infoTitle}>{selectedMarker.title}</Text>
-              <Text style={styles.infoDescription}>
-                {selectedMarker.description}
-              </Text>
-              <TouchableOpacity style={styles.selectButton}>
-                <Text style={styles.selectButtonText}>Select</Text>
-              </TouchableOpacity>
-            </>
-          ) : (
-            <Text>No marker selected</Text>
-          )}
-        </View>
-      </BottomSheet>
-    </View>
+        {/* 지도 표시 */}
+        {location ? (
+          <MapView
+            style={{ flex: selectedMarker ? 0.6 : 1 }} // Marker 선택 여부에 따라 지도 크기 조정
+            initialRegion={location}
+            showsUserLocation={false} // 현재 위치 표시
+            onPress={() => bottomSheetModalRef.current?.dismiss()} // 지도 클릭시 Bottom Sheet 닫기
+          >
+
+            {/* 현재 사용자 마커 */}
+            {location && (
+              <Marker coordinate={location}>
+                <View style={[styles.markerContainer, styles.currentUserMarker]}>
+                  <Text style={[styles.markerText, styles.currentUserText]}>Me</Text>
+                </View>
+              </Marker>
+            )}
+            
+            {/* Marker 렌더링 */}
+            {filteredMarkers.map((marker) => (
+              <Marker
+                key={marker.id}
+                coordinate={{
+                  latitude: location.latitude + marker.latitudeOffset,
+                  longitude: location.longitude + marker.longitudeOffset,
+                }}
+                onPress={() => handleMarkerPress(marker)} // Marker 클릭 시 정보 저장
+              >
+                {/* 커스텀 Marker 스타일 */}
+                <View style={[styles.markerContainer]}>
+                  <Text style={[styles.markerText]}>
+                    {marker.title}
+                  </Text>
+                </View>
+              </Marker>
+            ))}
+          </MapView>
+        ) : (
+          <Text>{errorMsg || "Loading..."}</Text>
+        )}
+
+        {/* Bottom Sheet Modal */}
+        <BottomSheetModal
+            ref={bottomSheetModalRef}
+            snapPoints={["40%", "40%"]}
+            // enableDynamicSizing={true}
+            enablePanDownToClose={true}
+            onChange={handleSheetChanges}
+          >
+            <View style={styles.contentContainer}>
+              {selectedMarker ? (
+                <>
+                  <View style={styles.infoRow}>
+                    <Text style={styles.infoTitle}>{selectedMarker.title}</Text>
+                    <Text style={styles.infoDescription}>{selectedMarker.description}</Text>
+                  </View>
+                  <View style={styles.weatherContainer}>
+                    {weatherData?.weather?.[0]?.icon ? (
+                      <>
+                        <Image
+                          source={{
+                            uri: `http://openweathermap.org/img/wn/${weatherData?.weather[0]?.icon}@2x.png`,
+                          }}
+                          style={styles.weatherIcon}
+                        />
+                        
+                        <Text style={styles.weatherDetail}>
+                          Temperature: {weatherData.main.temp}°C
+                        </Text>
+                        <Text style={styles.weatherDetail}>
+                          Condition: {weatherData.weather[0].description}
+                        </Text>
+                        <Text style={styles.weatherDetail}>
+                          Humidity: {weatherData.main.humidity}%
+                        </Text>
+                        <Text style={styles.weatherDetail}>
+                          Wind Speed: {weatherData.wind.speed} m/s
+                        </Text>
+                      </>
+                      ) : (
+                        <Text>No weather data available</Text>
+                      )}
+         
+                  </View>
+                  
+                  <TouchableOpacity style={styles.selectButton}>
+                    <Text style={styles.selectButtonText}>Select</Text>
+                  </TouchableOpacity>
+                </>
+              ) : (
+                <Text>No marker selected</Text>
+              )}
+            </View>
+          </BottomSheetModal>
+      </View>
+    </BottomSheetModalProvider>
   );
 }
 
@@ -248,12 +287,33 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
     alignItems: "center",
+    justifyContent: "center",
+  },
+  infoRow: {
+    flexDirection: "row", // 가로로 배치
+    alignItems: "center", // 세로 축에서 중앙 정렬
+    justifyContent: "space-between",
+    // marginBottom: 10,
   },
   infoTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 10,
-    color:"#333"
+    // marginBottom: 30,
+    color:"#333",
+    marginRight: 20,
+  },
+  infoDescription: {
+    fontWeight: "bold",
+    color:"#333",
+    // marginBottom: 40,
+  },
+  weatherContainer: {
+    alignSelf: "flex-start",
+    marginTop: 30,
+    marginLeft: 40
+  },
+  weatherDetail: {
+    alignSelf: "flex-start"
   },
   markerContainer: {
     backgroundColor: "#fff",
@@ -268,12 +328,34 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 3,
   },
-
   markerText: {
     fontSize: 12,
     color: "#333",
     fontWeight: "bold",
     textAlign: "center",
   },
-
+  currentUserMarker: {
+    backgroundColor: "#000",
+    borderWidth: 0,
+  },
+  currentUserText: {
+    color: "#fff",
+  },
+  infoDescription: {
+    fontSize: 14,
+    color: "#666",
+  },
+  selectButton: {
+    alignSelf: "flex-start",
+    marginTop: 30,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: "#000",
+    borderRadius: 5,
+    marginLeft: 30,
+  },
+  selectButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
 })
