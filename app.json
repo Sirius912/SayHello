@@ -1,0 +1,39 @@
+{
+  "expo": {
+    "name": "SayHello",
+    "slug": "sayhello",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "projectId": "35409568-d2b4-49aa-b176-1fd0ba361962",
+    "notification": {
+      "icon": "./assets/icon.png",
+      "color": "#000000"
+    },
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "35409568-d2b4-49aa-b176-1fd0ba361962"
+      }
+    },
+    "owner": "jieunkang"
+  }
+}
