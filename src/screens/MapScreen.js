@@ -4,6 +4,7 @@ import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import { BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { fetchWeatherData } from "../api";
+import { GOOGLE_MAPS_API_KEY } from '@env';
 
 export default function MapScreen() {
   const [location, setLocation] = useState(null); // 현재 위치 저장
@@ -11,6 +12,7 @@ export default function MapScreen() {
   const [searchQuery, setSearchQuery] = useState(""); // 검색어 상태
   const [selectedMarker, setSelectedMarker] = useState(null); // 선택된 Marker 정보
   const [weatherData, setWeatherData] = useState(null); // 날씨 데이터 상태
+  const [regionName, setRegionName] = useState(""); // 지역 이름 상태태
   const bottomSheetModalRef = useRef(null);
 
   // 샘플 데이터 (나중에 수정해야함)
@@ -73,10 +75,26 @@ export default function MapScreen() {
     if (index === -1) {
       setSelectedMarker(null);
       setWeatherData(null);
+      setRegionName("");
     }
   }, []);
 
-  
+  const getRegionName = async (latitude, longitude) => {
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${GOOGLE_MAPS_API_KEY}`;
+    try {
+      const response = await axios.get(url);
+      if (response.data.results.length > 0) {
+        const regionName = response.data.results[0].formatted_address;
+        setRegionName(regionName);
+      } else {
+        setRegionName("Unknown");
+      }
+    } catch (error) {
+      console.error(error);
+      setRegionName("Failed to load");
+    }
+  };
+
   const handleMarkerPress = async (marker) => {
     setSelectedMarker(marker);
     const data = await fetchWeatherData(
@@ -86,6 +104,14 @@ export default function MapScreen() {
     // console.log(data);
     setWeatherData(data);
     // console.log(weatherData);
+
+    // 지역 이름 가져오기
+    await getRegionName(
+      location.latitude + marker.latitudeOffset,
+      location.longitude + marker.longitudeOffset
+    );
+    // console.log(regionName);
+
     bottomSheetModalRef.current?.present(); // BottomSheetModal 열기
   };
 
@@ -164,6 +190,7 @@ export default function MapScreen() {
                   <View style={styles.infoRow}>
                     <Text style={styles.infoTitle}>{selectedMarker.title}</Text>
                     <Text style={styles.infoDescription}>{selectedMarker.description}</Text>
+                    <Text style={styles.infoDescription}>{regionName}</Text>
                   </View>
                   <View style={styles.weatherContainer}>
                     {weatherData?.weather?.[0]?.icon ? (
@@ -265,20 +292,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-  // infoContainer: {
-  //   flexDirection: "column",
-  //   flex: 0.4, // 선택된 Marker가 있을 때 정보 창 표시
-  //   backgroundColor: "#fff",
-  //   borderTopLeftRadius: 20,
-  //   borderTopRightRadius: 20,
-  //   paddingHorizontal: 20,
-  //   paddingVertical: 15,
-  //   shadowColor: "#000",
-  //   shadowOffset: { width: 0, height: -2 },
-  //   shadowOpacity: 0.1,
-  //   shadowRadius: 5,
-  //   elevation: 10, // Android 그림자 효과
-  // },
   infoContainer: {
     padding: 20,
     backgroundColor: "white",
