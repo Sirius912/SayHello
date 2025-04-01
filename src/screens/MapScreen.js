@@ -5,6 +5,7 @@ import * as Location from "expo-location";
 import { BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { fetchWeatherData } from "../api";
 import { GOOGLE_MAPS_API_KEY } from '@env';
+import axios from 'axios';
 
 export default function MapScreen() {
   const [location, setLocation] = useState(null); // 현재 위치 저장
@@ -85,7 +86,9 @@ export default function MapScreen() {
       const response = await axios.get(url);
       if (response.data.results.length > 0) {
         const regionName = response.data.results[0].formatted_address;
-        setRegionName(regionName);
+        const addressParts = regionName.split(' '); // 공백 기준으로 나누기
+        const simplifiedAddress = addressParts.slice(1, 4).join(' '); // 지역명만 뜨게 하기 (예: 서울특별시 강남구 역삼동)
+        setRegionName(simplifiedAddress);
       } else {
         setRegionName("Unknown");
       }
@@ -190,7 +193,7 @@ export default function MapScreen() {
                   <View style={styles.infoRow}>
                     <Text style={styles.infoTitle}>{selectedMarker.title}</Text>
                     <Text style={styles.infoDescription}>{selectedMarker.description}</Text>
-                    <Text style={styles.infoDescription}>{regionName}</Text>
+                    <Text style={styles.infoDescription}>{regionName}</Text> {/* 띄어쓰기 하드 코딩 수정해야함. */}
                   </View>
                   <View style={styles.weatherContainer}>
                     {weatherData?.weather?.[0]?.icon ? (
@@ -203,7 +206,7 @@ export default function MapScreen() {
                         />
                         
                         <Text style={styles.weatherDetail}>
-                          Temperature: {weatherData.main.temp}°C
+                          Temperature: {weatherData?.main?.temp ? `${Math.round(weatherData.main.temp)}°C` : "N/A"}
                         </Text>
                         <Text style={styles.weatherDetail}>
                           Condition: {weatherData.weather[0].description}
