@@ -15,7 +15,7 @@ export const useGoogleAuth = () => {
     useProxy: true,
   });
 
-  console.log("Redirect URI:", request?.redirectUri);
+  // console.log("Redirect URI:", request?.redirectUri);
 
   const handleGoogleLogin = async () => {
     try {
