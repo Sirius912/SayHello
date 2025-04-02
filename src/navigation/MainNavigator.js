@@ -18,9 +18,18 @@ const PeopleStack = createStackNavigator();
 function PeopleStackNavigator() {
   return (
     <PeopleStack.Navigator>
-      <PeopleStack.Screen name="People" component={PeopleScreen} />
-      <PeopleStack.Screen name="EditPersonScreen" component={EditPersonScreen} />
-      <PeopleStack.Screen name="AddPersonScreen" component={AddPersonScreen} />
+      <PeopleStack.Screen name = "People" 
+        component={PeopleScreen}
+        options={{ headerShown: false }} 
+      />
+      <PeopleStack.Screen name="EditPersonScreen" 
+        component={EditPersonScreen} 
+        options={{ headerShown: false }} 
+      />
+      <PeopleStack.Screen name="AddPersonScreen"
+        component={AddPersonScreen} 
+        options={{ headerShown: false }} 
+      />
     </PeopleStack.Navigator>
   );
 }

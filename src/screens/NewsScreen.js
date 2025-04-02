@@ -3,48 +3,48 @@ import {View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, SafeAreaVie
 
 // 각 카테고리별 메시지 정의
 const messages = {
-  Disaster: [
+  "재해": [
     {
       id: 1,
       image: require("../../assets/earthquake.jpg"),
-      sender: "GrandParents",
-      title: "Earthquake 7.1",
+      sender: "할아버지",
+      title: "지진 7.1도",
       date: "2025-03-01",
-      desc: "A strong earthquake has been detected in your area. Please evacuate to a safe zone immediately and stay tuned for official updates.",
+      desc: "강한 지진이 감지되었습니다. 즉시 안전한 장소로 대피하시고 공식 업데이트를 확인하세요.",
     },    
     {
       id: 2,
       image: require("../../assets/flood.jpg"),
-      sender: "Jane",
-      title: "Flood",
+      sender: "제인",
+      title: "홍수",
       date: "2025-02-28",
-      desc: "Severe flooding has occurred due to heavy rainfall. Avoid low-lying areas and seek shelter on higher ground.",
+      desc: "폭우로 인해 심각한 홍수가 발생했습니다. 저지대를 피하고 높은 지대로 이동하세요.",
     },
   ],
-  "Weather Report": [
+  "날씨": [
     {
       id: 3,
-      image: require("../../assets/snow.jpg"), 
-      sender: "Dad",
-      title: "Heavy Snow Alert",
+      image: require("../../assets/snow.jpg"),
+      sender: "아빠",
+      title: "폭설 경보",
       date: "2025-03-02",
-      desc: "(Rainfall expected to exceed 100mm)",
+      desc: "(100mm 이상의 강수량 예상)",
     },
   ],
-  "Fine Dust": [
+  "미세먼지": [
     {
       id: 4,
-      image: require("../../assets/dust.jpg"), 
-      sender: "Health Center",
-      title: "Fine Dust Warning",
+      image: require("../../assets/dust.jpg"),
+      sender: "보건소",
+      title: "미세먼지 경보",
       date: "2025-03-03",
-      desc: "(Outdoor activity should be minimized)",
+      desc: "(야외 활동을 최소화하세요)",
     },
   ],
 };
 
 export default function WhatsUpScreen({ navigation }) {
-  const [selectedCategory, setSelectedCategory] = useState("Disaster");
+  const [selectedCategory, setSelectedCategory] = useState("재해");
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -53,7 +53,7 @@ export default function WhatsUpScreen({ navigation }) {
         <Text style={styles.heading}>What's up</Text>
 
         <View style={styles.filterTabs}>
-          {["Disaster", "Weather Report", "Fine Dust"].map((category) => (
+          {["재해", "날씨", "미세먼지"].map((category) => (
             <TouchableOpacity
               key={category}
               style={[
@@ -89,7 +89,7 @@ export default function WhatsUpScreen({ navigation }) {
               style={styles.messageButtonRight}
               onPress={() => navigation.navigate("Messages")}
             >
-              <Text style={styles.messageText}>message</Text>
+              <Text style={styles.messageText}>메시지</Text>
             </TouchableOpacity>
           </View>
         ))}

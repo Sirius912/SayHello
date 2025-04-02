@@ -1,114 +1,98 @@
-import React, { useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
+import React, { useEffect, useState } from 'react';
+// import { StatusBar } from 'expo-status-bar';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, SafeAreaView } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { collection, onSnapshot } from 'firebase/firestore';
+import { db } from '../api/firebase';
 
 const PeopleScreen = ({ navigation }) => {
-    const [selectedButton, setSelectedButton] = useState();
 
-    const handlePress = (buttonName) => {
-        setSelectedButton(selectedButton === buttonName ? null : buttonName);
-    };
+  const [contacts, setContacts] = useState([]);
+  const [selectedButton, setSelectedButton] = useState();
 
-    return (
-        <SafeAreaView style={styles.safeArea}>
-            <View style={styles.box}>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Text style={styles.title}>People</Text>
-                </View>
-                <View>
-                    <ScrollView style={{ marginVertical: 7 }} horizontal={true} showsHorizontalScrollIndicator={false}>
-                        <View style={{ flexDirection: 'row' }}>
-                            {['Friend', 'Family', 'Company', 'ETC'].map((item) => (
-                                <TouchableOpacity
-                                    key={item}
-                                    style={[
-                                        styles.option,
-                                        selectedButton === item && styles.selectedButton
-                                    ]}
-                                    onPress={() => handlePress(item)}
-                                >
-                                    <Text style={[styles.buttonText, selectedButton === item && styles.selectedText]}>
-                                        {item}
-                                    </Text>
-                                </TouchableOpacity>
-                            ))}
-                        </View>
-                    </ScrollView>
-                </View>
-                <ScrollView showsHorizontalScrollIndicator={false}>
-                    <View style={{ marginTop: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <Image source={require('../../assets/mom.png')} style={styles.photo}></Image>
-                        <View style={{ flex: 1, marginLeft: 10, flexDirection: 'row' }}>
-                            <View style={{ justifyContent: 'center' }}>
-                                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Mom</Text>
-                                <Text style={{ fontSize: 16 }}>010-xxxx-xxxx</Text>
-                            </View>
-                            <View style={styles.edit_button_view}>
-                                <TouchableOpacity style={styles.edit_button} onPress={() => { navigation.navigate('EditPersonScreen') }}>
-                                    <Text style={{ color: '#ffffff', fontSize: 18 }}>Edit</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </View>
-                    <View style={{ marginTop: 20, flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <Image source={require('../../assets/dad.png')} style={styles.photo}></Image>
-                        <View style={{ flex: 1, marginLeft: 10, flexDirection: 'row' }}>
-                            <View style={{ justifyContent: 'center' }}>
-                                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Dad</Text>
-                                <Text style={{ fontSize: 16 }}>010-xxxx-xxxx</Text>
-                            </View>
-                            <View style={styles.edit_button_view}>
-                                <TouchableOpacity style={styles.edit_button} onPress={() => { navigation.navigate('EditPersonScreen') }}>
-                                    <Text style={{ color: '#ffffff', fontSize: 18 }}>Edit</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </View>
-                    <View style={{ marginTop: 20, flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <Image source={require('../../assets/jane.png')} style={styles.photo}></Image>
-                        <View style={{ flex: 1, marginLeft: 10, flexDirection: 'row' }}>
-                            <View style={{ justifyContent: 'center' }}>
-                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Jane</Text>
-                                    <Text>1d</Text>
-                                </View>
-                                <Text style={{ fontSize: 16 }}>010-xxxx-xxxx</Text>
-                            </View>
-                            <View style={styles.edit_button_view}>
-                                <TouchableOpacity style={styles.edit_button} onPress={() => { navigation.navigate('EditPersonScreen') }}>
-                                    <Text style={{ color: '#ffffff', fontSize: 18 }}>Edit</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </View>
-                    <View style={{ marginTop: 20, flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <Image source={require('../../assets/brother1.png')} style={styles.photo}></Image>
-                        <View style={{ flex: 1, marginLeft: 10, flexDirection: 'row' }}>
-                            <View style={{ justifyContent: 'center' }}>
-                                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Brother</Text>
-                                <Text style={{ fontSize: 16 }}>010-xxxx-xxxx</Text>
-                            </View>
-                            <View style={styles.edit_button_view}>
-                                <TouchableOpacity style={styles.edit_button} onPress={() => { navigation.navigate('EditPersonScreen') }}>
-                                    <Text style={{ color: '#ffffff', fontSize: 18 }}>Edit</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
+  // Firestore 실시간 업데이트 설정
+  useEffect(() => {
+      const contactsRef = collection(db, 'contacts'); // 'contacts' 컬렉션 참조
+      const unsubscribe = onSnapshot(contactsRef, (snapshot) => {
+          const contactsData = snapshot.docs.map(doc => ({
+              id: doc.id, // 문서 ID
+              ...doc.data(), // 문서 데이터
+          }));
+          setContacts(contactsData); // 상태 업데이트
+      });
+
+      return () => unsubscribe(); // 컴포넌트 언마운트 시 구독 해제
+  }, []);
+
+  // 버튼 선택 핸들러 (기존 로직 유지)
+  const handlePress = (buttonName) => {
+      setSelectedButton(selectedButton === buttonName ? null : buttonName);
+  };
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+        <View style={styles.box}>
+            <View>
+                <ScrollView style={{ marginVertical: 7 }} horizontal={true} showsHorizontalScrollIndicator={false}>
+                    {/* 필터 탭 (기존 로직 유지) */}
+                    <View style={{ flexDirection: 'row' }}>
+                        {['친구', '가족', '직장', '기타'].map((item) => (
+                            <TouchableOpacity
+                                key={item}
+                                style={[
+                                    styles.option,
+                                    selectedButton === item && styles.selectedButton
+                                ]}
+                                onPress={() => handlePress(item)}
+                            >
+                                <Text style={[styles.buttonText, selectedButton === item && styles.selectedText]}>
+                                    {item}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
                     </View>
                 </ScrollView>
             </View>
-            <View style={styles.add_person_view}>
-                <TouchableOpacity
-                    onPress={() => { navigation.navigate('AddPersonScreen') }}
-                    style={styles.add_person_button}>
-                    <Text style={{ color: '#ffffff', fontSize: 16 }}>Add new person</Text>
-                </TouchableOpacity>
-            </View>
-        </SafeAreaView>
 
+            {/* 지인 목록 렌더링 (Firestore 데이터 반영) */}
+            <ScrollView showsHorizontalScrollIndicator={false}>
+                {contacts.map((contact) => (
+                    <View key={contact.id} style={{ marginTop: 20, flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <Image 
+                            source={contact.image ? { uri: contact.image } : require('../../assets/mom.png')} 
+                            style={styles.photo} 
+                        />
+                        <View style={{ flex: 1, marginLeft: 10, flexDirection: 'row' }}>
+                            <View style={{ justifyContent: 'center' }}>
+                                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{contact.name}</Text>
+                                <Text style={{ fontSize: 16 }}>{contact.phone}</Text>
+                            </View>
+                            <View style={styles.edit_button_view}>
+                                <TouchableOpacity
+                                    style={styles.edit_button}
+                                    onPress={() => navigation.navigate('EditPersonScreen', { contactId: contact.id })}
+                                >
+                                    <Text style={{ color: '#ffffff', fontSize: 18 }}>편집</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                ))}
+            </ScrollView>
+        </View>
 
-    );
-}
+        {/* 새 지인 추가 버튼 */}
+        <View style={styles.add_person_view}>
+            <TouchableOpacity
+                onPress={() => navigation.navigate('AddPersonScreen')}
+                style={styles.add_person_button}
+            >
+                <Text style={{ color: '#ffffff', fontSize: 16 }}>새 지인 추가</Text>
+            </TouchableOpacity>
+        </View>
+    </SafeAreaView>
+  );
+};
 
 const styles = StyleSheet.create({
     add_person_view: {
@@ -118,7 +102,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#ffffff'
     },
     add_person_button: {
-        backgroundColor: '#000000',
+        backgroundColor: '#4CAF50',
         padding: 8,
         borderRadius: 8,
         paddingHorizontal: 18,
@@ -134,7 +118,7 @@ const styles = StyleSheet.create({
         flex: 11
     },
     edit_button: {
-        backgroundColor: '#000000',
+        backgroundColor: '#4CAF50',
         padding: 4,
         borderRadius: 8,
         paddingHorizontal: 10,

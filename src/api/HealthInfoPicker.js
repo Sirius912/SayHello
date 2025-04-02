@@ -28,7 +28,7 @@ const HealthInfoPicker = ({ onSelect }) => {
           onSelect(val); // 선택한 건강 정보를 상위 컴포넌트에 전달
         }}
         setItems={setItems}
-        placeholder="Choose Health Information"
+        placeholder="건강 정보 선택"
         style={{
             height: 40,         // 드롭다운의 높이 설정
             width: "100%",       // 드롭다운의 너비 설정

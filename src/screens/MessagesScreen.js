@@ -13,58 +13,54 @@ export default function MessageScreen() {
         }
     };
 
-    const message = `Dear Grandpa and Grandma,
-I hope you are both doing well after the recent earthquake. I know it must have been a
-tough time, and I hope you're safe and sound.
-Today, the weather is a bit chilly with a temperature of 4°C. There's only a slight
-chance of rain (2%), but the humidity is at 68%, and the wind is gentle at 2 m/s. Please
-take care and stay warm.
-Sending you lots of love and hoping to hear from you soon!
-Take care`
+    const message = `할아버지와 할머니께,
+최근 지진 이후 잘 지내고 계신지요? 힘든 시간을 보내셨을 텐데, 안전하고 건강하시길 바랍니다.
+오늘 날씨는 약간 쌀쌀하며 기온은 4°C입니다. 비 올 확률은 2%로 낮지만, 습도는 68%이며 바람은 2 m/s로 약하게 불고 있습니다. 따뜻하게 입으시고 건강에 유의하세요.
+많은 사랑을 보내며 곧 소식을 듣길 기대합니다!
+건강하세요.`;
 
     const copyToClipboard = () => {
         Clipboard.setString(message);
-        Alert.alert('Copy Successful!', 'The text has been copied to the clipboard.');
+        Alert.alert('복사 완료!', '텍스트가 클립보드에 복사되었습니다.');
     };
 
     return (
         <SafeAreaView style={styles.safeArea}>
             <View style={styles.box}>
-                <Text style={styles.title}>Message</Text>
                 <ScrollView style={{ padding: 5, paddingTop: -5 }} showsVerticalScrollIndicator={false}>
                     <View style={{ flexDirection: 'row' }}>
                         <View style={{ flex: 1 }}>
-                            <Text style={styles.text1}>Name</Text>
-                            <Text style={styles.text1}>Last Contact</Text>
-                            <Text style={styles.text1}>Term</Text>
+                            <Text style={styles.text1}>이름</Text>
+                            <Text style={styles.text1}>최근 연락</Text>
+                            <Text style={styles.text1}>연락 주기</Text>
                         </View>
                         <View style={{ flex: 2, marginLeft: 10 }}>
-                            <Text style={styles.text2}>Kate</Text>
+                            <Text style={styles.text2}>케이트</Text>
                             <Text style={styles.text2}>2025-02-10</Text>
-                            <Text style={styles.text2}>1 month</Text>
+                            <Text style={styles.text2}>1개월</Text>
                         </View>
                     </View>
                     <View style={styles.divider}></View>
-                    <Text style={styles.text1}>Information</Text>
+                    <Text style={styles.text1}>정보</Text>
                     <View style={{ marginVertical: 7 }}>
                         <View style={{ flexDirection: 'row' }}>
                             <View style={{ flex: 1 }}>
                                 <Image source={require('../../assets/earthquake.jpg')} style={styles.photo}></Image>
                             </View>
                             <View style={{ flex: 2, marginLeft: 10 }}>
-                                <Text style={{ color: '#777', fontSize: 17, marginVertical: 3 }}>Disaster</Text>
+                                <Text style={{ color: '#777', fontSize: 17, marginVertical: 3 }}>재해</Text>
                                 <Text style={styles.text3}>2025-03-01</Text>
-                                <Text style={styles.text3}>Earthquake 7.1</Text>
+                                <Text style={styles.text3}>지진 7.1</Text>
                             </View>
 
                         </View>
                     </View>
                     <View style={styles.divider}></View>
-                    <Text style={styles.text1}>Recommend Message</Text>
-                    <Text style={styles.text1}>Select options:</Text>
+                    <Text style={styles.text1}>추천 메시지</Text>
+                    <Text style={styles.text1}>옵션 선택:</Text>
                     <ScrollView style={{ marginVertical: 7 }} horizontal={true} showsHorizontalScrollIndicator={false}>
                         <View style={{ flexDirection: 'row' }}>
-                            {['Disaster', 'Weather Report', 'Fine Dust', 'None'].map((item) => (
+                            {['재해', '날씨 보고', '미세먼지', '없음'].map((item) => (
                                 <TouchableOpacity
                                     key={item}
                                     style={[
@@ -81,23 +77,14 @@ Take care`
                         </View>
                     </ScrollView>
                     <View style={styles.divider}></View>
-                    <Text style={styles.text1}>Output</Text>
+                    <Text style={styles.text1}>출력</Text>
                     <View style={styles.messageBox}>
-                        <Text style={styles.messageText}>
-                            Dear Grandpa and Grandma,{'\n'}
-                            I hope you are both doing well after the recent earthquake. I know it must have been a
-                            tough time, and I hope you're safe and sound.{'\n'}
-                            Today, the weather is a bit chilly with a temperature of 4°C. There's only a slight
-                            chance of rain (2%), but the humidity is at 68%, and the wind is gentle at 2 m/s. Please
-                            take care and stay warm.{'\n'}
-                            Sending you lots of love and hoping to hear from you soon!{'\n'}
-                            Take care
-                        </Text>
+                    <Text style={styles.messageText}>{message}</Text>
                     </View>
                     <View style={styles.copy_view}>
                         <TouchableOpacity
                             style={styles.copy_button} onPress={copyToClipboard}>
-                            <Text style={{ color: '#ffffff', fontSize: 19 }}>Copy</Text>
+                            <Text style={{ color: '#ffffff', fontSize: 19 }}>복사</Text>
                         </TouchableOpacity>
                     </View>
                 </ScrollView>

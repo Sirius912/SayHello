@@ -20,29 +20,29 @@ export default function MapScreen() {
   const markers = [
     {
       id: "1",
-      title: "GrandParents",
-      description: "Earthquake 7.1 - 2025-03-01",
+      title: "할아버지",
+      description: "지진 7.1 - 2025-03-01",
       latitudeOffset: 0.001,
       longitudeOffset: -0.001,
     },
     {
       id: "2",
-      title: "Parents",
-      description: "Flood - 2025-02-15",
+      title: "부모님",
+      description: "홍수 - 2025-02-15",
       latitudeOffset: -0.001,
       longitudeOffset: 0.001,
     },
     {
       id: "3",
-      title: "Brother1",
-      description: "Storm - 2025-01-10",
+      title: "형",
+      description: "천둥 - 2025-01-10",
       latitudeOffset: 0.002,
       longitudeOffset: -0.002,
     },
     {
       id: "4",
-      title: "Jane",
-      description: "Heatwave - 2025-01-05",
+      title: "제인",
+      description: "폭염 - 2025-01-05",
       latitudeOffset: -0.002,
       longitudeOffset: 0.002,
     },
@@ -206,16 +206,16 @@ export default function MapScreen() {
                         />
                         
                         <Text style={styles.weatherDetail}>
-                          Temperature: {weatherData?.main?.temp ? `${Math.round(weatherData.main.temp)}°C` : "N/A"}
+                          기온: {weatherData?.main?.temp ? `${Math.round(weatherData.main.temp)}°C` : "N/A"}
                         </Text>
                         <Text style={styles.weatherDetail}>
-                          Condition: {weatherData.weather[0].description}
+                          날씨: {weatherData.weather[0].description}
                         </Text>
                         <Text style={styles.weatherDetail}>
-                          Humidity: {weatherData.main.humidity}%
+                          습도: {weatherData.main.humidity}%
                         </Text>
                         <Text style={styles.weatherDetail}>
-                          Wind Speed: {weatherData.wind.speed} m/s
+                          풍속: {weatherData.wind.speed} m/s
                         </Text>
                       </>
                       ) : (

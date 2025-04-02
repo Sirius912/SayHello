@@ -1,30 +1,34 @@
 // LocationPicker.js
-import React, { useState } from "react";
+import React, { useState, useEffect  } from "react";
 import DropDownPicker from "react-native-dropdown-picker";
 import { View } from "react-native";
 
-const LocationPicker = ({ onSelect }) => {
+const LocationPicker = ({ onSelect, initialValue }) => {
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
+  const [value, setValue] = useState(initialValue || null);
   const [items, setItems] = useState([
-    { label: "Busan", value: "Busan" },
-    { label: "Chungbuk", value: "Chungbuk" },
-    { label: "Chungnam", value: "Chungnam" },
-    { label: "Daegu", value: "Daegu" },
-    { label: "Daejeon", value: "Daejeon" },
-    { label: "Gangwon", value: "Gangwon" },
-    { label: "Gwangju", value: "Gwangju" },
-    { label: "Gyeongbuk", value: "Gyeongbuk" },
-    { label: "Gyeonggi", value: "Gyeonggi" },
-    { label: "Gyeongnam", value: "Gyeongnam" },
-    { label: "Incheon", value: "Incheon" },
-    { label: "Jeju", value: "Jeju" },
-    { label: "Jeonbuk", value: "Jeonbuk" },
-    { label: "Jeonnam", value: "Jeonnam" },
-    { label: "Sejong", value: "Sejong" },
-    { label: "Seoul", value: "Seoul" },
-    { label: "Ulsan", value: "Ulsan" },
+    { label: "서울특별시", value: "Seoul" },
+    { label: "경기도", value: "Gyeonggi" },
+    { label: "인천광역시", value: "Incheon" },
+    { label: "부산광역시", value: "Busan" },
+    { label: "강원도", value: "Gangwon" },
+    { label: "충청북도", value: "Chungbuk" },
+    { label: "충청남도", value: "Chungnam" },
+    { label: "대전광역시", value: "Daejeon" },
+    { label: "세종특별자치시시", value: "Sejong" },
+    { label: "대구광역시", value: "Daegu" },
+    { label: "광주광역시", value: "Gwangju" },
+    { label: "전라북도", value: "Jeonbuk" },
+    { label: "전라남도", value: "Jeonnam" },
+    { label: "경상북도", value: "Gyeongbuk" },
+    { label: "경상남도", value: "Gyeongnam" },
+    { label: "울산광역시", value: "Ulsan" },
+    { label: "제주도", value: "Jeju" },
   ]);
+
+  useEffect(() => {
+    if (initialValue) setValue(initialValue);
+  }, [initialValue]);
 
   return (
     <View>
@@ -38,7 +42,7 @@ const LocationPicker = ({ onSelect }) => {
           onSelect(val); // 선택한 값 전달
         }}
         setItems={setItems}
-        placeholder="Choose location"
+        placeholder="지역 선택"
         style={{
             height: 40,         // 드롭다운의 높이 설정
             width: "100%",       // 드롭다운의 너비 설정

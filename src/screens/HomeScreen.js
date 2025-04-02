@@ -41,19 +41,19 @@ export default function HomeScreen() {
 
   // 샘플 데이터 (나중에 수정해야함)
   const peopleData = [
-    { id: "1", name: "Mom", image: require("../../assets/mom.png") },
-    { id: "2", name: "Dad", image: require("../../assets/dad.png") },
-    { id: "3", name: "Brother1", image: require("../../assets/brother1.png") },
-    { id: "4", name: "Jane", image: require("../../assets/jane.png") },
+    { id: "1", name: "엄마", image: require("../../assets/mom.png") },
+    { id: "2", name: "아빠", image: require("../../assets/dad.png") },
+    { id: "3", name: "형", image: require("../../assets/brother1.png") },
+    { id: "4", name: "제인", image: require("../../assets/jane.png") },
   ];
 
   const otherUsers = [
     { id: 1,
-      name: "Jane",
+      name: "제인",
       latitude: 0.003,
       longitude: 0.003},
     { id: 2, 
-      name: "Brother1",
+      name: "형",
       latitude: 0.003,
       longitude: 0.003 },
   ];
@@ -61,14 +61,14 @@ export default function HomeScreen() {
   const newsData = [
     {
       id: "1",
-      title: "Earthquake 7.1",
-      sender: "GrandParents",
+      title: "지진 7.1",
+      sender: "할아버지",
       image: require("../../assets/earthquake.jpg"),
     },
     {
       id: "2",
-      title: "Flood",
-      sender: "Jane",
+      title: "홍수",
+      sender: "제인",
       image: require("../../assets/flood.jpg"),
     },
   ];
@@ -210,7 +210,7 @@ export default function HomeScreen() {
                   onPress={() => navigation.navigate("Messages")}
                   style={styles.messageButton}>
                   <Text style={{ color: "#fff", fontWeight: "bold" }}>
-                    Go to message
+                    메시지 보내기
                   </Text>
                 </TouchableOpacity>
               </View>
