@@ -1,6 +1,7 @@
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+// import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import React from 'react';
+import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons'; // 아이콘 라이브러리
 import HomeScreen from '../screens/HomeScreen';
@@ -8,8 +9,21 @@ import MapScreen from '../screens/MapScreen';
 import PeopleScreen from '../screens/PeopleScreen';
 import NewsScreen from '../screens/NewsScreen';
 import MessagesScreen from '../screens/MessagesScreen';
+import EditPersonScreen from '../screens/EditPersonScreen';
+import AddPersonScreen from '../screens/AddPersonScreen';
 
 const Tab = createBottomTabNavigator();
+const PeopleStack = createStackNavigator();
+
+function PeopleStackNavigator() {
+  return (
+    <PeopleStack.Navigator>
+      <PeopleStack.Screen name="People" component={PeopleScreen} />
+      <PeopleStack.Screen name="EditPersonScreen" component={EditPersonScreen} />
+      <PeopleStack.Screen name="AddPersonScreen" component={AddPersonScreen} />
+    </PeopleStack.Navigator>
+  );
+}
 
 export default function MainNavigator() {
   return (
@@ -42,7 +56,7 @@ export default function MainNavigator() {
       >
         <Tab.Screen name="Home" component={HomeScreen} />
         <Tab.Screen name="Map" component={MapScreen} />
-        <Tab.Screen name="People" component={PeopleScreen} />
+        <Tab.Screen name="People" component={PeopleStackNavigator} />
         <Tab.Screen name="News" component={NewsScreen} />
         <Tab.Screen name="Messages" component={MessagesScreen} />
       </Tab.Navigator>
