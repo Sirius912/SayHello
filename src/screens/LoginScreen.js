@@ -192,7 +192,8 @@ export default function LoginScreen({ navigation }) {
           <Text style={[styles.link]}>회원가입</Text>
         </TouchableOpacity>
       </View>
-    
+
+      {/* 구분선 */}
       <View style={{
         borderBottomColor: '#ccc',
         borderBottomWidth: 1,
@@ -230,12 +231,13 @@ export default function LoginScreen({ navigation }) {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Sign up</Text>
+            <Text style={styles.modalTitle}>회원가입</Text>
             
             {/* 이름 입력 */}
             <TextInput
               style={styles.input}
               placeholder="이름을 입력해주세요"
+              placeholderTextColor={styles.placeholderColor.color}
               value={name}
               onChangeText={(text) => setName(text)}
             />
@@ -244,6 +246,7 @@ export default function LoginScreen({ navigation }) {
             <TextInput
               style={styles.input}
               placeholder="닉네임을 입력해주세요"
+              placeholderTextColor={styles.placeholderColor.color}
               value={nickname}
               onChangeText={(text) => setNickname(text)}
             />
@@ -252,6 +255,7 @@ export default function LoginScreen({ navigation }) {
             <TextInput
               style={styles.input}
               placeholder="이메일을 입력해주세요"
+              placeholderTextColor={styles.placeholderColor.color}
               value={email}
               onChangeText={(text) => setEmail(text)}
               keyboardType="email-address"
@@ -262,6 +266,7 @@ export default function LoginScreen({ navigation }) {
             <TextInput
               style={styles.input}
               placeholder="비밀번호를 입력해주세요"
+              placeholderTextColor={styles.placeholderColor.color}
               value={password}
               onChangeText={(text) => setPassword(text)}
               secureTextEntry
@@ -292,12 +297,22 @@ export default function LoginScreen({ navigation }) {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>비밀번호 재설정</Text>
+            <Text style={styles.modalTitle}>
+              비밀번호 찾기
+            </Text>
+
+            <Text style={styles.modalInfo}>
+              등록된 이메일 주소로 
+              {'\n'}비밀번호 재설정 링크를 보내드립니다.
+              {'\n'}회원님 이메일을 확인하신 후, 12시간 이내에
+              {'\n'}비밀번호 재설정을 완료해주세요.
+            </Text>
 
             {/* 이메일 입력 */}
             <TextInput
               style={styles.input}
               placeholder="이메일을 입력해주세요"
+              placeholderTextColor={styles.placeholderColor.color}
               value={email}
               onChangeText={(text) => setEmail(text)}
               keyboardType="email-address"
@@ -309,12 +324,16 @@ export default function LoginScreen({ navigation }) {
               style={[styles.button, styles.resetButton]}
               onPress={handleForgotPassword}
             >
-              <Text style={[styles.closeButton]}>비밀번호 재설정</Text> {/* 스타일 수정해야함. */}
+              <Text style={[styles.buttonText]}>
+                인증 메일 받기
+              </Text>
             </TouchableOpacity>
 
             {/* 닫기 버튼 */}
             <TouchableOpacity onPress={() => setForgotPasswordVisible(false)}>
-              <Text style={[styles.closeButton]}>Close</Text>
+              <Text style={[styles.closeButton]}>
+                닫기
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -343,7 +362,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 30,
   },
-  
+  placeholderColor: {
+    color: '#abb4bd',
+  },
   inputGroup: {
     width: '100%',
     marginBottom: 15,
@@ -375,9 +396,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#4CAF50" 
   },
   signUpButton: { 
-    backgroundColor: "#007BFF" 
+    backgroundColor: "#007BFF",
+    marginTop: 10,
   },
-  socialLoginContainer: { 
+  resetButton: {
+    backgroundColor: "#007BFF",
+    marginTop: 10,
+  },
+  socialLoginContainer: {
     marginTop: 20 
   },
   socialButton: { 
@@ -421,7 +447,13 @@ const styles = StyleSheet.create({
   modalTitle:{
     fontSize :18 ,
     fontWeight:"bold",
-    marginBottom :10
+    marginBottom: 30
+  },
+
+  modalInfo:{
+    color: "#808080",
+    marginBottom: 20,
+    textAlign: 'center',
   },
 
   modalButtonText:{
@@ -433,7 +465,13 @@ const styles = StyleSheet.create({
   },
   
   closeButton:{
-    marginTop :10
+    marginTop :5,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    alignItems: 'center',
   },
   closeButtonLabel :{
     color:'red'
@@ -474,11 +512,11 @@ const styles = StyleSheet.create({
     fontSize:"15"
   },
   socialImage: {
-    width: 50, // 버튼 너비 (적절히 조정)
-    height: 50, // 버튼 높이 (적절히 조정)
-    resizeMode: 'contain', // 이미지 비율 유지
-    marginVertical: 10, // 버튼 간격
-    marginHorizontal: 15, // 버튼 간격
+    width: 50,
+    height: 50,
+    resizeMode: 'contain',
+    marginVertical: 10,
+    marginHorizontal: 15,
   },
 
 });

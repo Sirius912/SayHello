@@ -191,9 +191,15 @@ export default function MapScreen() {
               {selectedMarker ? (
                 <>
                   <View style={styles.infoRow}>
-                    <Text style={styles.infoTitle}>{selectedMarker.title}</Text>
-                    <Text style={styles.infoDescription}>{selectedMarker.description}</Text>
-                    <Text style={styles.infoDescription}>{regionName}</Text> {/* 띄어쓰기 하드 코딩 수정해야함. */}
+                    <Text style={styles.infoTitle}>
+                      {selectedMarker.title}
+                    </Text>
+                    <Text style={styles.infoDescription}>
+                      {selectedMarker.description}
+                    </Text>
+                    <Text style={styles.infoDescription}>
+                      {regionName}
+                    </Text>
                   </View>
                   <View style={styles.weatherContainer}>
                     {weatherData?.weather?.[0]?.icon ? (
