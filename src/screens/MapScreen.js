@@ -120,7 +120,13 @@ export default function MapScreen() {
   };
 
   const icons = {
-    "Rain": "rain"
+    "Thunderstorm": "lightning",
+    "Drizzle": "rains",
+    "Rain": "rain",
+    "Snow" : "snowflake",
+    "Atmosphere": "cloudy-gusts",
+    "Clear" : "day-sunny",
+    "Clouds": "cloudy",
   }
 
   return (
