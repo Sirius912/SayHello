@@ -23,6 +23,7 @@ const fetchWeatherData = async (latitude, longitude) => {
     );
     console.log("Image URL:", `http://openweathermap.org/img/wn/${response.data.weather?.[0]?.icon}@2x.png`);
     console.log("Weather Data:", response.data); // 응답 데이터 출력
+  
     return response.data;
   } catch (error) {
     if (error.response) {
@@ -46,7 +47,8 @@ const fetchWeatherData = async (latitude, longitude) => {
   console.log(weatherData.weather[0].icon)
   if (weatherData) {
     console.log("Success! Weather data received:");
-    console.log(weatherData);
+    // console.log(weatherData);
+    console.log(weatherData.weather[1].main);
   } else {
     console.log("Failed to fetch weather data.");
   }

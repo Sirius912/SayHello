@@ -6,6 +6,7 @@ import { BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet
 import { fetchWeatherData } from "../api";
 import { GOOGLE_MAPS_API_KEY } from '@env';
 import axios from 'axios';
+import { Fontisto } from '@expo/vector-icons';
 
 export default function MapScreen() {
   const [location, setLocation] = useState(null); // 현재 위치 저장
@@ -118,6 +119,10 @@ export default function MapScreen() {
     bottomSheetModalRef.current?.present(); // BottomSheetModal 열기
   };
 
+  const icons = {
+    "Rain": "rain"
+  }
+
   return (
     <BottomSheetModalProvider>
       <View style={styles.container}>
@@ -204,12 +209,14 @@ export default function MapScreen() {
                   <View style={styles.weatherContainer}>
                     {weatherData?.weather?.[0]?.icon ? (
                       <>
-                        <Image
+                        {/* <Image
                           source={{
                             uri: `http://openweathermap.org/img/wn/${weatherData?.weather[0]?.icon}@2x.png`,
                           }}
                           style={styles.weatherIcon}
-                        />
+                        /> */}
+
+                        <Fontisto name={icons[weatherData?.weather[0]?.main]} size={24} color="black" />
                         
                         <Text style={styles.weatherDetail}>
                           기온: {weatherData?.main?.temp ? `${Math.round(weatherData.main.temp)}°C` : "N/A"}
