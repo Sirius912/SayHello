@@ -50,7 +50,6 @@ export default function WhatsUpScreen({ navigation }) {
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.heading}>What's up</Text>
 
         <View style={styles.filterTabs}>
           {["재해", "날씨", "미세먼지"].map((category) => (
@@ -131,23 +130,25 @@ const styles = StyleSheet.create({
     color: "#888",
   },
   filterTab: {
-    backgroundColor: "#fff",
-    borderColor: "#ccc",
-    borderRadius: 20,
+    padding: 5,
+    alignItems: 'center',
+    borderRadius: 10,
     borderWidth: 1,
+    borderColor: '#cccccc',
+    marginHorizontal: 4,
     paddingHorizontal: 12,
-    paddingVertical: 6,
+    backgroundColor: '#E8F5E9',
+    marginBottom: 10,
   },
   filterTabActive: {
-    backgroundColor: "#000",
-    borderColor: "#000",
+    backgroundColor: '#4CAF50',
   },
   filterTabText: {
     color: "#333",
-    fontSize: 12,
+    fontWeight: '600',
   },
   filterTabTextActive: {
-    color: "#fff",
+    color: 'white',
   },
   filterTabs: {
     flexDirection: "row",
@@ -162,7 +163,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   messageButtonRight: {
-    backgroundColor: "#000",
+    backgroundColor: '#4CAF50',
     paddingVertical: 6,
     paddingHorizontal: 8,
     borderRadius: 7,
@@ -179,7 +180,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   safeArea: {
-    backgroundColor: "#fff",
+    backgroundColor: "#F5FBEF",
     flex: 1,
   },
   sender: {

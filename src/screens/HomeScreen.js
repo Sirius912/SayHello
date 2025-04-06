@@ -13,11 +13,16 @@ import { Ionicons } from "@expo/vector-icons";
 import MapView, { Marker } from "react-native-maps";
 import { useNavigation } from "@react-navigation/native";
 import * as Location from "expo-location";
+import { collection, onSnapshot } from "firebase/firestore";
+import { db } from "../api/firebase";
+import { getAuth } from "firebase/auth";
+
 
 export default function HomeScreen() {
   const navigation = useNavigation();
   const [currentLocation, setCurrentLocation] = useState(null);
   const [setLoading] = useState(true);
+  const [contacts, setContacts] = useState([]);
 
   // 현재 위치 가져오기
   useEffect(() => {
@@ -37,6 +42,31 @@ export default function HomeScreen() {
       });
       setLoading(false);
     })();
+  }, []);
+
+  // Firestore 실시간 업데이트 설정
+  useEffect(() => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+  
+    if (!user) {
+      console.error("사용자가 로그인되어 있지 않습니다.");
+      return;
+    }
+  
+    const userId = user.uid; // 현재 로그인한 사용자의 uid
+    const contactsRef = collection(db, `users/${userId}/contacts`);
+  
+    const unsubscribe = onSnapshot(contactsRef, (snapshot) => {
+      const contactsData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        name: doc.data().name || "No Name", // 이름 필드가 없을 경우 기본값 설정
+        image: require("../../assets/default.jpg"), // 우선은 기본 이미지로로
+      }));
+      setContacts(contactsData);
+    });
+  
+    return () => unsubscribe(); // 컴포넌트 언마운트 시 구독 해제
   }, []);
 
   // 샘플 데이터 (나중에 수정해야함)
@@ -110,7 +140,7 @@ export default function HomeScreen() {
           <Text style={styles.tabText}>People</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.tab}
-          onPress={() => navigation.navigate("People")}
+          onPress={() => navigation.navigate("Message")}
         >
           <Ionicons name="chatbubbles-outline" size={18} color="#333" />
           <Text style={styles.tabText}>Message</Text>
@@ -169,13 +199,18 @@ export default function HomeScreen() {
         </View>
         <FlatList
           horizontal
-          data={peopleData}
+          data={contacts}
           keyExtractor={(item) => item.id}
-          showsHorizontalScrollIndicator = { false }
-          showsVerticalScrollIndicator = { false }
+          showsHorizontalScrollIndicator={false}
           renderItem={({ item }) => (
             <View style={styles.personCard}>
-              <Image source={item.image} style={styles.personImage} />
+              {/* 프로필 이미지 */}
+              {typeof item.image === 'string' ? (
+                <Image source={{ uri: item.image }} style={styles.personImage} />
+              ) : (
+                <Image source={item.image} style={styles.personImage} />
+              )}
+              {/* 이름 */}
               <Text style={styles.personName}>{item.name}</Text>
             </View>
           )}
@@ -231,7 +266,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#F5FBEF",
     paddingHorizontal: 10,
     paddingTop: 20, // 상단 여백
   },
@@ -264,6 +299,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     borderWidth: 1,
     borderColor: "#ccc",
+    backgroundColor: '#E8F5E9',
     borderRadius: 20,
     marginHorizontal: 5,
   },
@@ -289,6 +325,7 @@ const styles = StyleSheet.create({
     color: "#333", // 텍스트 색상 설정
     marginLeft: 10, // 왼쪽 벽하고 간격 추가
     marginRight: 5, // 화살표 아이콘과 간격 추가
+    marginTop: 5,
   },
   peopleSection: {
     marginVertical: 10,
@@ -306,10 +343,11 @@ const styles = StyleSheet.create({
   },
   personName: {
     fontSize: 14, // 텍스트 크기 조정
+    marginTop: 5,
     color: "#333",
   },
   newsSection: {
-    marginVertical: 10,
+    marginVertical: 5,
   },
   newsContent: {
     paddingHorizontal: 10,
@@ -329,10 +367,8 @@ const styles = StyleSheet.create({
   newsImageContainer: {
     width: "100%",
     height: 120,
-    borderTopLeftRadius: 15, // 상단 왼쪽 둥근 모서리
-    borderTopRightRadius: 15, // 상단 오른쪽 둥근 모서리
-    borderBottomLeftRadius: 15, // 하단 왼쪽 둥근 모서리 추가
-    borderBottomRightRadius: 15, // 하단 오른쪽 둥근 모서리 추가
+    borderRadius: 10,
+    overflow: "hidden",
   },
   newsImage: {
     width: "100%",

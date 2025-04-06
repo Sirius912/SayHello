@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12
     },
     copy_button: {
-        backgroundColor: '#000000',
+        backgroundColor: '#4CAF50',
         padding: 8,
         borderRadius: 8,
         paddingHorizontal: 18,

@@ -4,45 +4,49 @@ import LocationPicker from "../api/LocationPicker";
 import HealthInfoPicker from "../api/HealthInfoPicker";
 import { db } from '../api/firebase'; // Firebase 설정 파일 가져오기
 import { collection, addDoc } from 'firebase/firestore';
+import { getAuth } from "firebase/auth";
 
 export default function AddPersonScreen({ navigation }) {
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [selectedHealthInfo, setSelectedHealthInfo] = useState(null);
     const [selectedRelationship, setSelectedRelationship] = useState(null);
-    const [selectedContactTerm, setSelectedContactTerm] = useState([]);
+    const [selectedContactTerm, setSelectedContactTerm] = useState(null);
     const [name, setName] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
-  
-    // 연락 주기 토글 함수
-    const toggleContactTerm = (item) => {
-      setSelectedContactTerm((prev) =>
-        prev.includes(item) ? prev.filter(term => term !== item) : [...prev, item]
-      );
-    };
-  
+
     // 저장 버튼 핸들러
     const handleSave = async () => {
-        if (!name || !phoneNumber) {
-            alert('이름과 전화번호를 입력하세요.');
-            return;
-        }
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (!user) {
+        alert('로그인 후 사용하세요.');
+        return;
+      }
 
-        try {
-            await addDoc(collection(db, 'contacts'), {
-                name,
-                phone: phoneNumber,
-                location: selectedLocation || 'Unknown',
-                healthInfo: selectedHealthInfo || 'None',
-                relationship: selectedRelationship || 'ETC',
-                contactTerm: selectedContactTerm.join(', '),
-                image: 'default_image_url', // 이미지 저장 구현 해야함.
-            });
-            alert('지인이 성공적으로 추가되었습니다.');
-            navigation.goBack();
-        } catch (error) {
-            console.error('Error adding document: ', error);
-            alert('지인을 추가하는 데 실패했습니다.');
-        }
+      const userId = user.uid;
+      console.log('userId:', userId); // userId 확인
+
+      if (!name || !phoneNumber) {
+          alert('이름과 전화번호를 입력하세요.');
+          return;
+      }
+
+      try {
+        await addDoc(collection(db, `users/${userId}/contacts`), {
+          name: name,
+          phone: phoneNumber,
+          location: selectedLocation || 'Unknown',
+          healthInfo: selectedHealthInfo || 'None',
+          relationship: selectedRelationship || 'ETC',
+          contactTerm: selectedContactTerm || '1개월',
+          image: 'default_image_url', // 이미지 저장 구현 해야함.
+        });
+        alert('지인이 성공적으로 추가되었습니다.');
+        navigation.goBack();
+      } catch (error) {
+        console.error('Error adding document: ', error);
+        alert('지인을 추가하는 데 실패했습니다.');
+      }
     };
   
     return (
@@ -135,7 +139,7 @@ export default function AddPersonScreen({ navigation }) {
   
         {/* 연락 주기 선택 섹션 */}
         <View>
-          <Text style={{ fontSize: 17, fontWeight: 'bold', marginVertical: 9 }}>Contact Term</Text>
+          <Text style={{ fontSize: 17, fontWeight: 'bold', marginVertical: 9 }}>연락 주기</Text>
           <ScrollView style={{ marginVertical: 7 }} horizontal={true} showsHorizontalScrollIndicator={false}>
             <View style={{ flexDirection: 'row' }}>
               {['1일', '3일', '1주', '1개월', '3개월'].map((item) => (
@@ -143,13 +147,13 @@ export default function AddPersonScreen({ navigation }) {
                   key={item}
                   style={[
                     styles.option,
-                    selectedContactTerm.includes(item) && styles.selectedButton
+                    selectedContactTerm == item && styles.selectedButton
                   ]}
-                  onPress={() => toggleContactTerm(item)}
+                  onPress={() => setSelectedContactTerm(item)}
                 >
                   <Text style={[
                     styles.buttonText,
-                    selectedContactTerm.includes(item) && styles.selectedText
+                    selectedContactTerm == item && styles.selectedText
                   ]}>
                     {item}
                   </Text>

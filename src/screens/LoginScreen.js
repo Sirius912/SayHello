@@ -152,6 +152,7 @@ export default function LoginScreen({ navigation }) {
       <TextInput
         style={styles.input}
         placeholder="이메일을 입력해주세요"
+        placeholderTextColor={styles.placeholderColor.color}
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
@@ -162,6 +163,7 @@ export default function LoginScreen({ navigation }) {
       <TextInput
         style={styles.input}
         placeholder="비밀번호를 입력해주세요"
+        placeholderTextColor={styles.placeholderColor.color}
         value={password}
         onChangeText={setPassword}
         secureTextEntry
@@ -234,6 +236,7 @@ export default function LoginScreen({ navigation }) {
             <Text style={styles.modalTitle}>회원가입</Text>
             
             {/* 이름 입력 */}
+            <Text style={styles.label}>이름</Text>
             <TextInput
               style={styles.input}
               placeholder="이름을 입력해주세요"
@@ -243,6 +246,7 @@ export default function LoginScreen({ navigation }) {
             />
 
             {/* 닉네임 입력 */}
+            <Text style={styles.label}>닉네임</Text>
             <TextInput
               style={styles.input}
               placeholder="닉네임을 입력해주세요"
@@ -252,6 +256,7 @@ export default function LoginScreen({ navigation }) {
             />
 
             {/* 이메일 입력 */}
+            <Text style={styles.label}>이메일</Text>
             <TextInput
               style={styles.input}
               placeholder="이메일을 입력해주세요"
@@ -263,6 +268,7 @@ export default function LoginScreen({ navigation }) {
             />
 
             {/* 비밀번호 입력 */}
+            <Text style={styles.label}>비밀번호</Text>
             <TextInput
               style={styles.input}
               placeholder="비밀번호를 입력해주세요"
@@ -348,7 +354,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F5FBEF',
     paddingHorizontal: 20,
   },
   title: {
@@ -369,11 +375,12 @@ const styles = StyleSheet.create({
     width: '100%',
     marginBottom: 15,
   },
-  
   label: {
     fontSize: 14,
+    fontWeight: 'bold',
     color: '#333',
     marginBottom: 5,
+    textAlign: 'left',
   },
   
   input: {
@@ -441,13 +448,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 20,
     paddingVertical: 30,
-    alignItems: 'center',
+    // alignItems: 'center',
   },
 
   modalTitle:{
     fontSize :18 ,
     fontWeight:"bold",
-    marginBottom: 30
+    marginBottom: 30,
+    textAlign: 'center',
   },
 
   modalInfo:{
@@ -471,7 +479,10 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingVertical: 10,
     paddingHorizontal: 15,
-    alignItems: 'center',
+    width: '20%',
+    alignSelf: 'center',
+    textAlign: 'center',
+    color: 'red',
   },
   closeButtonLabel :{
     color:'red'

@@ -51,7 +51,7 @@ export default function MainNavigator() {
               iconName = focused ? 'people' : 'people-outline';
             } else if (route.name === 'News') {
               iconName = focused ? 'newspaper' : 'newspaper-outline';
-            } else if (route.name === 'Messages') {
+            } else if (route.name === 'Message') {
               iconName = focused ? 'chatbubbles' : 'chatbubbles-outline';
             }
 
@@ -61,13 +61,20 @@ export default function MainNavigator() {
           tabBarActiveTintColor: '#4CAF50', // 활성화된 탭의 색상
           tabBarInactiveTintColor: '#777', // 비활성화된 탭의 색상
           tabBarShowLabel: true, // 라벨 표시 여부
+          tabBarStyle: {
+            backgroundColor: '#E8F5E9', // 탭 상단 배경색 (포근한 연두색)
+          },
+          headerStyle: {
+            backgroundColor: '#E8F5E9', // 상단 헤더 배경색 (연한 녹색)
+          },
+          
         })}
       >
         <Tab.Screen name="Home" component={HomeScreen} />
         <Tab.Screen name="Map" component={MapScreen} />
         <Tab.Screen name="People" component={PeopleStackNavigator} />
         <Tab.Screen name="News" component={NewsScreen} />
-        <Tab.Screen name="Messages" component={MessagesScreen} />
+        <Tab.Screen name="Message" component={MessagesScreen} />
       </Tab.Navigator>
     </GestureHandlerRootView>
   );
