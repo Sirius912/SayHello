@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
-import LocationPicker from "../api/LocationPicker";
+import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Image, Alert, Modal } from 'react-native';
 import HealthInfoPicker from "../api/HealthInfoPicker";
 import { db } from '../api/firebase'; // Firebase 설정 파일 가져오기
 import { collection, addDoc } from 'firebase/firestore';
 import { getAuth } from "firebase/auth";
 import * as ImagePicker from 'expo-image-picker'; // 이미지 선택 라이브러리
 import { Feather } from '@expo/vector-icons';
+import AddressSearch from './AddressSearch';
 
 export default function AddPersonScreen({ navigation }) {
     const [selectedLocation, setSelectedLocation] = useState(null);
@@ -16,6 +16,7 @@ export default function AddPersonScreen({ navigation }) {
     const [name, setName] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [imageUri, setImageUri] = useState(null); // 이미지 URI 상태 추가
+    const [isModalVisible, setModalVisible] = useState(false); // 모달 상태 관리
 
 
     const pickImage = async () => {
@@ -124,17 +125,32 @@ export default function AddPersonScreen({ navigation }) {
         </View>
         <View style={styles.divider}></View>
   
-        {/* 위치 선택 섹션 */}
-        <View style={styles.type_view}>
-          <View style={{ flex: 1, justifyContent: 'center' }}>
-            <Text style={styles.text1}>지역</Text>
-          </View>
-          <View style={{ flex: 2, justifyContent: 'center' }}>
-            <LocationPicker onSelect={setSelectedLocation} />
+        {/* 지역 선택 섹션 */}
+        <View style={styles.inputSection}>
+          <Text style={styles.label}>주소</Text>
+          <View style={styles.inputRow}>
+            <Text style={styles.inputText}>
+              {selectedLocation ? selectedLocation.address : '주소를 선택하세요'}
+            </Text>
+            <TouchableOpacity
+              style={styles.searchButton}
+              onPress={() => setModalVisible(true)}
+            >
+              <Text style={styles.searchButtonText}>주소 검색</Text>
+            </TouchableOpacity>
           </View>
         </View>
         <View style={styles.divider}></View>
-  
+
+        {/* 모달 */}
+        <Modal visible={isModalVisible} animationType="slide">
+          <AddressSearch
+            onSelectAddress={(address) => {
+              setSelectedLocation(address); // 선택된 주소 저장
+              setModalVisible(false); // 모달 닫기
+            }}
+          />
+        </Modal>
         {/* 관계 선택 섹션 */}
         <View>
           <Text style={{ fontSize: 17, fontWeight: 'bold', marginVertical: 9 }}>관계</Text>
@@ -220,7 +236,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff'
   },
   add_person_button: {
-    backgroundColor: '#000000',
+    backgroundColor: '#4CAF50',
     padding: 8,
     borderRadius: 8,
     paddingHorizontal: 18,
@@ -291,5 +307,43 @@ const styles = StyleSheet.create({
   },
   type_view: {
     flexDirection: 'row',
+  },
+  inputSection: {
+    marginBottom: 16,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  inputRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    backgroundColor: '#f9f9f9',
+    width: '90%',
+    alignSelf: 'flex-end',
+  },
+  inputText: {
+    flex: 1,
+    fontSize: 15,
+    color: '#333',
+  },
+  searchButton: {
+    marginLeft: 8,
+    backgroundColor: '#4CAF50',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 6,
+  },
+  searchButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
