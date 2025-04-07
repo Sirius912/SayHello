@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
 import LocationPicker from "../api/LocationPicker";
 import HealthInfoPicker from "../api/HealthInfoPicker";
 import { db } from '../api/firebase'; // Firebase 설정 파일 가져오기
 import { collection, addDoc } from 'firebase/firestore';
 import { getAuth } from "firebase/auth";
+import * as ImagePicker from 'expo-image-picker'; // 이미지 선택 라이브러리
+import { Feather } from '@expo/vector-icons';
 
 export default function AddPersonScreen({ navigation }) {
     const [selectedLocation, setSelectedLocation] = useState(null);
@@ -13,13 +15,34 @@ export default function AddPersonScreen({ navigation }) {
     const [selectedContactTerm, setSelectedContactTerm] = useState(null);
     const [name, setName] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
+    const [imageUri, setImageUri] = useState(null); // 이미지 URI 상태 추가
+
+
+    const pickImage = async () => {
+      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (permissionResult.granted === false) {
+        Alert.alert("알림", "사진 접근 권한이 필요합니다.");
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+      });
+
+      if (!result.canceled) {
+        setImageUri(result.assets[0].uri); // 선택한 이미지 URI 저장
+      }
+    };
 
     // 저장 버튼 핸들러
     const handleSave = async () => {
       const auth = getAuth();
       const user = auth.currentUser;
       if (!user) {
-        alert('로그인 후 사용하세요.');
+        Alert.alert('알림', '로그인 후 사용하세요.');
         return;
       }
 
@@ -27,7 +50,7 @@ export default function AddPersonScreen({ navigation }) {
       console.log('userId:', userId); // userId 확인
 
       if (!name || !phoneNumber) {
-          alert('이름과 전화번호를 입력하세요.');
+          Alert.alert('알림', '이름과 전화번호를 입력하세요.');
           return;
       }
 
@@ -39,20 +62,33 @@ export default function AddPersonScreen({ navigation }) {
           healthInfo: selectedHealthInfo || 'None',
           relationship: selectedRelationship || 'ETC',
           contactTerm: selectedContactTerm || '1개월',
-          image: 'default_image_url', // 이미지 저장 구현 해야함.
+          image: imageUri || 'default_image_url',
         });
-        alert('지인이 성공적으로 추가되었습니다.');
+        Alert.alert('알림', '지인이 성공적으로 추가되었습니다.');
         navigation.goBack();
       } catch (error) {
         console.error('Error adding document: ', error);
-        alert('지인을 추가하는 데 실패했습니다.');
+        Alert.alert('알림','지인을 추가하는 데 실패했습니다.');
       }
     };
   
     return (
       <View style={styles.screen}>
-        {/* 프로필 이미지 영역 (기존 디자인 유지) */}
-        <View style={styles.profile_image}></View>
+        {/* 프로필 이미지 영역*/}
+        <View style={styles.profile_image_container}>
+          <TouchableOpacity onPress={pickImage}>
+            {imageUri ? (
+              <Image source={{ uri: imageUri }} style={styles.profile_image} />
+            ) : (
+              <View style={styles.profile_placeholder}>
+                <Feather name="camera" size={32} color="black" />
+              </View>
+            )}
+          </TouchableOpacity>
+        </View>
+
+
+
         <View style={styles.divider}></View>
   
         {/* 이름 입력 섹션 */}
@@ -208,9 +244,26 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12       // space between text and border
   },
 
+  profile_image_container: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
   profile_image: {
+    width: 100,
     height: 100,
-    backgroundColor: '#ccc'
+    borderRadius: 50,
+  },
+  profile_placeholder: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#ddd',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  profile_placeholder_text: {
+    color: '#777',
+    fontSize: 16,
   },
   selectedButton: {
     backgroundColor: 'black',

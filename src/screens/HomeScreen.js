@@ -61,21 +61,13 @@ export default function HomeScreen() {
       const contactsData = snapshot.docs.map(doc => ({
         id: doc.id,
         name: doc.data().name || "No Name", // 이름 필드가 없을 경우 기본값 설정
-        image: require("../../assets/default.jpg"), // 우선은 기본 이미지로로
+        image: doc.data().image || require('../../assets/default.jpg'),
       }));
       setContacts(contactsData);
     });
   
     return () => unsubscribe(); // 컴포넌트 언마운트 시 구독 해제
   }, []);
-
-  // 샘플 데이터 (나중에 수정해야함)
-  const peopleData = [
-    { id: "1", name: "엄마", image: require("../../assets/mom.png") },
-    { id: "2", name: "아빠", image: require("../../assets/dad.png") },
-    { id: "3", name: "형", image: require("../../assets/brother1.png") },
-    { id: "4", name: "제인", image: require("../../assets/jane.png") },
-  ];
 
   const otherUsers = [
     { id: 1,

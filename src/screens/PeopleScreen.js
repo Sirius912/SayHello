@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, SafeAreaView, Alert } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { collection, onSnapshot, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../api/firebase';
@@ -56,7 +56,7 @@ const PeopleScreen = ({ navigation }) => {
     const user = auth.currentUser;
 
     if (!user) {
-      alert("로그인이 필요합니다.");
+      Alert.alert("알림", "로그인이 필요합니다.");
       return;
     }
 
@@ -64,11 +64,11 @@ const PeopleScreen = ({ navigation }) => {
 
     try {
       await deleteDoc(doc(db, `users/${userId}/contacts`, contactId));
-      alert("연락처가 성공적으로 삭제되었습니다!");
+      Alert.alert("알림", "연락처가 성공적으로 삭제되었습니다!");
       setContacts((prevContacts) => prevContacts.filter((contact) => contact.id !== contactId));
     } catch (error) {
       console.error("연락처 삭제 실패:", error);
-      alert("연락처를 삭제하는 데 실패했습니다.");
+      Alert.alert("실패", "연락처를 삭제하는 데 실패했습니다.");
     }
   };
 
@@ -124,7 +124,7 @@ const PeopleScreen = ({ navigation }) => {
                         <View style={styles.contactItem}>
                             <Image 
                                 /*source={contact.image ? { uri: contact.image } : require('../../assets/mom.png')}*/                            
-                                source={require('../../assets/default.jpg')} // 임시 이미지
+                                source={contact.image ? { uri: contact.image } : require('../../assets/default.jpg')} // 임시 이미지
                                 style={styles.photo}
                             />
                             <View style={styles.contactInfo}>
