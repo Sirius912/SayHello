@@ -1,0 +1,48 @@
+{
+  "expo": {
+    "name": "SayHello",
+    "slug": "SayHello",
+    "owner": "taehoo",
+    "scheme": "sayhello",
+    "platforms": ["ios", "android", "web"],
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.SayHello",
+      "config": {
+        "googleSignIn": {
+          "reservedClientId": "1018343746579-dpcs1lhg0deftabhf4kk8p8u037mmg55.apps.googleusercontent.com"
+        }
+      }
+    },
+    "android": {
+      "config": {
+        "googleMaps": {
+          "apiKey": "@env.GOOGLE_MAPS_API_KEY"
+        }
+      },
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.anonymous.SayHello"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "c9cf565e-300b-409c-b19d-4d103362fc4e"
+      }
+    }
+  }
+}
