@@ -16,6 +16,7 @@ import * as Location from "expo-location";
 import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../api/firebase";
 import { getAuth } from "firebase/auth";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 
 export default function HomeScreen() {
@@ -96,158 +97,160 @@ export default function HomeScreen() {
   ];
 
   return (
-    <View style={styles.container}>
-      {/* 검색 창 */}
-      <View style={styles.searchContainer}>
-        <Ionicons name="search" size={20} color="#777" style={styles.icon} />
-        <TextInput
-          style={styles.input}
-          placeholder="Search"
-          placeholderTextColor="#999"
-        />
-      </View>
-
-      {/* Navigation Tabs */}
-      <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false} // 스크롤바 숨김
-      contentContainerStyle={styles.tabsContainer}
-      style={{ maxHeight: 50 }}
-      >
-      <View style={styles.tabs}>
-        <TouchableOpacity style={styles.tab}>
-          <Ionicons name="heart-outline" size={18} color="#333" />
-          <Text style={styles.tabText}>Favorites</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tab}
-          onPress={() => navigation.navigate("News")}
-        >
-          <Ionicons name="newspaper-outline" size={18} color="#333" />
-          <Text style={styles.tabText}>What's up?</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tab}
-          onPress={() => navigation.navigate("People")}
-        >
-          <Ionicons name="people-outline" size={18} color="#333" />
-          <Text style={styles.tabText}>People</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tab}
-          onPress={() => navigation.navigate("Message")}
-        >
-          <Ionicons name="chatbubbles-outline" size={18} color="#333" />
-          <Text style={styles.tabText}>Message</Text>
-        </TouchableOpacity>
-      </View>
-      </ScrollView>
-
-       {/* Map Section */}
-       <View style={styles.mapSection}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Map</Text>
-          <TouchableOpacity onPress={() => navigation.navigate("Map")}>
-            <Ionicons name="chevron-forward-circle-outline" size={20} color="#333" />
-          </TouchableOpacity>
+    <SafeAreaView style={{ flex: 1 }}>
+      <View style={styles.container}>
+        {/* 검색 창 */}
+        <View style={styles.searchContainer}>
+          <Ionicons name="search" size={20} color="#777" style={styles.icon} />
+          <TextInput
+            style={styles.input}
+            placeholder="Search"
+            placeholderTextColor="#999"
+          />
         </View>
-        <TouchableOpacity onPress={() => navigation.navigate("Map")}>
-          <MapView
-            style={styles.map}
-            region={currentLocation} // 현재 위치를 지도에 반영
-            showsUserLocation={false} // 사용자 위치 표시
+
+        {/* Navigation Tabs */}
+        <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false} // 스크롤바 숨김
+        contentContainerStyle={styles.tabsContainer}
+        style={{ maxHeight: 50 }}
+        >
+        <View style={styles.tabs}>
+          <TouchableOpacity style={styles.tab}>
+            <Ionicons name="heart-outline" size={18} color="#333" />
+            <Text style={styles.tabText}>Favorites</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.tab}
+            onPress={() => navigation.navigate("News")}
           >
-            {/* 현재 사용자 마커 */}
-            {currentLocation && (
-              <Marker coordinate={currentLocation}>
-                <View style={[styles.markerContainer, styles.currentUserMarker]}>
-                  <Text style={[styles.markerText, styles.currentUserText]}>Me</Text>
-                </View>
-              </Marker>
-            )}
-            {/* 다른 사용자 마커 */}
-            {otherUsers.map((user) => (
-              <Marker
-                key={user.id}
-                coordinate={{ latitude: user.latitude, longitude: user.longitude }}
-              >
-                <View style={styles.markerContainer}>
-                  <Text style={styles.markerText}>{user.name}</Text>
-                </View>
-              </Marker>
-            ))}
-          </MapView>
-        </TouchableOpacity>
-      </View>
-
-      {/* People Section */}
-      <View style={styles.peopleSection}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>People</Text>
-          <TouchableOpacity onPress={() => navigation.navigate("People")}>
-            <Ionicons
-              name="chevron-forward-circle-outline"
-              size={20} // 화살표 크기
-              color="#333"
-            />
+            <Ionicons name="newspaper-outline" size={18} color="#333" />
+            <Text style={styles.tabText}>What's up?</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.tab}
+            onPress={() => navigation.navigate("People")}
+          >
+            <Ionicons name="people-outline" size={18} color="#333" />
+            <Text style={styles.tabText}>People</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.tab}
+            onPress={() => navigation.navigate("Message")}
+          >
+            <Ionicons name="chatbubbles-outline" size={18} color="#333" />
+            <Text style={styles.tabText}>Message</Text>
           </TouchableOpacity>
         </View>
-        <FlatList
-          horizontal
-          data={contacts}
-          keyExtractor={(item) => item.id}
-          showsHorizontalScrollIndicator={false}
-          renderItem={({ item }) => (
-            <View style={styles.personCard}>
-              {/* 프로필 이미지 */}
-              {typeof item.image === 'string' ? (
-                <Image source={{ uri: item.image }} style={styles.personImage} />
-              ) : (
-                <Image source={item.image} style={styles.personImage} />
+        </ScrollView>
+
+        {/* Map Section */}
+        <View style={styles.mapSection}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Map</Text>
+            <TouchableOpacity onPress={() => navigation.navigate("Map")}>
+              <Ionicons name="chevron-forward-circle-outline" size={20} color="#333" />
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity onPress={() => navigation.navigate("Map")}>
+            <MapView
+              style={styles.map}
+              region={currentLocation} // 현재 위치를 지도에 반영
+              showsUserLocation={false} // 사용자 위치 표시
+            >
+              {/* 현재 사용자 마커 */}
+              {currentLocation && (
+                <Marker coordinate={currentLocation}>
+                  <View style={[styles.markerContainer, styles.currentUserMarker]}>
+                    <Text style={[styles.markerText, styles.currentUserText]}>Me</Text>
+                  </View>
+                </Marker>
               )}
-              {/* 이름 */}
-              <Text style={styles.personName}>{item.name}</Text>
-            </View>
-          )}
-        />
-      </View>
-
-      {/* What's up? Section */}
-      <View style={styles.newsSection}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>What's up?</Text>
-          <TouchableOpacity onPress={() => navigation.navigate("News")}>
-            <Ionicons
-              name="chevron-forward-circle-outline"
-              size={20} // 화살표 크기
-              color="#333"
-            />
+              {/* 다른 사용자 마커 */}
+              {otherUsers.map((user) => (
+                <Marker
+                  key={user.id}
+                  coordinate={{ latitude: user.latitude, longitude: user.longitude }}
+                >
+                  <View style={styles.markerContainer}>
+                    <Text style={styles.markerText}>{user.name}</Text>
+                  </View>
+                </Marker>
+              ))}
+            </MapView>
           </TouchableOpacity>
         </View>
-        <FlatList
-          data={newsData}
-          keyExtractor={(item) => item.id}
-          numColumns={2} // 두 개의 열로 배치
-          renderItem={({ item }) => (
-            <View style={styles.newsCard}>
-              <View style={styles.newsImageContainer}>
-                <Image source={item.image} style={styles.newsImage} />
+
+        {/* People Section */}
+        <View style={styles.peopleSection}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>People</Text>
+            <TouchableOpacity onPress={() => navigation.navigate("People")}>
+              <Ionicons
+                name="chevron-forward-circle-outline"
+                size={20} // 화살표 크기
+                color="#333"
+              />
+            </TouchableOpacity>
+          </View>
+          <FlatList
+            horizontal
+            data={contacts}
+            keyExtractor={(item) => item.id}
+            showsHorizontalScrollIndicator={false}
+            renderItem={({ item }) => (
+              <View style={styles.personCard}>
+                {/* 프로필 이미지 */}
+                {typeof item.image === 'string' ? (
+                  <Image source={{ uri: item.image }} style={styles.personImage} />
+                ) : (
+                  <Image source={item.image} style={styles.personImage} />
+                )}
+                {/* 이름 */}
+                <Text style={styles.personName}>{item.name}</Text>
               </View>
-              <View style={styles.newsContent}>
-                <Text style={styles.sender}>{item.sender}</Text>
-                <Text style={styles.title}>{item.title}</Text>
-                <TouchableOpacity 
-                  onPress={() => navigation.navigate("Messages")}
-                  style={styles.messageButton}>
-                  <Text style={{ color: "#fff", fontWeight: "bold" }}>
-                    메시지 보내기
-                  </Text>
-                </TouchableOpacity>
+            )}
+          />
+        </View>
+
+        {/* What's up? Section */}
+        <View style={styles.newsSection}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>What's up?</Text>
+            <TouchableOpacity onPress={() => navigation.navigate("News")}>
+              <Ionicons
+                name="chevron-forward-circle-outline"
+                size={20} // 화살표 크기
+                color="#333"
+              />
+            </TouchableOpacity>
+          </View>
+          <FlatList
+            data={newsData}
+            keyExtractor={(item) => item.id}
+            numColumns={2} // 두 개의 열로 배치
+            renderItem={({ item }) => (
+              <View style={styles.newsCard}>
+                <View style={styles.newsImageContainer}>
+                  <Image source={item.image} style={styles.newsImage} />
+                </View>
+                <View style={styles.newsContent}>
+                  <Text style={styles.sender}>{item.sender}</Text>
+                  <Text style={styles.title}>{item.title}</Text>
+                  <TouchableOpacity 
+                    onPress={() => navigation.navigate("Messages")}
+                    style={styles.messageButton}>
+                    <Text style={{ color: "#fff", fontWeight: "bold" }}>
+                      메시지 보내기
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
-          )}
-        />
+            )}
+          />
+        </View>
+
+
       </View>
-
-
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -258,7 +261,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: "#F5FBEF",
+    backgroundColor: "white",
     paddingHorizontal: 10,
     paddingTop: 20, // 상단 여백
   },

@@ -145,12 +145,13 @@ export default function LoginScreen({ navigation }) {
     <View style={styles.container}>
       <Text style={styles.title}>SayHello</Text>
       <Text style={styles.subtitle}>
-        사랑하는 사람과 연락을 주고받는 방법을 찾고 계신가요?
-        {'\n'}지금 바로 시작하세요!
+        사랑하는 사람들과 더 가까이 연결되며
+        {'\n'}따뜻한 인사와 안부를 전하는 순간을 더욱 쉽게 만들어보세요
       </Text>
 
+      <Text style={styles.emailPasswordLabel}>Email</Text>
       <TextInput
-        style={styles.input}
+        style={styles.emailPasswordInput}
         placeholder="이메일을 입력해주세요"
         placeholderTextColor={styles.placeholderColor.color}
         value={email}
@@ -160,8 +161,9 @@ export default function LoginScreen({ navigation }) {
       />
 
       {/* 비밀번호 입력 */}
+      <Text style={styles.emailPasswordLabel}>Password</Text>
       <TextInput
-        style={styles.input}
+        style={styles.emailPasswordInput}
         placeholder="비밀번호를 입력해주세요"
         placeholderTextColor={styles.placeholderColor.color}
         value={password}
@@ -361,6 +363,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
+    marginTop: 30,
   },
   subtitle: {
     fontSize: 14,
@@ -381,16 +384,37 @@ const styles = StyleSheet.create({
     color: '#333',
     marginBottom: 5,
     textAlign: 'left',
+    alignSelf: 'flex-start',
+    marginLeft: 10,
   },
-  
   input: {
-    width: '100%',
+    width: '95%',
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
     marginBottom: 15,
+  },
+  emailPasswordInput: {
+    width: '95%',
+    height: 40,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    marginBottom: 15,
+    marginTop: 5,
+  },
+  emailPasswordLabel: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 5,
+    textAlign: 'left',
+    alignSelf: 'flex-start',
+    marginLeft: 13,
   },
   button: {
     width: '100%',
@@ -400,15 +424,31 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   loginButton: { 
-    backgroundColor: "#4CAF50" 
+    width: '95%',
+    backgroundColor: "#4CAF50",
+    borderRadius: 10,
+    shadowOpacity: 0.3,
+    shadowRadius: 4, 
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
   },
   signUpButton: { 
-    backgroundColor: "#007BFF",
+    backgroundColor: "#4CAF50",
+    borderRadius: 10,
     marginTop: 10,
+    shadowOpacity: 0.3,
+    shadowRadius: 4, 
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
   },
   resetButton: {
-    backgroundColor: "#007BFF",
+    backgroundColor: "#4CAF50",
     marginTop: 10,
+    borderRadius: 10,
+    shadowOpacity: 0.3,
+    shadowRadius: 4, 
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
   },
   socialLoginContainer: {
     marginTop: 20 
@@ -423,7 +463,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#FEE500',
     width: '48%',
   },
-
   googleButton: {
     backgroundColor: '#4285F4',
     width: '48%',
@@ -440,15 +479,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
+    paddingHorizontal: 20,
   },
 
   modalContent: {
     width: '80%',
     backgroundColor: '#FFF',
-    borderRadius: 10,
+    borderRadius: 30,
     paddingHorizontal: 20,
     paddingVertical: 30,
-    // alignItems: 'center',
   },
 
   modalTitle:{
@@ -491,7 +530,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
     alignItems: "center",
-    width: "100%",
+    width: "95%",
     marginBottom: 20,
   },
   switchLabel: {

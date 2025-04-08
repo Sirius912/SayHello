@@ -7,6 +7,7 @@ import { fetchWeatherData } from "../api";
 import { GOOGLE_MAPS_API_KEY } from '@env';
 import axios from 'axios';
 import { Fontisto } from '@expo/vector-icons';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function MapScreen() {
   const [location, setLocation] = useState(null); // 현재 위치 저장
@@ -130,130 +131,132 @@ export default function MapScreen() {
   }
 
   return (
-    <BottomSheetModalProvider>
-      <View style={styles.container}>
-        {/* 검색창 및 필터/정렬 */}
-        <View style={styles.searchContainer}>
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search for person or map"
-            value={searchQuery}
-            onChangeText={(text) => setSearchQuery(text)}
-          />
-          <TouchableOpacity style={styles.filterButton}>
-            <Text style={styles.filterButtonText}>Filter</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.sortButton}>
-            <Text style={styles.sortButtonText}>Sort</Text>
-          </TouchableOpacity>
-          <Text style={styles.resultCount}>{filteredMarkers.length} results</Text>
-        </View>
+    <SafeAreaView style={{ flex: 1 }}>
+      <BottomSheetModalProvider>
+        <View style={styles.container}>
+          {/* 검색창 및 필터/정렬 */}
+          <View style={styles.searchContainer}>
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search for person or map"
+              value={searchQuery}
+              onChangeText={(text) => setSearchQuery(text)}
+            />
+            <TouchableOpacity style={styles.filterButton}>
+              <Text style={styles.filterButtonText}>Filter</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.sortButton}>
+              <Text style={styles.sortButtonText}>Sort</Text>
+            </TouchableOpacity>
+            <Text style={styles.resultCount}>{filteredMarkers.length} results</Text>
+          </View>
 
-        {/* 지도 표시 */}
-        {location ? (
-          <MapView
-            style={{ flex: selectedMarker ? 0.6 : 1 }} // Marker 선택 여부에 따라 지도 크기 조정
-            initialRegion={location}
-            showsUserLocation={false} // 현재 위치 표시
-            onPress={() => bottomSheetModalRef.current?.dismiss()} // 지도 클릭시 Bottom Sheet 닫기
-          >
+          {/* 지도 표시 */}
+          {location ? (
+            <MapView
+              style={{ flex: selectedMarker ? 0.6 : 1 }} // Marker 선택 여부에 따라 지도 크기 조정
+              initialRegion={location}
+              showsUserLocation={false} // 현재 위치 표시
+              onPress={() => bottomSheetModalRef.current?.dismiss()} // 지도 클릭시 Bottom Sheet 닫기
+            >
 
-            {/* 현재 사용자 마커 */}
-            {location && (
-              <Marker coordinate={location}>
-                <View style={[styles.markerContainer, styles.currentUserMarker]}>
-                  <Text style={[styles.markerText, styles.currentUserText]}>Me</Text>
-                </View>
-              </Marker>
-            )}
-            
-            {/* Marker 렌더링 */}
-            {filteredMarkers.map((marker) => (
-              <Marker
-                key={marker.id}
-                coordinate={{
-                  latitude: location.latitude + marker.latitudeOffset,
-                  longitude: location.longitude + marker.longitudeOffset,
-                }}
-                onPress={() => handleMarkerPress(marker)} // Marker 클릭 시 정보 저장
-              >
-                {/* 커스텀 Marker 스타일 */}
-                <View style={[styles.markerContainer]}>
-                  <Text style={[styles.markerText]}>
-                    {marker.title}
-                  </Text>
-                </View>
-              </Marker>
-            ))}
-          </MapView>
-        ) : (
-          <Text>{errorMsg || "Loading..."}</Text>
-        )}
-
-        {/* Bottom Sheet Modal */}
-        <BottomSheetModal
-            ref={bottomSheetModalRef}
-            snapPoints={["40%", "40%"]}
-            // enableDynamicSizing={true}
-            enablePanDownToClose={true}
-            onChange={handleSheetChanges}
-          >
-            <View style={styles.contentContainer}>
-              {selectedMarker ? (
-                <>
-                  <View style={styles.infoRow}>
-                    <Text style={styles.infoTitle}>
-                      {selectedMarker.title}
-                    </Text>
-                    <Text style={styles.infoDescription}>
-                      {selectedMarker.description}
-                    </Text>
-                    <Text style={styles.infoDescription}>
-                      {regionName}
-                    </Text>
+              {/* 현재 사용자 마커 */}
+              {location && (
+                <Marker coordinate={location}>
+                  <View style={[styles.markerContainer, styles.currentUserMarker]}>
+                    <Text style={[styles.markerText, styles.currentUserText]}>Me</Text>
                   </View>
-                  <View style={styles.weatherContainer}>
-                    {weatherData?.weather?.[0]?.icon ? (
-                      <>
-                        {/* <Image
-                          source={{
-                            uri: `http://openweathermap.org/img/wn/${weatherData?.weather[0]?.icon}@2x.png`,
-                          }}
-                          style={styles.weatherIcon}
-                        /> */}
-
-                        <Fontisto name={icons[weatherData?.weather[0]?.main]} size={24} color="black" />
-                        
-                        <Text style={styles.weatherDetail}>
-                          기온: {weatherData?.main?.temp ? `${Math.round(weatherData.main.temp)}°C` : "N/A"}
-                        </Text>
-                        <Text style={styles.weatherDetail}>
-                          날씨: {weatherData.weather[0].description}
-                        </Text>
-                        <Text style={styles.weatherDetail}>
-                          습도: {weatherData.main.humidity}%
-                        </Text>
-                        <Text style={styles.weatherDetail}>
-                          풍속: {weatherData.wind.speed} m/s
-                        </Text>
-                      </>
-                      ) : (
-                        <Text>No weather data available</Text>
-                      )}
-         
-                  </View>
-                  
-                  <TouchableOpacity style={styles.selectButton}>
-                    <Text style={styles.selectButtonText}>Select</Text>
-                  </TouchableOpacity>
-                </>
-              ) : (
-                <Text>No marker selected</Text>
+                </Marker>
               )}
-            </View>
-          </BottomSheetModal>
-      </View>
-    </BottomSheetModalProvider>
+              
+              {/* Marker 렌더링 */}
+              {filteredMarkers.map((marker) => (
+                <Marker
+                  key={marker.id}
+                  coordinate={{
+                    latitude: location.latitude + marker.latitudeOffset,
+                    longitude: location.longitude + marker.longitudeOffset,
+                  }}
+                  onPress={() => handleMarkerPress(marker)} // Marker 클릭 시 정보 저장
+                >
+                  {/* 커스텀 Marker 스타일 */}
+                  <View style={[styles.markerContainer]}>
+                    <Text style={[styles.markerText]}>
+                      {marker.title}
+                    </Text>
+                  </View>
+                </Marker>
+              ))}
+            </MapView>
+          ) : (
+            <Text>{errorMsg || "Loading..."}</Text>
+          )}
+
+          {/* Bottom Sheet Modal */}
+          <BottomSheetModal
+              ref={bottomSheetModalRef}
+              snapPoints={["40%", "40%"]}
+              // enableDynamicSizing={true}
+              enablePanDownToClose={true}
+              onChange={handleSheetChanges}
+            >
+              <View style={styles.contentContainer}>
+                {selectedMarker ? (
+                  <>
+                    <View style={styles.infoRow}>
+                      <Text style={styles.infoTitle}>
+                        {selectedMarker.title}
+                      </Text>
+                      <Text style={styles.infoDescription}>
+                        {selectedMarker.description}
+                      </Text>
+                      <Text style={styles.infoDescription}>
+                        {regionName}
+                      </Text>
+                    </View>
+                    <View style={styles.weatherContainer}>
+                      {weatherData?.weather?.[0]?.icon ? (
+                        <>
+                          {/* <Image
+                            source={{
+                              uri: `http://openweathermap.org/img/wn/${weatherData?.weather[0]?.icon}@2x.png`,
+                            }}
+                            style={styles.weatherIcon}
+                          /> */}
+
+                          <Fontisto name={icons[weatherData?.weather[0]?.main]} size={24} color="black" />
+                          
+                          <Text style={styles.weatherDetail}>
+                            기온: {weatherData?.main?.temp ? `${Math.round(weatherData.main.temp)}°C` : "N/A"}
+                          </Text>
+                          <Text style={styles.weatherDetail}>
+                            날씨: {weatherData.weather[0].description}
+                          </Text>
+                          <Text style={styles.weatherDetail}>
+                            습도: {weatherData.main.humidity}%
+                          </Text>
+                          <Text style={styles.weatherDetail}>
+                            풍속: {weatherData.wind.speed} m/s
+                          </Text>
+                        </>
+                        ) : (
+                          <Text>No weather data available</Text>
+                        )}
+          
+                    </View>
+                    
+                    <TouchableOpacity style={styles.selectButton}>
+                      <Text style={styles.selectButtonText}>Select</Text>
+                    </TouchableOpacity>
+                  </>
+                ) : (
+                  <Text>No marker selected</Text>
+                )}
+              </View>
+            </BottomSheetModal>
+        </View>
+      </BottomSheetModalProvider>
+    </SafeAreaView>
   );
 }
 

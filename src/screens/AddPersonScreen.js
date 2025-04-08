@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Image, Alert, Modal } from 'react-native';
+import { SafeAreaView, View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Image, Alert, Modal } from 'react-native';
 import HealthInfoPicker from "../api/HealthInfoPicker";
 import { db } from '../api/firebase'; // Firebase 설정 파일 가져오기
 import { collection, addDoc } from 'firebase/firestore';
@@ -74,157 +74,159 @@ export default function AddPersonScreen({ navigation }) {
     };
   
     return (
-      <View style={styles.screen}>
-        {/* 프로필 이미지 영역*/}
-        <View style={styles.profile_image_container}>
-          <TouchableOpacity onPress={pickImage}>
-            {imageUri ? (
-              <Image source={{ uri: imageUri }} style={styles.profile_image} />
-            ) : (
-              <View style={styles.profile_placeholder}>
-                <Feather name="camera" size={32} color="black" />
+      <SafeAreaView style={{ flex: 1 }}>
+        <View style={styles.screen}>
+          {/* 프로필 이미지 영역*/}
+          <View style={styles.profile_image_container}>
+            <TouchableOpacity onPress={pickImage}>
+              {imageUri ? (
+                <Image source={{ uri: imageUri }} style={styles.profile_image} />
+              ) : (
+                <View style={styles.profile_placeholder}>
+                  <Feather name="camera" size={32} color="black" />
+                </View>
+              )}
+            </TouchableOpacity>
+          </View>
+
+
+
+          <View style={styles.divider}></View>
+    
+          {/* 이름 입력 섹션 */}
+          <View style={styles.type_view}>
+            <View style={{ flex: 1, justifyContent: 'center' }}>
+              <Text style={styles.text1}>이름</Text>
+            </View>
+            <View style={{ flex: 2, justifyContent: 'center' }}>
+              <TextInput 
+                style={styles.type_input} 
+                placeholder='이름을 입력하세요.'
+                value={name}
+                onChangeText={setName}
+              />
+            </View>
+          </View>
+          <View style={styles.divider}></View>
+    
+          {/* 전화번호 입력 섹션 */}
+          <View style={styles.type_view}>
+            <View style={{ flex: 1, justifyContent: 'center' }}>
+              <Text style={styles.text1}>전화번호</Text>
+            </View>
+            <View style={{ flex: 2, justifyContent: 'center' }}>
+              <TextInput 
+                style={styles.type_input} 
+                placeholder='전화번호를 입력하세요.'
+                value={phoneNumber}
+                onChangeText={setPhoneNumber}
+                keyboardType="phone-pad"
+              />
+            </View>
+          </View>
+          <View style={styles.divider}></View>
+    
+          {/* 지역 선택 섹션 */}
+          <View style={styles.inputSection}>
+            <Text style={styles.label}>주소</Text>
+            <View style={styles.inputRow}>
+              <Text style={styles.inputText}>
+                {selectedLocation ? selectedLocation.address : '주소를 선택하세요'}
+              </Text>
+              <TouchableOpacity
+                style={styles.searchButton}
+                onPress={() => setModalVisible(true)}
+              >
+                <Text style={styles.searchButtonText}>주소 검색</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View style={styles.divider}></View>
+
+          {/* 모달 */}
+          <Modal visible={isModalVisible} animationType="slide">
+            <AddressSearch
+              onSelectAddress={(address) => {
+                setSelectedLocation(address); // 선택된 주소 저장
+                setModalVisible(false); // 모달 닫기
+              }}
+            />
+          </Modal>
+          {/* 관계 선택 섹션 */}
+          <View>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', marginVertical: 9 }}>관계</Text>
+            <ScrollView style={{ marginVertical: 7 }} horizontal={true} showsHorizontalScrollIndicator={false}>
+              <View style={{ flexDirection: 'row' }}>
+                {['친구', '가족', '직장', '기타'].map((item) => (
+                  <TouchableOpacity
+                    key={item}
+                    style={[
+                      styles.option,
+                      selectedRelationship === item && styles.selectedButton
+                    ]}
+                    onPress={() => setSelectedRelationship(item)}
+                  >
+                    <Text style={[
+                      styles.buttonText,
+                      selectedRelationship === item && styles.selectedText
+                    ]}>
+                      {item}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
               </View>
-            )}
-          </TouchableOpacity>
-        </View>
-
-
-
-        <View style={styles.divider}></View>
-  
-        {/* 이름 입력 섹션 */}
-        <View style={styles.type_view}>
-          <View style={{ flex: 1, justifyContent: 'center' }}>
-            <Text style={styles.text1}>이름</Text>
+            </ScrollView>
           </View>
-          <View style={{ flex: 2, justifyContent: 'center' }}>
-            <TextInput 
-              style={styles.type_input} 
-              placeholder='이름을 입력하세요.'
-              value={name}
-              onChangeText={setName}
-            />
+          <View style={styles.divider}></View>
+    
+          {/* 건강 정보 선택 섹션 */}
+          <View style={styles.type_view}>
+            <View style={{ flex: 1, justifyContent: 'center' }}>
+              <Text style={styles.text1}>건강 정보</Text>
+            </View>
+            <View style={{ flex: 2, justifyContent: 'center' }}>
+              <HealthInfoPicker onSelect={setSelectedHealthInfo} />
+            </View>
           </View>
-        </View>
-        <View style={styles.divider}></View>
-  
-        {/* 전화번호 입력 섹션 */}
-        <View style={styles.type_view}>
-          <View style={{ flex: 1, justifyContent: 'center' }}>
-            <Text style={styles.text1}>전화번호</Text>
+          <View style={styles.divider}></View>
+    
+          {/* 연락 주기 선택 섹션 */}
+          <View>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', marginVertical: 9 }}>연락 주기</Text>
+            <ScrollView style={{ marginVertical: 7 }} horizontal={true} showsHorizontalScrollIndicator={false}>
+              <View style={{ flexDirection: 'row' }}>
+                {['1일', '3일', '1주', '1개월', '3개월'].map((item) => (
+                  <TouchableOpacity
+                    key={item}
+                    style={[
+                      styles.option,
+                      selectedContactTerm == item && styles.selectedButton
+                    ]}
+                    onPress={() => setSelectedContactTerm(item)}
+                  >
+                    <Text style={[
+                      styles.buttonText,
+                      selectedContactTerm == item && styles.selectedText
+                    ]}>
+                      {item}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </ScrollView>
           </View>
-          <View style={{ flex: 2, justifyContent: 'center' }}>
-            <TextInput 
-              style={styles.type_input} 
-              placeholder='전화번호를 입력하세요.'
-              value={phoneNumber}
-              onChangeText={setPhoneNumber}
-              keyboardType="phone-pad"
-            />
-          </View>
-        </View>
-        <View style={styles.divider}></View>
-  
-        {/* 지역 선택 섹션 */}
-        <View style={styles.inputSection}>
-          <Text style={styles.label}>주소</Text>
-          <View style={styles.inputRow}>
-            <Text style={styles.inputText}>
-              {selectedLocation ? selectedLocation.address : '주소를 선택하세요'}
-            </Text>
+    
+          {/* 저장 버튼 (기존 디자인 유지) */}
+          <View style={styles.add_person_view}>
             <TouchableOpacity
-              style={styles.searchButton}
-              onPress={() => setModalVisible(true)}
+              style={styles.add_person_button}
+              onPress={handleSave}
             >
-              <Text style={styles.searchButtonText}>주소 검색</Text>
+              <Text style={{ color: '#ffffff', fontSize: 16 }}>저장하기</Text>
             </TouchableOpacity>
           </View>
         </View>
-        <View style={styles.divider}></View>
-
-        {/* 모달 */}
-        <Modal visible={isModalVisible} animationType="slide">
-          <AddressSearch
-            onSelectAddress={(address) => {
-              setSelectedLocation(address); // 선택된 주소 저장
-              setModalVisible(false); // 모달 닫기
-            }}
-          />
-        </Modal>
-        {/* 관계 선택 섹션 */}
-        <View>
-          <Text style={{ fontSize: 17, fontWeight: 'bold', marginVertical: 9 }}>관계</Text>
-          <ScrollView style={{ marginVertical: 7 }} horizontal={true} showsHorizontalScrollIndicator={false}>
-            <View style={{ flexDirection: 'row' }}>
-              {['친구', '가족', '직장', '기타'].map((item) => (
-                <TouchableOpacity
-                  key={item}
-                  style={[
-                    styles.option,
-                    selectedRelationship === item && styles.selectedButton
-                  ]}
-                  onPress={() => setSelectedRelationship(item)}
-                >
-                  <Text style={[
-                    styles.buttonText,
-                    selectedRelationship === item && styles.selectedText
-                  ]}>
-                    {item}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </ScrollView>
-        </View>
-        <View style={styles.divider}></View>
-  
-        {/* 건강 정보 선택 섹션 */}
-        <View style={styles.type_view}>
-          <View style={{ flex: 1, justifyContent: 'center' }}>
-            <Text style={styles.text1}>건강 정보</Text>
-          </View>
-          <View style={{ flex: 2, justifyContent: 'center' }}>
-            <HealthInfoPicker onSelect={setSelectedHealthInfo} />
-          </View>
-        </View>
-        <View style={styles.divider}></View>
-  
-        {/* 연락 주기 선택 섹션 */}
-        <View>
-          <Text style={{ fontSize: 17, fontWeight: 'bold', marginVertical: 9 }}>연락 주기</Text>
-          <ScrollView style={{ marginVertical: 7 }} horizontal={true} showsHorizontalScrollIndicator={false}>
-            <View style={{ flexDirection: 'row' }}>
-              {['1일', '3일', '1주', '1개월', '3개월'].map((item) => (
-                <TouchableOpacity
-                  key={item}
-                  style={[
-                    styles.option,
-                    selectedContactTerm == item && styles.selectedButton
-                  ]}
-                  onPress={() => setSelectedContactTerm(item)}
-                >
-                  <Text style={[
-                    styles.buttonText,
-                    selectedContactTerm == item && styles.selectedText
-                  ]}>
-                    {item}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </ScrollView>
-        </View>
-  
-        {/* 저장 버튼 (기존 디자인 유지) */}
-        <View style={styles.add_person_view}>
-          <TouchableOpacity
-            style={styles.add_person_button}
-            onPress={handleSave}
-          >
-            <Text style={{ color: '#ffffff', fontSize: 16 }}>저장하기</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+      </SafeAreaView>
     );
   }
 

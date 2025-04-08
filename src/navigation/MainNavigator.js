@@ -60,14 +60,11 @@ export default function MainNavigator() {
           },
           tabBarActiveTintColor: '#4CAF50', // 활성화된 탭의 색상
           tabBarInactiveTintColor: '#777', // 비활성화된 탭의 색상
-          tabBarShowLabel: true, // 라벨 표시 여부
+          tabBarShowLabel: false, // 라벨 표시 여부
           tabBarStyle: {
             backgroundColor: '#E8F5E9', // 탭 상단 배경색 (포근한 연두색)
           },
-          headerStyle: {
-            backgroundColor: '#E8F5E9', // 상단 헤더 배경색 (연한 녹색)
-          },
-          
+          headerShown: false, // 헤더 숨기기
         })}
       >
         <Tab.Screen name="Home" component={HomeScreen} />

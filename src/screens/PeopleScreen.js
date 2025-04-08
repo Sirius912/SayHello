@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, SafeAreaView, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, SafeAreaView, Alert, TextInput } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { collection, onSnapshot, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../api/firebase';
@@ -10,7 +10,8 @@ const PeopleScreen = ({ navigation }) => {
 
   const [contacts, setContacts] = useState([]);
   const [filteredContacts, setFilteredContacts] = useState([]); // 필터링된 데이터
-  const [selectedButton, setSelectedButton] = useState();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedButton, setSelectedButton] = useState('전체'); // 기본값 '전체'
 
   // Firestore 실시간 업데이트 설정
   useEffect(() => {
@@ -36,6 +37,20 @@ const PeopleScreen = ({ navigation }) => {
   
     return () => unsubscribe(); // 컴포넌트 언마운트 시 구독 해제
   }, []);
+
+
+  // 검색 및 필터링
+  const handleSearch = (text) => {
+    setSearchQuery(text);
+    if (text === '') {
+      setFilteredContacts(contacts);
+    } else {
+      const filtered = contacts.filter((contact) =>
+        contact.name.toLowerCase().includes(text.toLowerCase())
+      );
+      setFilteredContacts(filtered);
+    }
+  };
 
   const handlePress = (buttonName) => {
     // console.log("선택된 버튼:", buttonName);
@@ -93,6 +108,15 @@ const PeopleScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.safeArea}>
         <View style={styles.box}>
+            <View style={styles.searchContainer}>
+                <Ionicons name="search" size={20} color="#777" style={styles.searchIcon} />
+                <TextInput
+                style={styles.searchInput}
+                placeholder="찾고자 하는 사람 이름을 입력하세요"
+                value={searchQuery}
+                onChangeText={handleSearch}
+                />
+            </View>
             <View>
                 <ScrollView style={{ marginVertical: 7 }} horizontal={true} showsHorizontalScrollIndicator={false}>
                     {/* 필터 탭 (기존 로직 유지) */}
@@ -122,8 +146,7 @@ const PeopleScreen = ({ navigation }) => {
                     renderRightActions={() => renderRightActions(contact.id)}
                     >
                         <View style={styles.contactItem}>
-                            <Image 
-                                /*source={contact.image ? { uri: contact.image } : require('../../assets/mom.png')}*/                            
+                            <Image                         
                                 source={contact.image ? { uri: contact.image } : require('../../assets/default.jpg')} // 임시 이미지
                                 style={styles.photo}
                             />
@@ -144,7 +167,7 @@ const PeopleScreen = ({ navigation }) => {
                 onPress={() => navigation.navigate('AddPersonScreen')}
                 style={styles.add_person_button}
             >
-                <Text style={{ color: '#ffffff', fontSize: 16 }}>새 지인 추가</Text>
+                <Text style={{ textAlign: 'center', color: '#ffffff', fontSize: 22 }}>새로운 사람 등록하기</Text>
             </TouchableOpacity>
         </View>
     </SafeAreaView>
@@ -152,24 +175,54 @@ const PeopleScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+    searchContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        paddingHorizontal: 10,
+        marginBottom: 15,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 2,
+    },
+    searchIcon: {
+        size: 20,
+        marginRight: 10,
+    },
+    searchInput: {
+        flex: 1,
+        height: 40,
+        fontSize: 16,
+        color: '#333',
+      },
     add_person_view: {
         flexDirection: 'row',
         justifyContent: 'center',
         padding: 30,
-        backgroundColor: '#F5FBEF',
+        backgroundColor: 'white',
     },
     add_person_button: {
         backgroundColor: '#4CAF50',
         padding: 8,
         borderRadius: 8,
         paddingHorizontal: 18,
-        justifyContent: 'center'
+        width: '95%',
+        justifyContent: 'center',
+        height: 50,
+        borderRadius: 10,
+        shadowOpacity: 0.3,
+        shadowRadius: 4, 
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
     },
     buttonText: {
         fontWeight: '600',
     },
     box: {
-        backgroundColor: '#F5FBEF',
+        backgroundColor: 'white',
         padding: 15,
         paddingBottom: -15,
         flex: 11
