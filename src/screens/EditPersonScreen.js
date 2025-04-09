@@ -202,7 +202,7 @@ export default function EditPersonScreen({ route, navigation }) {
                         style={styles.saveButton}
                         onPress={handleSave}
                     >
-                        <Text style={styles.saveButtonText}>변경 사항 저장</Text>
+                        <Text style={styles.saveButtonText}>프로필 수정 완료</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -270,10 +270,15 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
     },
     saveButton: {
-        backgroundColor: '#000',
+        backgroundColor: '#41BA6B',
         paddingVertical: 15,
         borderRadius: 10,
         alignItems: 'center',
+        borderRadius: 10,
+        shadowOpacity: 0.3,
+        shadowRadius: 4, 
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
     },
     saveButtonText: {
         color: '#fff',

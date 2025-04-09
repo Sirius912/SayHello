@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
         flex: 1,
         height: 40,
         fontSize: 16,
-        color: '#333',
+        color: '#828282',
       },
     add_person_view: {
         flexDirection: 'row',
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
     },
     add_person_button: {
-        backgroundColor: '#4CAF50',
+        backgroundColor: '#41BA6B',
         padding: 8,
         borderRadius: 8,
         paddingHorizontal: 18,

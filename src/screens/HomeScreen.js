@@ -13,7 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import MapView, { Marker } from "react-native-maps";
 import { useNavigation } from "@react-navigation/native";
 import * as Location from "expo-location";
-import { collection, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot, doc } from "firebase/firestore";
 import { db } from "../api/firebase";
 import { getAuth } from "firebase/auth";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -24,6 +24,7 @@ export default function HomeScreen() {
   const [currentLocation, setCurrentLocation] = useState(null);
   const [setLoading] = useState(true);
   const [contacts, setContacts] = useState([]);
+  const [currentUserNickname, setCurrentUserNickname] = useState("");
 
   // 현재 위치 가져오기
   useEffect(() => {
@@ -38,8 +39,8 @@ export default function HomeScreen() {
       setCurrentLocation({
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
+        latitudeDelta: 0.005,
+        longitudeDelta: 0.005,
       });
       setLoading(false);
     })();
@@ -56,8 +57,18 @@ export default function HomeScreen() {
     }
   
     const userId = user.uid; // 현재 로그인한 사용자의 uid
+    const userDocRef = doc(db, "users", userId);
     const contactsRef = collection(db, `users/${userId}/contacts`);
-  
+    
+    // 사용자 닉네임 가져오기
+    const unsubscribeUserDoc = onSnapshot(userDocRef, (docSnap) => {
+      if (docSnap.exists()) {
+        setCurrentUserNickname(docSnap.data().nickname || "Unknown"); // 닉네임 설정
+      } else {
+        console.error("사용자 문서를 찾을 수 없습니다.");
+      }
+    });
+
     const unsubscribe = onSnapshot(contactsRef, (snapshot) => {
       const contactsData = snapshot.docs.map(doc => ({
         id: doc.id,
@@ -67,18 +78,37 @@ export default function HomeScreen() {
       setContacts(contactsData);
     });
   
-    return () => unsubscribe(); // 컴포넌트 언마운트 시 구독 해제
+    return () => {
+      unsubscribeUserDoc();
+      unsubscribe();
+    }; // 컴포넌트 언마운트 시 구독 해제
   }, []);
 
   const otherUsers = [
-    { id: 1,
-      name: "제인",
-      latitude: 0.003,
-      longitude: 0.003},
-    { id: 2, 
+    { 
+      id: 1,
+      name: "할아버지",
+      latitudeOffset: 0.001,
+      longitudeOffset: -0.001,
+    },
+    { 
+      id: 2, 
+      name: "부모님",
+      latitudeOffset: -0.001,
+      longitudeOffset: 0.001,
+    },
+    { 
+      id: 3, 
       name: "형",
-      latitude: 0.003,
-      longitude: 0.003 },
+      latitudeOffset: 0.002,
+      longitudeOffset: -0.002,
+    },
+    { 
+      id: 4, 
+      name: "제인",
+      latitudeOffset: -0.002,
+      longitudeOffset: 0.002,
+    },
   ];
 
   const newsData = [
@@ -97,14 +127,14 @@ export default function HomeScreen() {
   ];
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
       <View style={styles.container}>
         {/* 검색 창 */}
         <View style={styles.searchContainer}>
           <Ionicons name="search" size={20} color="#777" style={styles.icon} />
           <TextInput
             style={styles.input}
-            placeholder="Search"
+            placeholder="검색어를 입력하세요"
             placeholderTextColor="#999"
           />
         </View>
@@ -145,7 +175,7 @@ export default function HomeScreen() {
         {/* Map Section */}
         <View style={styles.mapSection}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Map</Text>
+            <Text style={styles.sectionTitle}>지도</Text>
             <TouchableOpacity onPress={() => navigation.navigate("Map")}>
               <Ionicons name="chevron-forward-circle-outline" size={20} color="#333" />
             </TouchableOpacity>
@@ -160,21 +190,27 @@ export default function HomeScreen() {
               {currentLocation && (
                 <Marker coordinate={currentLocation}>
                   <View style={[styles.markerContainer, styles.currentUserMarker]}>
-                    <Text style={[styles.markerText, styles.currentUserText]}>Me</Text>
+                    <Text style={[styles.markerText, styles.currentUserText]}>
+                      {currentUserNickname}
+                    </Text>
                   </View>
                 </Marker>
               )}
               {/* 다른 사용자 마커 */}
-              {otherUsers.map((user) => (
-                <Marker
-                  key={user.id}
-                  coordinate={{ latitude: user.latitude, longitude: user.longitude }}
-                >
-                  <View style={styles.markerContainer}>
-                    <Text style={styles.markerText}>{user.name}</Text>
-                  </View>
-                </Marker>
-              ))}
+              {currentLocation &&
+                otherUsers.map((user) => (
+                  <Marker
+                    key={user.id}
+                    coordinate={{
+                      latitude: currentLocation.latitude + user.latitudeOffset, // 현재 위치에서 위도 오프셋 적용
+                      longitude: currentLocation.longitude + user.longitudeOffset, // 현재 위치에서 경도 오프셋 적용
+                    }}
+                  >
+                    <View style={styles.markerContainer}>
+                      <Text style={styles.markerText}>{user.name}</Text>
+                    </View>
+                  </Marker>
+                ))}
             </MapView>
           </TouchableOpacity>
         </View>
@@ -182,7 +218,7 @@ export default function HomeScreen() {
         {/* People Section */}
         <View style={styles.peopleSection}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>People</Text>
+            <Text style={styles.sectionTitle}>주소록</Text>
             <TouchableOpacity onPress={() => navigation.navigate("People")}>
               <Ionicons
                 name="chevron-forward-circle-outline"
@@ -214,7 +250,7 @@ export default function HomeScreen() {
         {/* What's up? Section */}
         <View style={styles.newsSection}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>What's up?</Text>
+            <Text style={styles.sectionTitle}>주변 소식</Text>
             <TouchableOpacity onPress={() => navigation.navigate("News")}>
               <Ionicons
                 name="chevron-forward-circle-outline"
@@ -238,8 +274,8 @@ export default function HomeScreen() {
                   <TouchableOpacity 
                     onPress={() => navigation.navigate("Messages")}
                     style={styles.messageButton}>
-                    <Text style={{ color: "#fff", fontWeight: "bold" }}>
-                      메시지 보내기
+                    <Text style={{ color: "#fff", fontWeight: "bold", textAlign: "center" }}>
+                      메시지 작성하기
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -310,7 +346,7 @@ const styles = StyleSheet.create({
   map: {
     width: "100%", // 화면 너비를 가득 채움
     height: 150,   // 지도 섹션 높이 설정
-    borderRadius: 10,
+    borderRadius: 30,
     overflow: "hidden",
     marginTop: 10,
   },

@@ -62,7 +62,7 @@ export default function MainNavigator() {
           tabBarInactiveTintColor: '#777', // 비활성화된 탭의 색상
           tabBarShowLabel: false, // 라벨 표시 여부
           tabBarStyle: {
-            backgroundColor: '#E8F5E9', // 탭 상단 배경색 (포근한 연두색)
+            backgroundColor: '#FFFFFF', // 탭 상단 배경색 (포근한 연두색)
           },
           headerShown: false, // 헤더 숨기기
         })}

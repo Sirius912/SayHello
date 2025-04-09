@@ -10,6 +10,7 @@ import {
   sendPasswordResetEmail
 } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 export default function LoginScreen({ navigation }) {
@@ -142,212 +143,214 @@ export default function LoginScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>SayHello</Text>
-      <Text style={styles.subtitle}>
-        사랑하는 사람들과 더 가까이 연결되며
-        {'\n'}따뜻한 인사와 안부를 전하는 순간을 더욱 쉽게 만들어보세요
-      </Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff", }}>
+      <View style={styles.container}>
+        <Text style={styles.title}>SayHello</Text>
+        <Text style={styles.subtitle}>
+          사랑하는 사람들과 더 가까이 연결되며
+          {'\n'}따뜻한 인사와 안부를 전하는 순간을 더욱 쉽게 만들어보세요
+        </Text>
 
-      <Text style={styles.emailPasswordLabel}>Email</Text>
-      <TextInput
-        style={styles.emailPasswordInput}
-        placeholder="이메일을 입력해주세요"
-        placeholderTextColor={styles.placeholderColor.color}
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
-
-      {/* 비밀번호 입력 */}
-      <Text style={styles.emailPasswordLabel}>Password</Text>
-      <TextInput
-        style={styles.emailPasswordInput}
-        placeholder="비밀번호를 입력해주세요"
-        placeholderTextColor={styles.placeholderColor.color}
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      {/* 로그인 상태 유지 슬라이드 스위치 */}
-      <View style={styles.switchContainer}>
-        <Text style={styles.switchLabel}>로그인 상태 유지</Text>
-        <Switch
-          value={isRemembered}
-          onValueChange={(value) => setIsRemembered(value)}
-          trackColor={{ false: "#ccc", true: "#4CAF50" }}
-          thumbColor={isRemembered ? "#fff" : "#f4f3f4"}
+        <Text style={styles.emailPasswordLabel}>Email</Text>
+        <TextInput
+          style={styles.emailPasswordInput}
+          placeholder="이메일을 입력해주세요"
+          placeholderTextColor={styles.placeholderColor.color}
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
         />
-      </View>
 
-      {/* 로그인 버튼 */}
-      <TouchableOpacity style={[styles.button, styles.loginButton]} onPress={handleEmailLogin}>
-        <Text style={styles.buttonText}>로그인</Text>
-      </TouchableOpacity>
+        {/* 비밀번호 입력 */}
+        <Text style={styles.emailPasswordLabel}>Password</Text>
+        <TextInput
+          style={styles.emailPasswordInput}
+          placeholder="비밀번호를 입력해주세요"
+          placeholderTextColor={styles.placeholderColor.color}
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+        {/* 로그인 상태 유지 슬라이드 스위치 */}
+        <View style={styles.switchContainer}>
+          <Text style={styles.switchLabel}>로그인 상태 유지</Text>
+          <Switch
+            value={isRemembered}
+            onValueChange={(value) => setIsRemembered(value)}
+            trackColor={{ false: "#ccc", true: "#4CAF50" }}
+            thumbColor={isRemembered ? "#fff" : "#f4f3f4"}
+          />
+        </View>
 
-      {/* 비밀번호 재설정 | 회원가입 */}
-      <View style={styles.linkContainer}>
-        <TouchableOpacity onPress={() => setForgotPasswordVisible(true)}>
-          <Text style={styles.link}>비밀번호 재설정</Text>
+        {/* 로그인 버튼 */}
+        <TouchableOpacity style={[styles.button, styles.loginButton]} onPress={handleEmailLogin}>
+          <Text style={styles.buttonText}>로그인</Text>
         </TouchableOpacity>
-        <Text style={styles.separator}>|</Text>
-        <TouchableOpacity onPress={() => setModalVisible(true)}>
-          <Text style={[styles.link]}>회원가입</Text>
-        </TouchableOpacity>
-      </View>
 
-      {/* 구분선 */}
-      <View style={{
-        borderBottomColor: '#ccc',
-        borderBottomWidth: 1,
-        width: '100%',
-        marginVertical: 20,
-        }} 
-      />
-       {/* SNS 계정으로 로그인 */}
-      <View style={styles.socialLoginContainer}>
-        <Text style={styles.socialLoginTitle}>SNS 계정으로 로그인</Text>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '50%', marginTop: 20 }}>
-          {/* 카카오 로그인 버튼 */}
-          <TouchableOpacity onPress={handleKakao}>
-            <Image
-              source={require('../../assets/kakao_login.png')} // 카카오 로그인 이미지 경로
-              style={styles.socialImage}
-            />
+        {/* 비밀번호 재설정 | 회원가입 */}
+        <View style={styles.linkContainer}>
+          <TouchableOpacity onPress={() => setForgotPasswordVisible(true)}>
+            <Text style={styles.link}>비밀번호 재설정</Text>
           </TouchableOpacity>
-          {/* 구글 로그인 버튼 */}
-          <TouchableOpacity onPress={() => promptAsync()}>
-            <Image
-              source={require('../../assets/google_login.png')} // 구글 로그인 이미지
-              style={styles.socialImage}
-            />
+          <Text style={styles.separator}>|</Text>
+          <TouchableOpacity onPress={() => setModalVisible(true)}>
+            <Text style={[styles.link]}>회원가입</Text>
           </TouchableOpacity>
         </View>
-      </View>
 
-      {/* 회원가입 모달 */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>회원가입</Text>
-            
-            {/* 이름 입력 */}
-            <Text style={styles.label}>이름</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="이름을 입력해주세요"
-              placeholderTextColor={styles.placeholderColor.color}
-              value={name}
-              onChangeText={(text) => setName(text)}
-            />
-
-            {/* 닉네임 입력 */}
-            <Text style={styles.label}>닉네임</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="닉네임을 입력해주세요"
-              placeholderTextColor={styles.placeholderColor.color}
-              value={nickname}
-              onChangeText={(text) => setNickname(text)}
-            />
-
-            {/* 이메일 입력 */}
-            <Text style={styles.label}>이메일</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="이메일을 입력해주세요"
-              placeholderTextColor={styles.placeholderColor.color}
-              value={email}
-              onChangeText={(text) => setEmail(text)}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-
-            {/* 비밀번호 입력 */}
-            <Text style={styles.label}>비밀번호</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="비밀번호를 입력해주세요"
-              placeholderTextColor={styles.placeholderColor.color}
-              value={password}
-              onChangeText={(text) => setPassword(text)}
-              secureTextEntry
-            />
-
-            {/* 회원가입 버튼 */}
-            <TouchableOpacity
-              style={[styles.button, styles.signUpButton]}
-              onPress={handleSignUp}
-            >
-              <Text style={styles.buttonText}>회원가입</Text>
+        {/* 구분선 */}
+        <View style={{
+          borderBottomColor: '#ccc',
+          borderBottomWidth: 1,
+          width: '100%',
+          marginVertical: 20,
+          }} 
+        />
+        {/* SNS 계정으로 로그인 */}
+        <View style={styles.socialLoginContainer}>
+          <Text style={styles.socialLoginTitle}>SNS 계정으로 로그인</Text>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '50%', marginTop: 20 }}>
+            {/* 카카오 로그인 버튼 */}
+            <TouchableOpacity onPress={handleKakao}>
+              <Image
+                source={require('../../assets/kakao_login.png')} // 카카오 로그인 이미지 경로
+                style={styles.socialImage}
+              />
             </TouchableOpacity>
-
-            {/* 모달 닫기 버튼 */}
-            <TouchableOpacity onPress={() => setModalVisible(false)}>
-              <Text style={[styles.closeButton]}>닫기</Text>
-            </TouchableOpacity>
-        
-          </View>
-        </View>
-      </Modal>
-
-      {/* Forgot Password 모달 */}
-      <Modal animationType="slide"
-        transparent={true}
-        visible={forgotPasswordVisible}
-        onRequestClose={() => setForgotPasswordVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>
-              비밀번호 찾기
-            </Text>
-
-            <Text style={styles.modalInfo}>
-              등록된 이메일 주소로 
-              {'\n'}비밀번호 재설정 링크를 보내드립니다.
-              {'\n'}회원님 이메일을 확인하신 후, 12시간 이내에
-              {'\n'}비밀번호 재설정을 완료해주세요.
-            </Text>
-
-            {/* 이메일 입력 */}
-            <TextInput
-              style={styles.input}
-              placeholder="이메일을 입력해주세요"
-              placeholderTextColor={styles.placeholderColor.color}
-              value={email}
-              onChangeText={(text) => setEmail(text)}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-
-            {/* 비밀번호 재설정 버튼 */}
-            <TouchableOpacity
-              style={[styles.button, styles.resetButton]}
-              onPress={handleForgotPassword}
-            >
-              <Text style={[styles.buttonText]}>
-                인증 메일 받기
-              </Text>
-            </TouchableOpacity>
-
-            {/* 닫기 버튼 */}
-            <TouchableOpacity onPress={() => setForgotPasswordVisible(false)}>
-              <Text style={[styles.closeButton]}>
-                닫기
-              </Text>
+            {/* 구글 로그인 버튼 */}
+            <TouchableOpacity onPress={() => promptAsync()}>
+              <Image
+                source={require('../../assets/google_login.png')} // 구글 로그인 이미지
+                style={styles.socialImage}
+              />
             </TouchableOpacity>
           </View>
         </View>
-      </Modal>
 
-    </View>
+        {/* 회원가입 모달 */}
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>회원가입</Text>
+              
+              {/* 이름 입력 */}
+              <Text style={styles.label}>이름</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="이름을 입력해주세요"
+                placeholderTextColor={styles.placeholderColor.color}
+                value={name}
+                onChangeText={(text) => setName(text)}
+              />
+
+              {/* 닉네임 입력 */}
+              <Text style={styles.label}>닉네임</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="닉네임을 입력해주세요"
+                placeholderTextColor={styles.placeholderColor.color}
+                value={nickname}
+                onChangeText={(text) => setNickname(text)}
+              />
+
+              {/* 이메일 입력 */}
+              <Text style={styles.label}>이메일</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="이메일을 입력해주세요"
+                placeholderTextColor={styles.placeholderColor.color}
+                value={email}
+                onChangeText={(text) => setEmail(text)}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+
+              {/* 비밀번호 입력 */}
+              <Text style={styles.label}>비밀번호</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="비밀번호를 입력해주세요"
+                placeholderTextColor={styles.placeholderColor.color}
+                value={password}
+                onChangeText={(text) => setPassword(text)}
+                secureTextEntry
+              />
+
+              {/* 회원가입 버튼 */}
+              <TouchableOpacity
+                style={[styles.button, styles.signUpButton]}
+                onPress={handleSignUp}
+              >
+                <Text style={styles.buttonText}>회원가입</Text>
+              </TouchableOpacity>
+
+              {/* 모달 닫기 버튼 */}
+              <TouchableOpacity onPress={() => setModalVisible(false)}>
+                <Text style={[styles.closeButton]}>닫기</Text>
+              </TouchableOpacity>
+          
+            </View>
+          </View>
+        </Modal>
+
+        {/* Forgot Password 모달 */}
+        <Modal animationType="slide"
+          transparent={true}
+          visible={forgotPasswordVisible}
+          onRequestClose={() => setForgotPasswordVisible(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>
+                비밀번호 찾기
+              </Text>
+
+              <Text style={styles.modalInfo}>
+                등록된 이메일 주소로 
+                {'\n'}비밀번호 재설정 링크를 보내드립니다.
+                {'\n'}회원님 이메일을 확인하신 후, 12시간 이내에
+                {'\n'}비밀번호 재설정을 완료해주세요.
+              </Text>
+
+              {/* 이메일 입력 */}
+              <TextInput
+                style={styles.input}
+                placeholder="이메일을 입력해주세요"
+                placeholderTextColor={styles.placeholderColor.color}
+                value={email}
+                onChangeText={(text) => setEmail(text)}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+
+              {/* 비밀번호 재설정 버튼 */}
+              <TouchableOpacity
+                style={[styles.button, styles.resetButton]}
+                onPress={handleForgotPassword}
+              >
+                <Text style={[styles.buttonText]}>
+                  인증 메일 받기
+                </Text>
+              </TouchableOpacity>
+
+              {/* 닫기 버튼 */}
+              <TouchableOpacity onPress={() => setForgotPasswordVisible(false)}>
+                <Text style={[styles.closeButton]}>
+                  닫기
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
+      </View>
+    </SafeAreaView>
   );
 }
 
@@ -425,7 +428,7 @@ const styles = StyleSheet.create({
   },
   loginButton: { 
     width: '95%',
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#41BA6B",
     borderRadius: 10,
     shadowOpacity: 0.3,
     shadowRadius: 4, 
@@ -433,7 +436,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
   },
   signUpButton: { 
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#41BA6B",
     borderRadius: 10,
     marginTop: 10,
     shadowOpacity: 0.3,
@@ -442,7 +445,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
   },
   resetButton: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#41BA6B",
     marginTop: 10,
     borderRadius: 10,
     shadowOpacity: 0.3,

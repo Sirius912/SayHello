@@ -8,6 +8,7 @@ import { GOOGLE_MAPS_API_KEY } from '@env';
 import axios from 'axios';
 import { Fontisto } from '@expo/vector-icons';
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function MapScreen() {
   const [location, setLocation] = useState(null); // 현재 위치 저장
@@ -23,28 +24,32 @@ export default function MapScreen() {
     {
       id: "1",
       title: "할아버지",
-      description: "지진 7.1 - 2025-03-01",
+      date: "2025-03-01",
+      description: "지진 7.1",
       latitudeOffset: 0.001,
       longitudeOffset: -0.001,
     },
     {
       id: "2",
       title: "부모님",
-      description: "홍수 - 2025-02-15",
+      date: "2025-02-20",
+      description: "홍수",
       latitudeOffset: -0.001,
       longitudeOffset: 0.001,
     },
     {
       id: "3",
       title: "형",
-      description: "천둥 - 2025-01-10",
+      date: "2025-01-10",
+      description: "천둥",
       latitudeOffset: 0.002,
       longitudeOffset: -0.002,
     },
     {
       id: "4",
       title: "제인",
-      description: "폭염 - 2025-01-05",
+      date: "2025-01-05",
+      description: "폭염",
       latitudeOffset: -0.002,
       longitudeOffset: 0.002,
     },
@@ -131,23 +136,36 @@ export default function MapScreen() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff", }}>
       <BottomSheetModalProvider>
         <View style={styles.container}>
           {/* 검색창 및 필터/정렬 */}
+          <Text style={styles.title}>지도</Text>
           <View style={styles.searchContainer}>
+            <Ionicons name="search" size={20} color="#777" style={styles.icon} />
             <TextInput
               style={styles.searchInput}
-              placeholder="Search for person or map"
+              placeholder="찾고자 하는 사람을 입력하세요"
               value={searchQuery}
               onChangeText={(text) => setSearchQuery(text)}
             />
-            <TouchableOpacity style={styles.filterButton}>
-              <Text style={styles.filterButtonText}>Filter</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.sortButton}>
-              <Text style={styles.sortButtonText}>Sort</Text>
-            </TouchableOpacity>
+          </View>
+
+          {/* 필터/정렬 및 결과 */}
+          <View style={styles.filterSortRow}>
+            <View style={styles.filterSortContainer}>
+              {/* 필터 버튼 */}
+              <TouchableOpacity style={styles.filterButton}>
+                <Text style={styles.filterButtonText}>필터</Text>
+              </TouchableOpacity>
+
+              {/* 정렬 버튼 */}
+              <TouchableOpacity style={styles.sortButton}>
+                <Text style={styles.sortButtonText}>정렬</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* 결과 개수 */}
             <Text style={styles.resultCount}>{filteredMarkers.length} results</Text>
           </View>
 
@@ -208,11 +226,9 @@ export default function MapScreen() {
                         {selectedMarker.title}
                       </Text>
                       <Text style={styles.infoDescription}>
-                        {selectedMarker.description}
+                        / {selectedMarker.date}
                       </Text>
-                      <Text style={styles.infoDescription}>
-                        {regionName}
-                      </Text>
+                      
                     </View>
                     <View style={styles.weatherContainer}>
                       {weatherData?.weather?.[0]?.icon ? (
@@ -246,8 +262,15 @@ export default function MapScreen() {
                     </View>
                     
                     <TouchableOpacity style={styles.selectButton}>
-                      <Text style={styles.selectButtonText}>Select</Text>
+                      <Text style={styles.selectButtonText}>선택</Text>
                     </TouchableOpacity>
+
+                    <Text style={styles.infoDescription}>
+                        {regionName}
+                    </Text>
+                    <Text style={styles.infoDescription}>
+                        {selectedMarker.description}
+                    </Text>
                   </>
                 ) : (
                   <Text>No marker selected</Text>
@@ -266,35 +289,55 @@ const styles = StyleSheet.create({
     // position: 'relative',
     // zIndex: 0,
     backgroundColor: "#fff",
+    padding: 16,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
   },
   searchContainer: {
     flexDirection: "row", // 검색창 및 버튼을 가로로 배치
     alignItems: "center",
     paddingHorizontal: 10,
     marginVertical: 10,
-    backgroundColor: "#f9f9f9",
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
+    borderRadius: 10,
+    backgroundColor: "#f0f0f0",
+    marginHorizontal: 10,
+    // borderBottomWidth: 1,
+    // borderBottomColor: "#ddd",
   },
   searchInput: {
     flex: 1,
     height: 40,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 10,
+    // borderWidth: 1,
+    // borderColor: "#ccc",
+    // borderRadius: 10,
     paddingHorizontal: 10,
     marginRight: 10,
-    fontSize: 14,
+    fontSize: 16,
+  },
+  filterSortRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between', // 필터/정렬과 결과 개수를 양쪽 끝으로 배치
+    marginLeft: 10,
+  },
+  filterSortContainer: {
+    flexDirection: 'row', // 필터와 정렬 버튼을 가로로 배치
+    alignItems: 'center',
+    marginBottom: 10,
   },
   filterButton: {
     paddingHorizontal: 15,
     paddingVertical: 8,
     backgroundColor: "#eaeaea",
-    borderRadius: 5,
+    borderRadius: 8,
     marginRight: 10,
   },
   filterButtonText: {
-    fontSize: 12,
+    fontSize: 14,
+    fontWeight: '500',
     color: "#333",
   },
   sortButton: {
@@ -305,12 +348,14 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   sortButtonText: {
-    fontSize: 12,
+    fontSize: 14,
+    fontWeight: '500',
     color: "#333",
   },
   resultCount: {
-    fontSize: 12,
+    fontSize: 14,
     color: "#666",
+    marginRight: 10,
   },
   map: {
     flex: 0.6, // Marker 선택 시 지도 크기 조정

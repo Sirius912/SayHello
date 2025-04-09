@@ -261,7 +261,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,        // space between butons
     paddingHorizontal: 12       // space between text and border
   },
-
   profile_image_container: {
     alignItems: 'center',
     marginBottom: 20,
