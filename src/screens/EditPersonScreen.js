@@ -5,7 +5,6 @@ import { db } from '../api/firebase'; // Firebase 설정 파일
 import LocationPicker from '../api/LocationPicker';
 import HealthInfoPicker from '../api/HealthInfoPicker';
 import { getAuth } from 'firebase/auth';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function EditPersonScreen({ route, navigation }) {
     const { contactId } = route.params; // PeopleScreen에서 전달받은 연락처 ID
@@ -100,113 +99,111 @@ export default function EditPersonScreen({ route, navigation }) {
     }
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
-            <View style={styles.screen}>
-                {/* 이름 입력 */}
-                <View style={styles.type_view}>
-                    <Text style={styles.text1}>이름</Text>
-                    <TextInput
-                        style={styles.type_input}
-                        placeholder='이름을 입력하세요.'
-                        value={name}
-                        onChangeText={setName}
-                    />
-                </View>
-                <View style={styles.divider}></View>
-
-                {/* 전화번호 입력 */}
-                <View style={styles.type_view}>
-                    <Text style={styles.text1}>전화번호</Text>
-                    <TextInput
-                        style={styles.type_input}
-                        placeholder='전화번호를 입력하세요.'
-                        value={phoneNumber}
-                        onChangeText={setPhoneNumber}
-                        keyboardType="phone-pad"
-                    />
-                </View>
-                <View style={styles.divider}></View>
-
-                {/* 위치 선택 */}
-                <View style={styles.type_view}>
-                    <Text style={styles.text1}>지역</Text>
-                    <LocationPicker 
-                        onSelect={setSelectedLocation} 
-                        initialValue={selectedLocation}
-                    />
-                </View>
-                <View style={styles.divider}></View>
-
-                {/* 관계 선택 */}
-                <View>
-                    <Text style={styles.sectionTitle}>관계</Text>
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                        {['친구', '가족', '직장', '기타'].map((item) => (
-                            <TouchableOpacity
-                                key={item}
-                                style={[
-                                    styles.option,
-                                    selectedRelationship === item && styles.selectedButton
-                                ]}
-                                onPress={() => setSelectedRelationship(item)}
-                            >
-                                <Text style={[
-                                    styles.buttonText,
-                                    selectedRelationship === item && styles.selectedText
-                                ]}>
-                                    {item}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
-                    </ScrollView>
-                </View>
-                <View style={styles.divider}></View>
-
-                {/* 건강 정보 선택 */}
-                <View style={styles.type_view}>
-                    <Text style={styles.text1}>건강 정보</Text>
-                    <HealthInfoPicker 
-                        onSelect={setSelectedHealthInfo} 
-                        initialValue={selectedHealthInfo}
-                    />
-                </View>
-                <View style={styles.divider}></View>
-
-                {/* 연락 주기 선택 */}
-                <View>
-                    <Text style={styles.sectionTitle}>연락 주기</Text>
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                        {['1일', '3일', '1주', '1개월', '3개월'].map((item) => (
-                            <TouchableOpacity
-                                key={item}
-                                style={[
-                                    styles.option,
-                                    selectedContactTerm.includes(item) && styles.selectedButton
-                                ]}
-                                onPress={() => toggleContactTerm(item)}
-                            >
-                                <Text style={[
-                                    styles.buttonText,
-                                    selectedContactTerm.includes(item) && styles.selectedText
-                                ]}>
-                                    {item}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
-                    </ScrollView>
-                </View>
-
-                {/* 저장 버튼 */}
-                <View style={styles.saveButtonContainer}>
-                    <TouchableOpacity
-                        style={styles.saveButton}
-                        onPress={handleSave}
-                    >
-                        <Text style={styles.saveButtonText}>프로필 수정 완료</Text>
-                    </TouchableOpacity>
-                </View>
+        <View style={styles.screen}>
+            {/* 이름 입력 */}
+            <View style={styles.type_view}>
+                <Text style={styles.text1}>이름</Text>
+                <TextInput
+                    style={styles.type_input}
+                    placeholder='이름을 입력하세요.'
+                    value={name}
+                    onChangeText={setName}
+                />
             </View>
-        </SafeAreaView>
+            <View style={styles.divider}></View>
+
+            {/* 전화번호 입력 */}
+            <View style={styles.type_view}>
+                <Text style={styles.text1}>전화번호</Text>
+                <TextInput
+                    style={styles.type_input}
+                    placeholder='전화번호를 입력하세요.'
+                    value={phoneNumber}
+                    onChangeText={setPhoneNumber}
+                    keyboardType="phone-pad"
+                />
+            </View>
+            <View style={styles.divider}></View>
+
+            {/* 위치 선택 */}
+            <View style={styles.type_view}>
+                <Text style={styles.text1}>지역</Text>
+                <LocationPicker 
+                    onSelect={setSelectedLocation} 
+                    initialValue={selectedLocation}
+                />
+            </View>
+            <View style={styles.divider}></View>
+
+            {/* 관계 선택 */}
+            <View>
+                <Text style={styles.sectionTitle}>관계</Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                    {['친구', '가족', '직장', '기타'].map((item) => (
+                        <TouchableOpacity
+                            key={item}
+                            style={[
+                                styles.option,
+                                selectedRelationship === item && styles.selectedButton
+                            ]}
+                            onPress={() => setSelectedRelationship(item)}
+                        >
+                            <Text style={[
+                                styles.buttonText,
+                                selectedRelationship === item && styles.selectedText
+                            ]}>
+                                {item}
+                            </Text>
+                        </TouchableOpacity>
+                    ))}
+                </ScrollView>
+            </View>
+            <View style={styles.divider}></View>
+
+            {/* 건강 정보 선택 */}
+            <View style={styles.type_view}>
+                <Text style={styles.text1}>건강 정보</Text>
+                <HealthInfoPicker 
+                    onSelect={setSelectedHealthInfo} 
+                    initialValue={selectedHealthInfo}
+                />
+            </View>
+            <View style={styles.divider}></View>
+
+            {/* 연락 주기 선택 */}
+            <View>
+                <Text style={styles.sectionTitle}>연락 주기</Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                    {['1일', '3일', '1주', '1개월', '3개월'].map((item) => (
+                        <TouchableOpacity
+                            key={item}
+                            style={[
+                                styles.option,
+                                selectedContactTerm.includes(item) && styles.selectedButton
+                            ]}
+                            onPress={() => toggleContactTerm(item)}
+                        >
+                            <Text style={[
+                                styles.buttonText,
+                                selectedContactTerm.includes(item) && styles.selectedText
+                            ]}>
+                                {item}
+                            </Text>
+                        </TouchableOpacity>
+                    ))}
+                </ScrollView>
+            </View>
+
+            {/* 저장 버튼 */}
+            <View style={styles.saveButtonContainer}>
+                <TouchableOpacity
+                    style={styles.saveButton}
+                    onPress={handleSave}
+                >
+                    <Text style={styles.saveButtonText}>변경 사항 저장</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
     );
 }
 
@@ -270,15 +267,10 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
     },
     saveButton: {
-        backgroundColor: '#41BA6B',
+        backgroundColor: '#000',
         paddingVertical: 15,
         borderRadius: 10,
         alignItems: 'center',
-        borderRadius: 10,
-        shadowOpacity: 0.3,
-        shadowRadius: 4, 
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 1 },
     },
     saveButtonText: {
         color: '#fff',

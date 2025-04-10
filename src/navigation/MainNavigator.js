@@ -39,6 +39,8 @@ export default function MainNavigator() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Tab.Navigator
         screenOptions={({ route }) => ({
+          tabBarItemStyle: { paddingTop: 5 },
+
           tabBarIcon: ({ focused, color, size }) => {
             let iconName;
 
@@ -56,7 +58,7 @@ export default function MainNavigator() {
             }
 
             // 아이콘 반환
-            return <Ionicons name={iconName} size={size} color={color} />;
+            return <Ionicons name={iconName} size={27} color={color} />;
           },
           tabBarActiveTintColor: '#4CAF50', // 활성화된 탭의 색상
           tabBarInactiveTintColor: '#777', // 비활성화된 탭의 색상
@@ -64,7 +66,7 @@ export default function MainNavigator() {
           tabBarStyle: {
             backgroundColor: '#FFFFFF', // 탭 상단 배경색 (포근한 연두색)
           },
-          headerShown: false, // 헤더 숨기기
+          headerShown: false,
         })}
       >
         <Tab.Screen name="Home" component={HomeScreen} />

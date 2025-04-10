@@ -292,9 +292,9 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   title: {
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: 'bold',
-    marginBottom: 16,
+    padding: 16,
   },
   searchContainer: {
     flexDirection: "row", // 검색창 및 버튼을 가로로 배치

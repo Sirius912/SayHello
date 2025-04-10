@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SafeAreaView, View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Image, Alert, Modal } from 'react-native';
+import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Image, Alert, Modal, SafeAreaView, ImageBackground, FlatList } from 'react-native';
 import HealthInfoPicker from "../api/HealthInfoPicker";
 import { db } from '../api/firebase'; // Firebase 설정 파일 가져오기
 import { collection, addDoc } from 'firebase/firestore';
@@ -9,72 +9,78 @@ import { Feather } from '@expo/vector-icons';
 import AddressSearch from './AddressSearch';
 
 export default function AddPersonScreen({ navigation }) {
-    const [selectedLocation, setSelectedLocation] = useState(null);
-    const [selectedHealthInfo, setSelectedHealthInfo] = useState(null);
-    const [selectedRelationship, setSelectedRelationship] = useState(null);
-    const [selectedContactTerm, setSelectedContactTerm] = useState(null);
-    const [name, setName] = useState('');
-    const [phoneNumber, setPhoneNumber] = useState('');
-    const [imageUri, setImageUri] = useState(null); // 이미지 URI 상태 추가
-    const [isModalVisible, setModalVisible] = useState(false); // 모달 상태 관리
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [selectedHealthInfo, setSelectedHealthInfo] = useState(null);
+  const [selectedRelationship, setSelectedRelationship] = useState(null);
+  const [selectedContactTerm, setSelectedContactTerm] = useState(null);
+  const [name, setName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [imageUri, setImageUri] = useState(null); // 이미지 URI 상태 추가
+  const [isModalVisible, setModalVisible] = useState(false); // 모달 상태 관리
 
+  const pickImage = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (permissionResult.granted === false) {
+      Alert.alert("알림", "사진 접근 권한이 필요합니다.");
+      return;
+    }
 
-    const pickImage = async () => {
-      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (permissionResult.granted === false) {
-        Alert.alert("알림", "사진 접근 권한이 필요합니다.");
-        return;
-      }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
 
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 1,
+    if (!result.canceled) {
+      setImageUri(result.assets[0].uri); // 선택한 이미지 URI 저장
+    }
+  };
+
+  // 저장 버튼 핸들러
+  const handleSave = async () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (!user) {
+      Alert.alert('알림', '로그인 후 사용하세요.');
+      return;
+    }
+
+    const userId = user.uid;
+    console.log('userId:', userId); // userId 확인
+
+    if (!name || !phoneNumber) {
+      Alert.alert('알림', '이름과 전화번호를 입력하세요.');
+      return;
+    }
+
+    try {
+      await addDoc(collection(db, `users/${userId}/contacts`), {
+        name: name,
+        phone: phoneNumber,
+        location: selectedLocation || 'Unknown',
+        healthInfo: selectedHealthInfo || 'None',
+        relationship: selectedRelationship || 'ETC',
+        contactTerm: selectedContactTerm || '1개월',
+        image: imageUri || 'default_image_url',
       });
+      Alert.alert('알림', '지인이 성공적으로 추가되었습니다.');
+      navigation.goBack();
+    } catch (error) {
+      console.error('Error adding document: ', error);
+      Alert.alert('알림', '지인을 추가하는 데 실패했습니다.');
+    }
+  };
 
-      if (!result.canceled) {
-        setImageUri(result.assets[0].uri); // 선택한 이미지 URI 저장
-      }
-    };
-
-    // 저장 버튼 핸들러
-    const handleSave = async () => {
-      const auth = getAuth();
-      const user = auth.currentUser;
-      if (!user) {
-        Alert.alert('알림', '로그인 후 사용하세요.');
-        return;
-      }
-
-      const userId = user.uid;
-      console.log('userId:', userId); // userId 확인
-
-      if (!name || !phoneNumber) {
-          Alert.alert('알림', '이름과 전화번호를 입력하세요.');
-          return;
-      }
-
-      try {
-        await addDoc(collection(db, `users/${userId}/contacts`), {
-          name: name,
-          phone: phoneNumber,
-          location: selectedLocation || 'Unknown',
-          healthInfo: selectedHealthInfo || 'None',
-          relationship: selectedRelationship || 'ETC',
-          contactTerm: selectedContactTerm || '1개월',
-          image: imageUri || 'default_image_url',
-        });
-        Alert.alert('알림', '지인이 성공적으로 추가되었습니다.');
-        navigation.goBack();
-      } catch (error) {
-        console.error('Error adding document: ', error);
-        Alert.alert('알림','지인을 추가하는 데 실패했습니다.');
-      }
-    };
-  
-    return (
-      <SafeAreaView style={{ flex: 1 }}>
+  return (
+    <SafeAreaView edges={['top']} style={styles.safeArea}>
+      <ScrollView showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+        <ImageBackground
+          source={require('../../assets/headerTab_round.png')}
+          style={{ width: '100%', height: 150, justifyContent: 'center', alignItems: 'center' }}
+          resizeMode="cover">
+          <Text style={styles.title}>프로필 등록</Text>
+        </ImageBackground>
         <View style={styles.screen}>
           {/* 프로필 이미지 영역*/}
           <View style={styles.profile_image_container}>
@@ -89,18 +95,16 @@ export default function AddPersonScreen({ navigation }) {
             </TouchableOpacity>
           </View>
 
-
-
           <View style={styles.divider}></View>
-    
+
           {/* 이름 입력 섹션 */}
           <View style={styles.type_view}>
             <View style={{ flex: 1, justifyContent: 'center' }}>
               <Text style={styles.text1}>이름</Text>
             </View>
             <View style={{ flex: 2, justifyContent: 'center' }}>
-              <TextInput 
-                style={styles.type_input} 
+              <TextInput
+                style={styles.type_input}
                 placeholder='이름을 입력하세요.'
                 value={name}
                 onChangeText={setName}
@@ -108,15 +112,15 @@ export default function AddPersonScreen({ navigation }) {
             </View>
           </View>
           <View style={styles.divider}></View>
-    
+
           {/* 전화번호 입력 섹션 */}
           <View style={styles.type_view}>
             <View style={{ flex: 1, justifyContent: 'center' }}>
               <Text style={styles.text1}>전화번호</Text>
             </View>
             <View style={{ flex: 2, justifyContent: 'center' }}>
-              <TextInput 
-                style={styles.type_input} 
+              <TextInput
+                style={styles.type_input}
                 placeholder='전화번호를 입력하세요.'
                 value={phoneNumber}
                 onChangeText={setPhoneNumber}
@@ -125,10 +129,12 @@ export default function AddPersonScreen({ navigation }) {
             </View>
           </View>
           <View style={styles.divider}></View>
-    
+
           {/* 지역 선택 섹션 */}
           <View style={styles.inputSection}>
-            <Text style={styles.label}>주소</Text>
+            <View style={{ flex: 1, justifyContent: 'center' }}>
+              <Text style={styles.label}>주소</Text>
+            </View>
             <View style={styles.inputRow}>
               <Text style={styles.inputText}>
                 {selectedLocation ? selectedLocation.address : '주소를 선택하세요'}
@@ -178,7 +184,7 @@ export default function AddPersonScreen({ navigation }) {
             </ScrollView>
           </View>
           <View style={styles.divider}></View>
-    
+
           {/* 건강 정보 선택 섹션 */}
           <View style={styles.type_view}>
             <View style={{ flex: 1, justifyContent: 'center' }}>
@@ -189,7 +195,7 @@ export default function AddPersonScreen({ navigation }) {
             </View>
           </View>
           <View style={styles.divider}></View>
-    
+
           {/* 연락 주기 선택 섹션 */}
           <View>
             <Text style={{ fontSize: 17, fontWeight: 'bold', marginVertical: 9 }}>연락 주기</Text>
@@ -214,23 +220,36 @@ export default function AddPersonScreen({ navigation }) {
                 ))}
               </View>
             </ScrollView>
+
           </View>
-    
+
           {/* 저장 버튼 (기존 디자인 유지) */}
           <View style={styles.add_person_view}>
             <TouchableOpacity
               style={styles.add_person_button}
               onPress={handleSave}
             >
-              <Text style={{ color: '#ffffff', fontSize: 16 }}>저장하기</Text>
+              <Text style={{ color: '#ffffff', fontSize: 20 }}>저장하기</Text>
             </TouchableOpacity>
           </View>
         </View>
-      </SafeAreaView>
-    );
-  }
+      </ScrollView>
+
+    </SafeAreaView>
+  );
+}
 
 const styles = StyleSheet.create({
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    marginTop: 60,
+  },
+  safeArea: {
+    backgroundColor: "#41BA6B",
+    flex: 1,
+  },
   add_person_view: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -238,9 +257,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff'
   },
   add_person_button: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#41BA6B',
     padding: 8,
-    borderRadius: 8,
+    borderRadius: 10,
     paddingHorizontal: 18,
     justifyContent: 'center'
   },
@@ -291,7 +310,10 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: '#fff',
-    padding: 20,
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingBottom: 20,
+
   },
   text1: {
     fontSize: 17,
@@ -304,13 +326,14 @@ const styles = StyleSheet.create({
   },
   type_input: {
     marginVertical: 7,
-    fontSize: 16
+    fontSize: 16,
+    color: 'gray'
   },
   type_view: {
     flexDirection: 'row',
   },
   inputSection: {
-    marginBottom: 16,
+    flexDirection: 'row'
   },
   label: {
     fontSize: 16,
@@ -319,6 +342,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   inputRow: {
+    flex: 2,
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
@@ -327,7 +351,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 10,
     backgroundColor: '#f9f9f9',
-    width: '90%',
     alignSelf: 'flex-end',
   },
   inputText: {
@@ -337,7 +360,7 @@ const styles = StyleSheet.create({
   },
   searchButton: {
     marginLeft: 8,
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#41BA6B',
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 6,
