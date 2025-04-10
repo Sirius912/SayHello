@@ -39,7 +39,7 @@ export default function MainNavigator() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Tab.Navigator
         screenOptions={({ route }) => ({
-          tabBarItemStyle: { paddingTop: 10 },
+          tabBarItemStyle: { paddingTop: 5 },
 
           tabBarIcon: ({ focused, color, size }) => {
             let iconName;

@@ -6,14 +6,14 @@ const HealthInfoPicker = ({ onSelect }) => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [items, setItems] = useState([
-    { label: "Blood Pressure", value: "blood_pressure" },
-    { label: "Body Temperature", value: "body_temperature" },
-    { label: "Body Weight", value: "body_weight" },
-    { label: "Heart Rate", value: "heart_rate" },
-    { label: "Cholesterol", value: "cholesterol" },
-    { label: "Blood Sugar", value: "blood_sugar" },
-    { label: "BMI (Body Mass Index)", value: "bmi" },
-    { label: "None", value: "none"},
+    { label: "혈압", value: "blood_pressure" },
+    { label: "체온", value: "body_temperature" },
+    { label: "체중", value: "body_weight" },
+    { label: "심박수", value: "heart_rate" },
+    { label: "콜레스테롤", value: "cholesterol" },
+    { label: "혈당", value: "blood_sugar" },
+    { label: "BMI (체질량지수)", value: "bmi" },
+    { label: "없음", value: "none" },
   ]);
 
   return (

@@ -129,182 +129,194 @@ export default function HomeScreen() {
   const isHorizontal = true; // 또는 false
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-              <ImageBackground
+    <SafeAreaView edges={['top']} style={styles.safeArea}>
+      <View style={{ height: 60 }}>
+        <Image
           source={require('../../assets/headerTab_double_v.png')}
-          style={{ width: '100%', height: 75, justifyContent: 'center', alignItems: 'center' }}
-          resizeMode="cover">
-        </ImageBackground>
-      <View style={styles.container}>
+          style={{ width: '100%', flex: 1, justifyContent: 'center', alignItems: 'center' }}
+        />
+      </View>
+      <ScrollView>
 
-        {/* 검색 창 */}
-        <View style={styles.searchContainer}>
-          <Ionicons name="search" size={20} color="#777" style={styles.icon} />
-          <TextInput
-            style={styles.input}
-            placeholder="검색어를 입력하세요"
-            placeholderTextColor="#999"
-          />
-        </View>
-        <Image source={"../../assets/headerTab_double_v.png"} />
-        {/* Navigation Tabs */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false} // 스크롤바 숨김
-          contentContainerStyle={styles.tabsContainer}
-          style={{ maxHeight: 50 }}
-        >
-          <View style={styles.tabs}>
-            <TouchableOpacity style={styles.tab}>
-              <Ionicons name="heart-outline" size={18} color="#333" />
-              <Text style={styles.tabText}>Favorites</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.tab}
-              onPress={() => navigation.navigate("News")}
-            >
-              <Ionicons name="newspaper-outline" size={18} color="#333" />
-              <Text style={styles.tabText}>What's up?</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.tab}
-              onPress={() => navigation.navigate("People")}
-            >
-              <Ionicons name="people-outline" size={18} color="#333" />
-              <Text style={styles.tabText}>People</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.tab}
-              onPress={() => navigation.navigate("Message")}
-            >
-              <Ionicons name="chatbubbles-outline" size={18} color="#333" />
-              <Text style={styles.tabText}>Message</Text>
-            </TouchableOpacity>
+        <View style={styles.container}>
+          {/* 검색 창 */}
+          <View style={styles.searchContainer}>
+            <Ionicons name="search" size={20} color="#777" style={styles.icon} />
+            <TextInput
+              style={styles.input}
+              placeholder="검색어를 입력하세요"
+              placeholderTextColor="#999"
+            />
           </View>
-        </ScrollView>
-
-        {/* Map Section */}
-        <View style={styles.mapSection}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>지도</Text>
-            <TouchableOpacity onPress={() => navigation.navigate("Map")}>
-              <Ionicons name="chevron-forward-circle-outline" size={20} color="#333" />
-            </TouchableOpacity>
-          </View>
-          <TouchableOpacity onPress={() => navigation.navigate("Map")}>
-            <MapView
-              style={styles.map}
-              region={currentLocation} // 현재 위치를 지도에 반영
-              showsUserLocation={false} // 사용자 위치 표시
-            >
-              {/* 현재 사용자 마커 */}
-              {currentLocation && (
-                <Marker coordinate={currentLocation}>
-                  <View style={[styles.markerContainer, styles.currentUserMarker]}>
-                    <Text style={[styles.markerText, styles.currentUserText]}>
-                      {currentUserNickname}
-                    </Text>
-                  </View>
-                </Marker>
-              )}
-              {/* 다른 사용자 마커 */}
-              {currentLocation &&
-                otherUsers.map((user) => (
-                  <Marker
-                    key={user.id}
-                    coordinate={{
-                      latitude: currentLocation.latitude + user.latitudeOffset, // 현재 위치에서 위도 오프셋 적용
-                      longitude: currentLocation.longitude + user.longitudeOffset, // 현재 위치에서 경도 오프셋 적용
-                    }}
-                  >
-                    <View style={styles.markerContainer}>
-                      <Text style={styles.markerText}>{user.name}</Text>
-                    </View>
-                  </Marker>
-                ))}
-            </MapView>
-          </TouchableOpacity>
-        </View>
-
-        {/* People Section */}
-        <View style={styles.peopleSection}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>주소록</Text>
-            <TouchableOpacity onPress={() => navigation.navigate("People")}>
-              <Ionicons
-                name="chevron-forward-circle-outline"
-                size={20} // 화살표 크기
-                color="#333"
-              />
-            </TouchableOpacity>
-          </View>
-          <FlatList
+          {/* Navigation Tabs */}
+          <ScrollView
             horizontal
-            data={contacts}
-            keyExtractor={(item) => item.id}
-            showsHorizontalScrollIndicator={false}
-            renderItem={({ item }) => (
-              <View style={styles.personCard}>
-                {/* 프로필 이미지 */}
-                {typeof item.image === 'string' ? (
-                  <Image source={{ uri: item.image }} style={styles.personImage} />
-                ) : (
-                  <Image source={item.image} style={styles.personImage} />
-                )}
-                {/* 이름 */}
-                <Text style={styles.personName}>{item.name}</Text>
-              </View>
-            )}
-          />
-        </View>
+            showsHorizontalScrollIndicator={false} // 스크롤바 숨김
+            contentContainerStyle={styles.tabsContainer}
+          >
+            <View style={styles.tabs}>
+              <TouchableOpacity style={styles.tab}>
+                <Ionicons name="heart-outline" size={18} color="#333" />
+                <Text style={styles.tabText}>Favorites</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.tab}
+                onPress={() => navigation.navigate("News")}
+              >
+                <Ionicons name="newspaper-outline" size={18} color="#333" />
+                <Text style={styles.tabText}>What's up?</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.tab}
+                onPress={() => navigation.navigate("People")}
+              >
+                <Ionicons name="people-outline" size={18} color="#333" />
+                <Text style={styles.tabText}>People</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.tab}
+                onPress={() => navigation.navigate("Message")}
+              >
+                <Ionicons name="chatbubbles-outline" size={18} color="#333" />
+                <Text style={styles.tabText}>Message</Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
 
-        {/* What's up? Section */}
-        <View style={styles.newsSection}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>주변 소식</Text>
-            <TouchableOpacity onPress={() => navigation.navigate("News")}>
-              <Ionicons
-                name="chevron-forward-circle-outline"
-                size={20} // 화살표 크기
-                color="#333"
-              />
+          {/* Map Section */}
+          <View style={{ marginHorizontal: 5 }}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>지도</Text>
+              <TouchableOpacity onPress={() => navigation.navigate("Map")}>
+                <Ionicons name="chevron-forward-circle-outline" size={20} color="#333" />
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity onPress={() => navigation.navigate("Map")}>
+              <View style={{
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 5 },
+                shadowOpacity: 0.3,
+                shadowRadius: 4,
+              }}>
+
+                <MapView
+                  style={styles.map}
+                  region={currentLocation} // 현재 위치를 지도에 반영
+                  showsUserLocation={false} // 사용자 위치 표시
+                >
+                  {/* 현재 사용자 마커 */}
+                  {currentLocation && (
+                    <Marker coordinate={currentLocation}>
+                      <View style={[styles.markerContainer, styles.currentUserMarker]}>
+                        <Text style={[styles.markerText, styles.currentUserText]}>
+                          {currentUserNickname}
+                        </Text>
+                      </View>
+                    </Marker>
+                  )}
+                  {/* 다른 사용자 마커 */}
+                  {currentLocation &&
+                    otherUsers.map((user) => (
+                      <Marker
+                        key={user.id}
+                        coordinate={{
+                          latitude: currentLocation.latitude + user.latitudeOffset, // 현재 위치에서 위도 오프셋 적용
+                          longitude: currentLocation.longitude + user.longitudeOffset, // 현재 위치에서 경도 오프셋 적용
+                        }}
+                      >
+                        <View style={styles.markerContainer}>
+                          <Text style={styles.markerText}>{user.name}</Text>
+                        </View>
+                      </Marker>
+                    ))}
+                </MapView>
+              </View>
+
             </TouchableOpacity>
           </View>
-          <FlatList
-            key={isHorizontal ? 'horizontal' : 'grid'}
-            data={isHorizontal ? contacts : newsData}
-            horizontal={isHorizontal}
-            numColumns={isHorizontal ? undefined : 2}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              isHorizontal ? (
-                // 가로 리스트 카드
+
+          {/* People Section */}
+          <View style={styles.peopleSection}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>주소록</Text>
+              <TouchableOpacity onPress={() => navigation.navigate("People")}>
+                <Ionicons
+                  name="chevron-forward-circle-outline"
+                  size={20} // 화살표 크기
+                  color="#333"
+                />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.shadowView}>
+
+            <FlatList
+              horizontal
+              data={contacts}
+              keyExtractor={(item) => item.id}
+              showsHorizontalScrollIndicator={false}
+              renderItem={({ item }) => (
                 <View style={styles.personCard}>
-                  <Image source={typeof item.image === 'string' ? { uri: item.image } : item.image} style={styles.personImage} />
+                  {/* 프로필 이미지 */}
+                  {typeof item.image === 'string' ? (
+                    <Image source={{ uri: item.image }} style={styles.personImage} />
+                  ) : (
+                    <Image source={item.image} style={styles.personImage} />
+                  )}
+                  {/* 이름 */}
                   <Text style={styles.personName}>{item.name}</Text>
                 </View>
-              ) : (
-                // 뉴스 카드
-                <View style={styles.newsCard}>
-                  <View style={styles.newsImageContainer}>
-                    <Image source={item.image} style={styles.newsImage} />
-                  </View>
-                  <View style={styles.newsContent}>
-                    <Text style={styles.sender}>{item.sender}</Text>
-                    <Text style={styles.title}>{item.title}</Text>
-                    <TouchableOpacity onPress={() => navigation.navigate("Messages")} style={styles.messageButton}>
-                      <Text style={{ color: "#fff", fontWeight: "bold", textAlign: "center" }}>
-                        메시지 작성하기
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              )
-            )}
-            showsHorizontalScrollIndicator={false}
-          />
+              )}
+            />
+            </View>
+          </View>
 
+          {/* What's up? Section */}
+          <View style={styles.newsSection}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>주변 소식</Text>
+              <TouchableOpacity onPress={() => navigation.navigate("News")}>
+                <Ionicons
+                  name="chevron-forward-circle-outline"
+                  size={20} // 화살표 크기
+                  color="#333"
+                />
+              </TouchableOpacity>
+            </View>
+
+            {/* <View style={{ borderWidth: 2, borderColor: '#000', borderRadius: 10 }}> */}
+            <View style={styles.shadowView}>
+              <FlatList
+                horizontal
+                data={newsData}
+                keyExtractor={(item, index) => item?.id?.toString() ?? index.toString()}
+                renderItem={({ item }) => (
+                  <View style={styles.newsCard}>
+                    <View style={styles.newsImageContainer}>
+                      <Image
+                        source={typeof item.image === 'string' ? { uri: item.image } : item.image}
+                        style={styles.newsImage}
+                      />
+                    </View>
+                    <View style={styles.newsContent}>
+                      <Text style={styles.sender}>{item.sender}</Text>
+                      <Text style={styles.title}>{item.title}</Text>
+                      <TouchableOpacity
+                        onPress={() => navigation.navigate("Messages")}
+                        style={styles.messageButton}
+                      >
+                        <Text style={{ color: "#fff", fontWeight: "bold", textAlign: "center" }}>
+                          메시지 작성하기
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                )}
+                showsVerticalScrollIndicator={false}
+              />
+            </View>
+
+
+          </View>
         </View>
+      </ScrollView>
 
-
-      </View>
     </SafeAreaView>
   );
 }
@@ -319,8 +331,7 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
   container: {
-    flex: 1,
-    backgroundColor: "white",
+    backgroundColor: "#fff",
     paddingHorizontal: 10,
   },
   searchContainer: {
@@ -342,19 +353,18 @@ const styles = StyleSheet.create({
   },
   tabs: {
     flexDirection: "row", // 탭을 가로로 배치
-    justifyContent: "space-around", // 탭 간격 균등 배치
-    marginVertical: 10,
   },
   tab: {
     flexDirection: "row", // 아이콘과 텍스트를 가로로 배치
     alignItems: "center", // 세로 정렬
+    paddingHorizontal: 13,
     paddingVertical: 5,
-    paddingHorizontal: 15,
     borderWidth: 1,
     borderColor: "#ccc",
     backgroundColor: '#E8F5E9',
     borderRadius: 20,
-    marginHorizontal: 5,
+    marginHorizontal: 4,
+    marginVertical: 10,
   },
   tabText: {
     fontSize: 14,
@@ -368,9 +378,10 @@ const styles = StyleSheet.create({
   map: {
     width: "100%", // 화면 너비를 가득 채움
     height: 150,   // 지도 섹션 높이 설정
-    borderRadius: 30,
+    borderRadius: 20,
     overflow: "hidden",
     marginTop: 10,
+    marginBottom: 10,
   },
   sectionTitle: {
     fontSize: 24, // 텍스트 크기 조정
@@ -378,7 +389,6 @@ const styles = StyleSheet.create({
     color: "#333", // 텍스트 색상 설정
     marginLeft: 10, // 왼쪽 벽하고 간격 추가
     marginRight: 5, // 화살표 아이콘과 간격 추가
-    marginTop: 5,
   },
   peopleSection: {
     marginVertical: 10,
@@ -388,6 +398,7 @@ const styles = StyleSheet.create({
     marginRight: 20, // 카드 간격 조정
     marginTop: 10,
     marginLeft: 10,
+    marginBottom: 10,
   },
   personImage: {
     width: 80, // 원형 이미지 너비 증가
@@ -399,15 +410,11 @@ const styles = StyleSheet.create({
     marginTop: 5,
     color: "#333",
   },
-  newsSection: {
-    marginVertical: 5,
-  },
   newsContent: {
-    paddingHorizontal: 10,
     paddingVertical: 5,
   },
   sender: {
-    fontSize: 14,
+    fontSize: 17,
     fontWeight: "bold",
     color: "#333",
   },
@@ -427,14 +434,25 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-
+  shadowView: {
+    marginHorizontal: 5,
+    marginTop: 10,
+    marginBottom: 10,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
   title: {
-    fontSize: 12,
-    color: "#666",
+    fontSize: 15,
+    color: "gray",
+    marginTop: 5,
   },
   messageButton: {
     marginTop: 10,
-    backgroundColor: "#4CAF50", // 초록색 버튼
+    backgroundColor: "#41BA6B", // 초록색 버튼
     paddingVertical: 5,
     paddingHorizontal: 15,
     borderRadius: 5,
