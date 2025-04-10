@@ -17,7 +17,7 @@ import { collection, onSnapshot, doc } from "firebase/firestore";
 import { db } from "../api/firebase";
 import { getAuth } from "firebase/auth";
 import { SafeAreaView } from "react-native-safe-area-context";
-
+import { ImageBackground } from 'react-native';
 
 export default function HomeScreen() {
   const navigation = useNavigation();
@@ -50,16 +50,16 @@ export default function HomeScreen() {
   useEffect(() => {
     const auth = getAuth();
     const user = auth.currentUser;
-  
+
     if (!user) {
       console.error("사용자가 로그인되어 있지 않습니다.");
       return;
     }
-  
+
     const userId = user.uid; // 현재 로그인한 사용자의 uid
     const userDocRef = doc(db, "users", userId);
     const contactsRef = collection(db, `users/${userId}/contacts`);
-    
+
     // 사용자 닉네임 가져오기
     const unsubscribeUserDoc = onSnapshot(userDocRef, (docSnap) => {
       if (docSnap.exists()) {
@@ -77,7 +77,7 @@ export default function HomeScreen() {
       }));
       setContacts(contactsData);
     });
-  
+
     return () => {
       unsubscribeUserDoc();
       unsubscribe();
@@ -85,26 +85,26 @@ export default function HomeScreen() {
   }, []);
 
   const otherUsers = [
-    { 
+    {
       id: 1,
       name: "할아버지",
       latitudeOffset: 0.001,
       longitudeOffset: -0.001,
     },
-    { 
-      id: 2, 
+    {
+      id: 2,
       name: "부모님",
       latitudeOffset: -0.001,
       longitudeOffset: 0.001,
     },
-    { 
-      id: 3, 
+    {
+      id: 3,
       name: "형",
       latitudeOffset: 0.002,
       longitudeOffset: -0.002,
     },
-    { 
-      id: 4, 
+    {
+      id: 4,
       name: "제인",
       latitudeOffset: -0.002,
       longitudeOffset: 0.002,
@@ -126,9 +126,17 @@ export default function HomeScreen() {
     },
   ];
 
+  const isHorizontal = true; // 또는 false
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+    <SafeAreaView style={styles.safeArea}>
+              <ImageBackground
+          source={require('../../assets/headerTab_double_v.png')}
+          style={{ width: '100%', height: 75, justifyContent: 'center', alignItems: 'center' }}
+          resizeMode="cover">
+        </ImageBackground>
       <View style={styles.container}>
+
         {/* 검색 창 */}
         <View style={styles.searchContainer}>
           <Ionicons name="search" size={20} color="#777" style={styles.icon} />
@@ -138,38 +146,38 @@ export default function HomeScreen() {
             placeholderTextColor="#999"
           />
         </View>
-
+        <Image source={"../../assets/headerTab_double_v.png"} />
         {/* Navigation Tabs */}
         <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false} // 스크롤바 숨김
-        contentContainerStyle={styles.tabsContainer}
-        style={{ maxHeight: 50 }}
+          horizontal
+          showsHorizontalScrollIndicator={false} // 스크롤바 숨김
+          contentContainerStyle={styles.tabsContainer}
+          style={{ maxHeight: 50 }}
         >
-        <View style={styles.tabs}>
-          <TouchableOpacity style={styles.tab}>
-            <Ionicons name="heart-outline" size={18} color="#333" />
-            <Text style={styles.tabText}>Favorites</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.tab}
-            onPress={() => navigation.navigate("News")}
-          >
-            <Ionicons name="newspaper-outline" size={18} color="#333" />
-            <Text style={styles.tabText}>What's up?</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.tab}
-            onPress={() => navigation.navigate("People")}
-          >
-            <Ionicons name="people-outline" size={18} color="#333" />
-            <Text style={styles.tabText}>People</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.tab}
-            onPress={() => navigation.navigate("Message")}
-          >
-            <Ionicons name="chatbubbles-outline" size={18} color="#333" />
-            <Text style={styles.tabText}>Message</Text>
-          </TouchableOpacity>
-        </View>
+          <View style={styles.tabs}>
+            <TouchableOpacity style={styles.tab}>
+              <Ionicons name="heart-outline" size={18} color="#333" />
+              <Text style={styles.tabText}>Favorites</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.tab}
+              onPress={() => navigation.navigate("News")}
+            >
+              <Ionicons name="newspaper-outline" size={18} color="#333" />
+              <Text style={styles.tabText}>What's up?</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.tab}
+              onPress={() => navigation.navigate("People")}
+            >
+              <Ionicons name="people-outline" size={18} color="#333" />
+              <Text style={styles.tabText}>People</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.tab}
+              onPress={() => navigation.navigate("Message")}
+            >
+              <Ionicons name="chatbubbles-outline" size={18} color="#333" />
+              <Text style={styles.tabText}>Message</Text>
+            </TouchableOpacity>
+          </View>
         </ScrollView>
 
         {/* Map Section */}
@@ -260,28 +268,39 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </View>
           <FlatList
-            data={newsData}
+            key={isHorizontal ? 'horizontal' : 'grid'}
+            data={isHorizontal ? contacts : newsData}
+            horizontal={isHorizontal}
+            numColumns={isHorizontal ? undefined : 2}
             keyExtractor={(item) => item.id}
-            numColumns={2} // 두 개의 열로 배치
             renderItem={({ item }) => (
-              <View style={styles.newsCard}>
-                <View style={styles.newsImageContainer}>
-                  <Image source={item.image} style={styles.newsImage} />
+              isHorizontal ? (
+                // 가로 리스트 카드
+                <View style={styles.personCard}>
+                  <Image source={typeof item.image === 'string' ? { uri: item.image } : item.image} style={styles.personImage} />
+                  <Text style={styles.personName}>{item.name}</Text>
                 </View>
-                <View style={styles.newsContent}>
-                  <Text style={styles.sender}>{item.sender}</Text>
-                  <Text style={styles.title}>{item.title}</Text>
-                  <TouchableOpacity 
-                    onPress={() => navigation.navigate("Messages")}
-                    style={styles.messageButton}>
-                    <Text style={{ color: "#fff", fontWeight: "bold", textAlign: "center" }}>
-                      메시지 작성하기
-                    </Text>
-                  </TouchableOpacity>
+              ) : (
+                // 뉴스 카드
+                <View style={styles.newsCard}>
+                  <View style={styles.newsImageContainer}>
+                    <Image source={item.image} style={styles.newsImage} />
+                  </View>
+                  <View style={styles.newsContent}>
+                    <Text style={styles.sender}>{item.sender}</Text>
+                    <Text style={styles.title}>{item.title}</Text>
+                    <TouchableOpacity onPress={() => navigation.navigate("Messages")} style={styles.messageButton}>
+                      <Text style={{ color: "#fff", fontWeight: "bold", textAlign: "center" }}>
+                        메시지 작성하기
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
+              )
             )}
+            showsHorizontalScrollIndicator={false}
           />
+
         </View>
 
 
@@ -291,15 +310,18 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    backgroundColor: "#41BA6B",
+    flex: 1,
+  },
   tabsContainer: {
     flexDirection: "row",
-    paddingHorizontal: 10,
+    paddingRight: 10,
   },
   container: {
     flex: 1,
     backgroundColor: "white",
     paddingHorizontal: 10,
-    paddingTop: 20, // 상단 여백
   },
   searchContainer: {
     flexDirection: "row", // 아이콘과 입력창을 가로로 배치
@@ -405,7 +427,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-  
+
   title: {
     fontSize: 12,
     color: "#666",

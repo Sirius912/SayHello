@@ -4,13 +4,14 @@ import { useGoogleAuth } from '../services/googleAuth';
 import { handleKakaoLogin } from '../services/kakaoAuth';
 import { doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../api/firebase';
-import { 
-  signInWithEmailAndPassword, 
+import {
+  signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   sendPasswordResetEmail
 } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ImageBackground } from 'react-native';
 
 
 export default function LoginScreen({ navigation }) {
@@ -59,7 +60,7 @@ export default function LoginScreen({ navigation }) {
         }
       }
     };
-    
+
     processGoogleLogin();
   }, [response]);
 
@@ -118,8 +119,6 @@ export default function LoginScreen({ navigation }) {
     }
   };
 
-
-
   const handleSignUp = async () => {
     try {
       // 이메일/비밀번호로 회원가입 시도
@@ -143,14 +142,21 @@ export default function LoginScreen({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff", }}>
+    <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <Text style={styles.title}>SayHello</Text>
-        <Text style={styles.subtitle}>
-          사랑하는 사람들과 더 가까이 연결되며
-          {'\n'}따뜻한 인사와 안부를 전하는 순간을 더욱 쉽게 만들어보세요
-        </Text>
-
+        <ImageBackground
+          source={require('../../assets/headerTab_login.png')}
+          style={{ width: '100%', height: 250, justifyContent: 'center', alignItems: 'center' }}
+          resizeMode="cover">
+          <Text style={styles.title}>로그인</Text>
+          <Text style={styles.subtitle}>
+            사랑하는 사람들과 더 가까이 연결되며
+            {'\n'}따뜻한 인사와 안부를 전하는 순간을 더욱 쉽게 만들어보세요
+          </Text>
+        </ImageBackground>
+        <View>
+          
+        </View>
         <Text style={styles.emailPasswordLabel}>Email</Text>
         <TextInput
           style={styles.emailPasswordInput}
@@ -161,8 +167,6 @@ export default function LoginScreen({ navigation }) {
           keyboardType="email-address"
           autoCapitalize="none"
         />
-
-        {/* 비밀번호 입력 */}
         <Text style={styles.emailPasswordLabel}>Password</Text>
         <TextInput
           style={styles.emailPasswordInput}
@@ -173,14 +177,21 @@ export default function LoginScreen({ navigation }) {
           secureTextEntry
         />
         {/* 로그인 상태 유지 슬라이드 스위치 */}
-        <View style={styles.switchContainer}>
-          <Text style={styles.switchLabel}>로그인 상태 유지</Text>
-          <Switch
-            value={isRemembered}
-            onValueChange={(value) => setIsRemembered(value)}
-            trackColor={{ false: "#ccc", true: "#4CAF50" }}
-            thumbColor={isRemembered ? "#fff" : "#f4f3f4"}
-          />
+        <View style={{flexDirection: 'row'}}>
+          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', flex: 1, paddingLeft: 15, marginBottom: 15,}}>
+            <Text style={styles.switchLabel}>로그인 상태 유지</Text>
+            <Switch
+              value={isRemembered}
+              onValueChange={(value) => setIsRemembered(value)}
+              trackColor={{ false: "#ccc", true: "#4CAF50" }}
+              thumbColor={isRemembered ? "#fff" : "#f4f3f4"}
+            />
+          </View>
+          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', flex:1, paddingRight: 15, marginBottom: 15,}}>
+            <TouchableOpacity onPress={() => setForgotPasswordVisible(true)}>
+              <Text style={{fondSize: 15}}>비밀번호를 잃어버렸어요</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* 로그인 버튼 */}
@@ -190,12 +201,9 @@ export default function LoginScreen({ navigation }) {
 
         {/* 비밀번호 재설정 | 회원가입 */}
         <View style={styles.linkContainer}>
-          <TouchableOpacity onPress={() => setForgotPasswordVisible(true)}>
-            <Text style={styles.link}>비밀번호 재설정</Text>
-          </TouchableOpacity>
-          <Text style={styles.separator}>|</Text>
+          <Text>계정이 없으신가요? </Text>
           <TouchableOpacity onPress={() => setModalVisible(true)}>
-            <Text style={[styles.link]}>회원가입</Text>
+            <Text style={[styles.link]}>지금 바로 회원가입해보세요!</Text>
           </TouchableOpacity>
         </View>
 
@@ -203,9 +211,9 @@ export default function LoginScreen({ navigation }) {
         <View style={{
           borderBottomColor: '#ccc',
           borderBottomWidth: 1,
-          width: '100%',
-          marginVertical: 20,
-          }} 
+          width: '90%',
+          marginVertical: 30,
+        }}
         />
         {/* SNS 계정으로 로그인 */}
         <View style={styles.socialLoginContainer}>
@@ -227,6 +235,7 @@ export default function LoginScreen({ navigation }) {
             </TouchableOpacity>
           </View>
         </View>
+        <View style={{height: 100, backgroundColor: '#fff'}}></View>
 
         {/* 회원가입 모달 */}
         <Modal
@@ -237,8 +246,11 @@ export default function LoginScreen({ navigation }) {
         >
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>회원가입</Text>
-              
+              <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+                <Image source={require('../../assets/logo_login.png')} style={{width: 30, height:20, marginRight: 10,}}></Image>
+                <Text style={styles.modalTitle}>회원가입</Text>
+              </View>
+
               {/* 이름 입력 */}
               <Text style={styles.label}>이름</Text>
               <TextInput
@@ -294,7 +306,7 @@ export default function LoginScreen({ navigation }) {
               <TouchableOpacity onPress={() => setModalVisible(false)}>
                 <Text style={[styles.closeButton]}>닫기</Text>
               </TouchableOpacity>
-          
+
             </View>
           </View>
         </Modal>
@@ -312,7 +324,7 @@ export default function LoginScreen({ navigation }) {
               </Text>
 
               <Text style={styles.modalInfo}>
-                등록된 이메일 주소로 
+                등록된 이메일 주소로
                 {'\n'}비밀번호 재설정 링크를 보내드립니다.
                 {'\n'}회원님 이메일을 확인하신 후, 12시간 이내에
                 {'\n'}비밀번호 재설정을 완료해주세요.
@@ -355,24 +367,26 @@ export default function LoginScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
+    backgroundColor: "#41BA6B",
     flex: 1,
+  },
+  container: {
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FBEF',
-    paddingHorizontal: 20,
+    backgroundColor: '#fff',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
-    marginTop: 30,
+    marginTop: 120,
   },
   subtitle: {
-    fontSize: 14,
-    color: '#666',
+    fontSize: 15,
+    lineHeight: 25,
+    color: '#000',
     textAlign: 'center',
-    marginBottom: 30,
   },
   placeholderColor: {
     color: '#abb4bd',
@@ -417,7 +431,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     textAlign: 'left',
     alignSelf: 'flex-start',
-    marginLeft: 13,
+    marginLeft: 15,
   },
   button: {
     width: '100%',
@@ -426,21 +440,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 15,
   },
-  loginButton: { 
+  loginButton: {
     width: '95%',
     backgroundColor: "#41BA6B",
     borderRadius: 10,
     shadowOpacity: 0.3,
-    shadowRadius: 4, 
+    shadowRadius: 4,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
   },
-  signUpButton: { 
+  signUpButton: {
     backgroundColor: "#41BA6B",
     borderRadius: 10,
     marginTop: 10,
     shadowOpacity: 0.3,
-    shadowRadius: 4, 
+    shadowRadius: 4,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
   },
@@ -449,18 +463,14 @@ const styles = StyleSheet.create({
     marginTop: 10,
     borderRadius: 10,
     shadowOpacity: 0.3,
-    shadowRadius: 4, 
+    shadowRadius: 4,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
   },
-  socialLoginContainer: {
-    marginTop: 20 
-  },
-  socialButton: { 
-    paddingVertical: 10, 
-    borderRadius: 5, 
-    alignItems: "center", 
-    marginBottom: 10 
+  socialButton: {
+    paddingVertical: 10,
+    borderRadius: 5,
+    alignItems: "center",
   },
   kakaoButton: {
     backgroundColor: '#FEE500',
@@ -470,13 +480,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#4285F4',
     width: '48%',
   },
-
   buttonText: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#FFFFFF',
   },
-
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -484,57 +492,52 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
     paddingHorizontal: 20,
   },
-
   modalContent: {
-    width: '80%',
+    width: '90%',
     backgroundColor: '#FFF',
     borderRadius: 30,
     paddingHorizontal: 20,
     paddingVertical: 30,
   },
-
-  modalTitle:{
-    fontSize :18 ,
-    fontWeight:"bold",
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
     marginBottom: 30,
     textAlign: 'center',
   },
-
-  modalInfo:{
+  modalInfo: {
     color: "#808080",
     marginBottom: 20,
     textAlign: 'center',
   },
-
-  modalButtonText:{
-     color:'#fff'
+  modalButtonText: {
+    color: '#fff'
   },
-  
-  modalButton:{
-    backgroundColor:'#007BFF'
+  modalButton: {
+    backgroundColor: '#007BFF'
   },
-  
-  closeButton:{
-    marginTop :5,
+  closeButton: {
+    marginTop: 5,
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
     paddingVertical: 10,
     paddingHorizontal: 15,
-    width: '20%',
+    width: '30%',
     alignSelf: 'center',
     textAlign: 'center',
     color: 'red',
   },
-  closeButtonLabel :{
-    color:'red'
+  closeButtonLabel: {
+    color: 'red'
   },
   switchContainer: {
     flexDirection: "row",
-    justifyContent: "flex-end",
+    justifyContent: "flex-start",
     alignItems: "center",
     width: "95%",
     marginBottom: 20,
+    marginLeft: 10,
   },
   switchLabel: {
     fontSize: 14,
@@ -543,13 +546,15 @@ const styles = StyleSheet.create({
   },
   linkContainer: {
     flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 10,
-    marginTop: 10,
+    justifyContent: "flex-end",
+    alignItems: "flex-end",
+    width: "100%",
+    marginRight: 20,
   },
   link: {
-    fontSize: 14,
+    fontSize: 15,
+    color: 'red',
+    fontWeight: 'bold'
   },
   separator: {
     marginHorizontal: 10,
@@ -559,10 +564,9 @@ const styles = StyleSheet.create({
   socialLoginContainer: {
     width: "100%",
     alignItems: "center",
-    marginTop: 40,
   },
-  socialLoginTitle:{
-    fontSize:"15"
+  socialLoginTitle: {
+    fontSize: "15"
   },
   socialImage: {
     width: 50,
