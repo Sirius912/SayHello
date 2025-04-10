@@ -53,7 +53,7 @@ export default function WhatsUpScreen({ navigation }) {
         style={{ width: '100%', height: 30, justifyContent: 'center', alignItems: 'center' }}
       />
       <View style={styles.box}>
-        <Text style={{ fontSize: 30, fontWeight: 'bold' }}>주변 소식</Text>
+        <Text style={{ marginTop: 5, marginBottom: 2, fontSize: 27, fontWeight: 'bold' }}>주변 소식</Text>
         <View style={styles.filterTabs}>
           {["재해", "날씨", "미세먼지"].map((category) => (
             <TouchableOpacity

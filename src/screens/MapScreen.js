@@ -136,8 +136,12 @@ export default function MapScreen() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff", }}>
+        <SafeAreaView edges={['top']} style={styles.safeArea}>
       <BottomSheetModalProvider>
+        <Image
+          source={require('../../assets/headerTab_v.png')}
+          style={{ width: '100%', height: 30, justifyContent: 'center', alignItems: 'center' }}
+        />
         <View style={styles.container}>
           {/* 검색창 및 필터/정렬 */}
           <Text style={styles.title}>지도</Text>
@@ -258,9 +262,7 @@ export default function MapScreen() {
                         ) : (
                           <Text>No weather data available</Text>
                         )}
-          
                     </View>
-                    
                     <TouchableOpacity style={styles.selectButton}>
                       <Text style={styles.selectButtonText}>선택</Text>
                     </TouchableOpacity>
@@ -284,17 +286,19 @@ export default function MapScreen() {
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    backgroundColor: "#41BA6B",
+    flex: 1,
+  },
   container: {
     flex: 1,
-    // position: 'relative',
-    // zIndex: 0,
     backgroundColor: "#fff",
-    padding: 16,
+    padding: 15,
   },
   title: {
-    fontSize: 24,
+    fontSize: 27,
     fontWeight: 'bold',
-    marginBottom: 16,
+    marginBottom: 5,
   },
   searchContainer: {
     flexDirection: "row", // 검색창 및 버튼을 가로로 배치

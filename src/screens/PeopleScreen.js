@@ -112,7 +112,7 @@ const PeopleScreen = ({ navigation }) => {
                 style={{ width: '100%', height: 30, justifyContent: 'center', alignItems: 'center' }}
             />
             <View style={styles.box}>
-                <Text style={{ fontSize: 30, fontWeight: 'bold' }}>주소록 설정</Text>
+                <Text style={{ marginTop: 5, marginBottom: 2, fontSize: 27, fontWeight: 'bold' }}>주소록 설정</Text>
                 <View style={styles.searchContainer}>
                     <Ionicons name="search" size={20} color="#777" style={styles.icon} />
                     <TextInput

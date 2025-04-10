@@ -25,61 +25,71 @@ export default function MessageScreen() {
     };
 
     return (
-        <SafeAreaView style={styles.safeArea}>
+        <SafeAreaView edges={['top']} style={styles.safeArea}>
+            <Image
+                source={require('../../assets/headerTab_v.png')}
+                style={{ width: '100%', height: 30, justifyContent: 'center', alignItems: 'center' }}
+            />
             <View style={styles.box}>
-                <ScrollView style={{ padding: 5, paddingTop: -5 }} showsVerticalScrollIndicator={false}>
-                    <View style={{ flexDirection: 'row' }}>
-                        <View style={{ flex: 1 }}>
-                            <Text style={styles.text1}>이름</Text>
-                            <Text style={styles.text1}>최근 연락</Text>
-                            <Text style={styles.text1}>연락 주기</Text>
-                        </View>
-                        <View style={{ flex: 2, marginLeft: 10 }}>
-                            <Text style={styles.text2}>케이트</Text>
-                            <Text style={styles.text2}>2025-02-10</Text>
-                            <Text style={styles.text2}>1개월</Text>
-                        </View>
-                    </View>
-                    <View style={styles.divider}></View>
-                    <Text style={styles.text1}>정보</Text>
-                    <View style={{ marginVertical: 7 }}>
-                        <View style={{ flexDirection: 'row' }}>
+                <View style={{ alignItems: 'center' }}>
+                    <Text style={styles.header_title}>안부 메시지 작성</Text>
+                </View>
+                <ScrollView showsVerticalScrollIndicator={false}>
+                    <View style={styles.shadowView}>
+                        <View style={{ flexDirection: 'row', }}>
                             <View style={{ flex: 1 }}>
-                                <Image source={require('../../assets/earthquake.jpg')} style={styles.photo}></Image>
+                                <Text style={styles.text1}>안부 대상</Text>
+                                <Text style={styles.text1}>최근 연락</Text>
+                                <Text style={styles.text1}>연락 주기</Text>
                             </View>
                             <View style={{ flex: 2, marginLeft: 10 }}>
-                                <Text style={{ color: '#777', fontSize: 17, marginVertical: 3 }}>재해</Text>
-                                <Text style={styles.text3}>2025-03-01</Text>
-                                <Text style={styles.text3}>지진 7.1</Text>
+                                <Text style={styles.text2}>할아버지</Text>
+                                <Text style={styles.text2}>2025-02-10</Text>
+                                <Text style={styles.text2}>1개월</Text>
                             </View>
+                        </View>
+                        <View style={styles.divider}></View>
+                        <Text style={styles.text1}>정보</Text>
+                        <View style={{ marginVertical: 7 }}>
+                            <View style={{ flexDirection: 'row' }}>
+                                <View style={{ flex: 1 }}>
+                                    <Image source={require('../../assets/earthquake.jpg')} style={styles.photo}></Image>
+                                </View>
+                                <View style={{ flex: 2, marginLeft: 10 }}>
+                                    <Text style={{ color: '#777', fontSize: 17, marginVertical: 3 }}>재해</Text>
+                                    <Text style={styles.text3}>2025-03-01</Text>
+                                    <Text style={styles.text3}>지진 7.1</Text>
+                                </View>
 
+                            </View>
                         </View>
-                    </View>
-                    <View style={styles.divider}></View>
-                    <Text style={styles.text1}>추천 메시지</Text>
-                    <Text style={styles.text1}>옵션 선택:</Text>
-                    <ScrollView style={{ marginVertical: 7 }} horizontal={true} showsHorizontalScrollIndicator={false}>
-                        <View style={{ flexDirection: 'row' }}>
-                            {['재해', '날씨 보고', '미세먼지', '없음'].map((item) => (
-                                <TouchableOpacity
-                                    key={item}
-                                    style={[
-                                        styles.option,
-                                        selectedButtons.includes(item) && styles.selectedButton,
-                                    ]}
-                                    onPress={() => handlePress(item)}
-                                >
-                                    <Text style={[styles.buttonText, selectedButtons.includes(item) && styles.selectedText]}>
-                                        {item}
-                                    </Text>
-                                </TouchableOpacity>
-                            ))}
+                        <View style={styles.divider}></View>
+                        <Text style={styles.text1}>메시지에 포함할 내용:</Text>
+                        <ScrollView style={{ marginVertical: 7 }} horizontal={true} showsHorizontalScrollIndicator={false}>
+                            <View style={{ flexDirection: 'row' }}>
+                                {['재해', '날씨 보고', '미세먼지', '없음'].map((item) => (
+                                    <TouchableOpacity
+                                        key={item}
+                                        style={[
+                                            styles.option,
+                                            selectedButtons.includes(item) && styles.selectedButton,
+                                        ]}
+                                        onPress={() => handlePress(item)}
+                                    >
+                                        <Text style={[styles.buttonText, selectedButtons.includes(item) && styles.selectedText]}>
+                                            {item}
+                                        </Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                        </ScrollView>
                         </View>
-                    </ScrollView>
-                    <View style={styles.divider}></View>
-                    <Text style={styles.text1}>출력</Text>
-                    <View style={styles.messageBox}>
-                    <Text style={styles.messageText}>{message}</Text>
+                        <View style={styles.shadowView}>
+
+                        <Text style={styles.text1}>메시지 미리보기</Text>
+                        <View>
+                            <Text style={styles.messageText}>{message}</Text>
+                        </View>
                     </View>
                     <View style={styles.copy_view}>
                         <TouchableOpacity
@@ -89,7 +99,7 @@ export default function MessageScreen() {
                     </View>
                 </ScrollView>
             </View>
-        </SafeAreaView>    
+        </SafeAreaView>
     );
 }
 
@@ -97,6 +107,11 @@ const styles = StyleSheet.create({
     header: {
         height: 30,
         backgroundColor: '#ffffff',
+    },
+    header_title: {
+        fontSize: 27,
+        fontWeight: 'bold',
+        marginBottom: 5,
     },
     box: {
         backgroundColor: '#ffffff',
@@ -106,7 +121,8 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
     copy_view: {
-        paddingBottom: 35
+        paddingBottom: 65,
+        padding: 10,
     },
     option: {
         padding: 5,
@@ -119,20 +135,32 @@ const styles = StyleSheet.create({
     },
     copy_button: {
         backgroundColor: '#41BA6B',
-        padding: 8,
         borderRadius: 8,
-        paddingHorizontal: 18,
         height: 50,
         justifyContent: 'center',
         alignItems: 'center',
         shadowOpacity: 0.3,
-        shadowRadius: 4, 
+        shadowRadius: 4,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 1 },
     },
+    shadowView: {
+        marginHorizontal: 5,
+        marginTop: 10,
+        marginBottom: 5,
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        paddingHorizontal: 15,
+        paddingTop: 8,
+        paddingBottom: 10,
+    },
     divider: {
         height: 1,
-        backgroundColor: '#ddd',
+        backgroundColor: '#eee',
         marginVertical: 7,
     },
     messageBox: {
@@ -153,7 +181,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     safeArea: {
-        backgroundColor: "#fff",
+        backgroundColor: "#41BA6B",
         flex: 1,
     },
     selectedButton: {

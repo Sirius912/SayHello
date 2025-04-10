@@ -93,19 +93,19 @@ export default function HomeScreen() {
     },
     {
       id: 2,
-      name: "부모님",
+      name: "태후",
       latitudeOffset: -0.001,
       longitudeOffset: 0.001,
     },
     {
       id: 3,
-      name: "형",
+      name: "현지",
       latitudeOffset: 0.002,
       longitudeOffset: -0.002,
     },
     {
       id: 4,
-      name: "제인",
+      name: "선아",
       latitudeOffset: -0.002,
       longitudeOffset: 0.002,
     },
@@ -136,8 +136,7 @@ export default function HomeScreen() {
           style={{ width: '100%', flex: 1, justifyContent: 'center', alignItems: 'center' }}
         />
       </View>
-      <ScrollView>
-
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           {/* 검색 창 */}
           <View style={styles.searchContainer}>
@@ -395,7 +394,7 @@ const styles = StyleSheet.create({
   },
   personCard: {
     alignItems: "center",
-    marginRight: 20, // 카드 간격 조정
+    marginRight: 10, // 카드 간격 조정
     marginTop: 10,
     marginLeft: 10,
     marginBottom: 10,

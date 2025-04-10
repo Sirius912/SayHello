@@ -74,7 +74,7 @@ export default function AddPersonScreen({ navigation }) {
 
   return (
     <SafeAreaView edges={['top']} style={styles.safeArea}>
-      <ScrollView showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+      <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
         <ImageBackground
           source={require('../../assets/headerTab_round.png')}
           style={{ width: '100%', height: 150, justifyContent: 'center', alignItems: 'center' }}
