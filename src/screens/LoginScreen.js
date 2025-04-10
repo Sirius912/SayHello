@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, TextInput, Modal, Switch, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, TextInput, Modal, Switch, Image, ImageBackground } from 'react-native';
 import { useGoogleAuth } from '../services/googleAuth';
 import { handleKakaoLogin } from '../services/kakaoAuth';
 import { doc, setDoc } from 'firebase/firestore';
@@ -11,7 +11,6 @@ import {
 } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ImageBackground } from 'react-native';
 
 
 export default function LoginScreen({ navigation }) {

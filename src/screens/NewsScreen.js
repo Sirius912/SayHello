@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, SafeAreaView, StatusBar,} from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, SafeAreaView, StatusBar, } from "react-native";
 
 // 각 카테고리별 메시지 정의
 const messages = {
@@ -11,7 +11,7 @@ const messages = {
       title: "지진 7.1도",
       date: "2025-03-01",
       desc: "강한 지진이 감지되었습니다. 즉시 안전한 장소로 대피하시고 공식 업데이트를 확인하세요.",
-    },    
+    },
     {
       id: 2,
       image: require("../../assets/flood.jpg"),
@@ -47,10 +47,13 @@ export default function WhatsUpScreen({ navigation }) {
   const [selectedCategory, setSelectedCategory] = useState("재해");
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-      <ScrollView contentContainerStyle={styles.container}>
-
+    <SafeAreaView edges={['top']} style={styles.safeArea}>
+      <Image
+        source={require('../../assets/headerTab_v.png')}
+        style={{ width: '100%', height: 30, justifyContent: 'center', alignItems: 'center' }}
+      />
+      <View style={styles.box}>
+        <Text style={{ fontSize: 30, fontWeight: 'bold' }}>주변 소식</Text>
         <View style={styles.filterTabs}>
           {["재해", "날씨", "미세먼지"].map((category) => (
             <TouchableOpacity
@@ -72,37 +75,49 @@ export default function WhatsUpScreen({ navigation }) {
             </TouchableOpacity>
           ))}
         </View>
-
-        {messages[selectedCategory]?.map((msg) => (
-          <View key={msg.id} style={styles.cardRowLayout}>
-            <View style={styles.cardLeft}>
-              <Image source={msg.image} style={styles.cardImageRow} />
-              <Text style={styles.sender}>{msg.sender}</Text>
-              <View style={styles.cardRow}>
-                <Text style={styles.messageTitle}>{msg.title}</Text>
-                <Text style={styles.date}>{msg.date}</Text>
+        <ScrollView contentContainerStyle={styles.container}>
+          {messages[selectedCategory]?.map((msg) => (
+            <View key={msg.id} style={styles.cardRowLayout}>
+              <View style={styles.cardLeft}>
+                <Image source={msg.image} style={styles.cardImageRow} />
+                <Text style={styles.sender}>{msg.sender}</Text>
+                <View style={styles.cardRow}>
+                  <Text style={styles.messageTitle}>{msg.title}</Text>
+                  <Text style={styles.date}>{msg.date}</Text>
+                </View>
+                <Text style={styles.messageDesc}>{msg.desc}</Text>
               </View>
-              <Text style={styles.messageDesc}>{msg.desc}</Text>
+              <TouchableOpacity
+                style={styles.messageButtonRight}
+                onPress={() => navigation.navigate("Messages")}
+              >
+                <Text style={styles.messageText}>메시지</Text>
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity
-              style={styles.messageButtonRight}
-              onPress={() => navigation.navigate("Messages")}
-            >
-              <Text style={styles.messageText}>메시지</Text>
-            </TouchableOpacity>
-          </View>
-        ))}
-      </ScrollView>
+          ))}
+        </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    backgroundColor: "#41BA6B",
+    flex: 1,
+  },
+  box: {
+    backgroundColor: 'white',
+    paddingTop: 0,
+    padding: 15,
+    paddingBottom: -15,
+    flex: 11
+  },
   cardImageRow: {
     width: "100%",
     height: 140,
     resizeMode: "cover",
-    borderRadius: 0,
+    borderRadius: 10,
     marginBottom: 6,
   },
   cardLeft: {
@@ -120,14 +135,14 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     overflow: "hidden",
     marginBottom: 20,
-    padding: 10,
     alignItems: "center",
   },
   container: {
-    padding: 20,
+    backgroundColor: 'white',
   },
   date: {
     color: "#888",
+    fontSize: 16
   },
   filterTab: {
     padding: 5,
@@ -135,7 +150,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     borderColor: '#cccccc',
-    marginHorizontal: 4,
+    marginRight: 10,
     paddingHorizontal: 12,
     backgroundColor: '#E8F5E9',
     marginBottom: 10,
@@ -153,9 +168,8 @@ const styles = StyleSheet.create({
   filterTabs: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 8,
     justifyContent: "flex-start",
-    marginBottom: 16,
+    marginTop: 5,
   },
   heading: {
     fontSize: 18,
@@ -171,20 +185,20 @@ const styles = StyleSheet.create({
   },
   messageDesc: {
     color: "#444",
-    fontSize: 12,
+    fontSize: 15,
   },
   messageText: {
     color: "#fff",
   },
   messageTitle: {
     fontWeight: "bold",
-  },
-  safeArea: {
-    backgroundColor: "#F5FBEF",
-    flex: 1,
+    fontSize: 20,
+    marginTop: 2,
   },
   sender: {
     color: "#888",
     marginBottom: 4,
+    fontSize: 16,
+    marginTop: 2,
   },
 });

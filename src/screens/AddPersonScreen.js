@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Image, Alert, Modal, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Image, Alert, Modal, SafeAreaView, ImageBackground, FlatList } from 'react-native';
 import HealthInfoPicker from "../api/HealthInfoPicker";
 import { db } from '../api/firebase'; // Firebase 설정 파일 가져오기
 import { collection, addDoc } from 'firebase/firestore';
@@ -73,8 +73,14 @@ export default function AddPersonScreen({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={{ marginVertical: 7 }} showsHorizontalScrollIndicator={false}>
+    <SafeAreaView edges={['top']} style={styles.safeArea}>
+      <ScrollView showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+        <ImageBackground
+          source={require('../../assets/headerTab_round.png')}
+          style={{ width: '100%', height: 150, justifyContent: 'center', alignItems: 'center' }}
+          resizeMode="cover">
+          <Text style={styles.title}>프로필 등록</Text>
+        </ImageBackground>
         <View style={styles.screen}>
           {/* 프로필 이미지 영역*/}
           <View style={styles.profile_image_container}>
@@ -126,7 +132,9 @@ export default function AddPersonScreen({ navigation }) {
 
           {/* 지역 선택 섹션 */}
           <View style={styles.inputSection}>
-            <Text style={styles.label}>주소</Text>
+            <View style={{ flex: 1, justifyContent: 'center' }}>
+              <Text style={styles.label}>주소</Text>
+            </View>
             <View style={styles.inputRow}>
               <Text style={styles.inputText}>
                 {selectedLocation ? selectedLocation.address : '주소를 선택하세요'}
@@ -212,6 +220,7 @@ export default function AddPersonScreen({ navigation }) {
                 ))}
               </View>
             </ScrollView>
+
           </View>
 
           {/* 저장 버튼 (기존 디자인 유지) */}
@@ -220,7 +229,7 @@ export default function AddPersonScreen({ navigation }) {
               style={styles.add_person_button}
               onPress={handleSave}
             >
-              <Text style={{ color: '#ffffff', fontSize: 16 }}>저장하기</Text>
+              <Text style={{ color: '#ffffff', fontSize: 20 }}>저장하기</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -231,8 +240,14 @@ export default function AddPersonScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    marginTop: 60,
+  },
   safeArea: {
-    backgroundColor: "#F5FBEF",
+    backgroundColor: "#41BA6B",
     flex: 1,
   },
   add_person_view: {
@@ -242,9 +257,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff'
   },
   add_person_button: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#41BA6B',
     padding: 8,
-    borderRadius: 8,
+    borderRadius: 10,
     paddingHorizontal: 18,
     justifyContent: 'center'
   },
@@ -295,7 +310,10 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: '#fff',
-    padding: 20,
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingBottom: 20,
+
   },
   text1: {
     fontSize: 17,
@@ -308,13 +326,14 @@ const styles = StyleSheet.create({
   },
   type_input: {
     marginVertical: 7,
-    fontSize: 16
+    fontSize: 16,
+    color: 'gray'
   },
   type_view: {
     flexDirection: 'row',
   },
   inputSection: {
-    marginBottom: 16,
+    flexDirection: 'row'
   },
   label: {
     fontSize: 16,
@@ -323,6 +342,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   inputRow: {
+    flex: 2,
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
@@ -331,7 +351,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 10,
     backgroundColor: '#f9f9f9',
-    width: '90%',
     alignSelf: 'flex-end',
   },
   inputText: {
@@ -341,7 +360,7 @@ const styles = StyleSheet.create({
   },
   searchButton: {
     marginLeft: 8,
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#41BA6B',
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 6,

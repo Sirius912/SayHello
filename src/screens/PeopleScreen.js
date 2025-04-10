@@ -109,7 +109,7 @@ const PeopleScreen = ({ navigation }) => {
         <SafeAreaView edges={['top']} style={styles.safeArea}>
             <Image
                 source={require('../../assets/headerTab_v.png')}
-                style={{ width: '100%', flex: 1, justifyContent: 'center', alignItems: 'center' }}
+                style={{ width: '100%', height: 30, justifyContent: 'center', alignItems: 'center' }}
             />
             <View style={styles.box}>
                 <Text style={{ fontSize: 30, fontWeight: 'bold' }}>주소록 설정</Text>
@@ -182,7 +182,7 @@ const PeopleScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
     shadowView: {
-        marginHorizontal: 5,
+        marginHorizontal: 0,
         marginTop: 5,
         marginBottom: 10,
         backgroundColor: '#fff',
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
     add_person_view: {
         flexDirection: 'row',
         justifyContent: 'center',
-        paddingHorizontal: 10,
+        paddingHorizontal: 5,
         paddingTop: 5,
         paddingBottom: 15,
         backgroundColor: 'white',
@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderWidth: 1,
         borderColor: '#cccccc',
-        marginHorizontal: 4,        // space between butons
+        marginRight: 8,        // space between buttons
         paddingHorizontal: 12,       // space between text and border
         backgroundColor: '#fff',
     },
