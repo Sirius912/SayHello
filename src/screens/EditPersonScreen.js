@@ -19,76 +19,76 @@ export default function EditPersonScreen({ route, navigation }) {
     // Firestore에서 연락처 데이터 불러오기
     useEffect(() => {
         const fetchContact = async () => {
-          const auth = getAuth();
-          const user = auth.currentUser;
-      
-          if (!user) {
-            Alert.alert('오류', '로그인이 필요합니다.');
-            return;
-          }
-      
-          const userId = user.uid;
-          try {
-            const docRef = doc(db, `users/${userId}/contacts`, contactId);
-            const docSnap = await getDoc(docRef);
-            // console.log("Fetching contact:", contactId);
-            // console.log("Document path:", `users/${user.uid}/contacts/${contactId}`);
-            if (docSnap.exists()) {
-              const data = docSnap.data();
-              setName(data.name);
-              setPhoneNumber(data.phone);
-              setSelectedLocation(data.location);
-              setSelectedHealthInfo(data.healthInfo);
-              setSelectedRelationship(data.relationship);
-              setSelectedContactTerm(data.contactTerm.split(', '));
-            } else {
-              Alert.alert('오류', '문서를 찾을 수 없습니다.');
+            const auth = getAuth();
+            const user = auth.currentUser;
+
+            if (!user) {
+                Alert.alert('오류', '로그인이 필요합니다.');
+                return;
             }
-          } catch (error) {
-            console.error('Error fetching contact:', error);
-            Alert.alert('오류', '데이터를 불러오는 데 실패했습니다.');
-          } finally {
-            setIsLoading(false); // 로딩 상태 해제
-          }
+
+            const userId = user.uid;
+            try {
+                const docRef = doc(db, `users/${userId}/contacts`, contactId);
+                const docSnap = await getDoc(docRef);
+                // console.log("Fetching contact:", contactId);
+                // console.log("Document path:", `users/${user.uid}/contacts/${contactId}`);
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    setName(data.name);
+                    setPhoneNumber(data.phone);
+                    setSelectedLocation(data.location);
+                    setSelectedHealthInfo(data.healthInfo);
+                    setSelectedRelationship(data.relationship);
+                    setSelectedContactTerm(data.contactTerm.split(', '));
+                } else {
+                    Alert.alert('오류', '문서를 찾을 수 없습니다.');
+                }
+            } catch (error) {
+                console.error('Error fetching contact:', error);
+                Alert.alert('오류', '데이터를 불러오는 데 실패했습니다.');
+            } finally {
+                setIsLoading(false); // 로딩 상태 해제
+            }
         };
-      
+
         fetchContact();
-      }, [contactId]);
+    }, [contactId]);
 
     // 저장 버튼 핸들러
     const handleSave = async () => {
         const auth = getAuth();
         const user = auth.currentUser;
-      
+
         if (!user) {
-          Alert.alert('오류', '로그인이 필요합니다.');
-          return;
+            Alert.alert('오류', '로그인이 필요합니다.');
+            return;
         }
-      
+
         const userId = user.uid;
-      
+
         if (!name || !phoneNumber) {
-          Alert.alert('오류', '이름과 전화번호는 필수 입력 항목입니다.');
-          return;
+            Alert.alert('오류', '이름과 전화번호는 필수 입력 항목입니다.');
+            return;
         }
-      
+
         try {
-          const docRef = doc(db, `users/${userId}/contacts`, contactId);
-          await updateDoc(docRef, {
-            name,
-            phone: phoneNumber,
-            location: selectedLocation,
-            healthInfo: selectedHealthInfo,
-            relationship: selectedRelationship,
-            contactTerm: selectedContactTerm.join(', '),
-          });
-          Alert.alert('성공', '변경 사항이 저장되었습니다.');
-          navigation.goBack();
+            const docRef = doc(db, `users/${userId}/contacts`, contactId);
+            await updateDoc(docRef, {
+                name,
+                phone: phoneNumber,
+                location: selectedLocation,
+                healthInfo: selectedHealthInfo,
+                relationship: selectedRelationship,
+                contactTerm: selectedContactTerm.join(', '),
+            });
+            Alert.alert('성공', '변경 사항이 저장되었습니다.');
+            navigation.goBack();
         } catch (error) {
-          console.error('Error updating document:', error);
-          Alert.alert('오류', '저장에 실패했습니다.');
+            console.error('Error updating document:', error);
+            Alert.alert('오류', '저장에 실패했습니다.');
         }
-      };
+    };
 
     if (isLoading) {
         return (
@@ -128,8 +128,8 @@ export default function EditPersonScreen({ route, navigation }) {
             {/* 위치 선택 */}
             <View style={styles.type_view}>
                 <Text style={styles.text1}>지역</Text>
-                <LocationPicker 
-                    onSelect={setSelectedLocation} 
+                <LocationPicker
+                    onSelect={setSelectedLocation}
                     initialValue={selectedLocation}
                 />
             </View>
@@ -163,8 +163,8 @@ export default function EditPersonScreen({ route, navigation }) {
             {/* 건강 정보 선택 */}
             <View style={styles.type_view}>
                 <Text style={styles.text1}>건강 정보</Text>
-                <HealthInfoPicker 
-                    onSelect={setSelectedHealthInfo} 
+                <HealthInfoPicker
+                    onSelect={setSelectedHealthInfo}
                     initialValue={selectedHealthInfo}
                 />
             </View>
@@ -200,7 +200,7 @@ export default function EditPersonScreen({ route, navigation }) {
                     style={styles.saveButton}
                     onPress={handleSave}
                 >
-                    <Text style={styles.saveButtonText}>변경 사항 저장</Text>
+                    <Text style={styles.saveButtonText}>프로필 수정 완료</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -267,10 +267,15 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
     },
     saveButton: {
-        backgroundColor: '#000',
+        backgroundColor: '#41BA6B',
         paddingVertical: 15,
         borderRadius: 10,
         alignItems: 'center',
+        borderRadius: 10,
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
     },
     saveButtonText: {
         color: '#fff',

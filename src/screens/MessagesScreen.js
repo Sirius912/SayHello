@@ -118,13 +118,17 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12
     },
     copy_button: {
-        backgroundColor: '#4CAF50',
+        backgroundColor: '#41BA6B',
         padding: 8,
         borderRadius: 8,
         paddingHorizontal: 18,
         height: 50,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        shadowOpacity: 0.3,
+        shadowRadius: 4, 
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
     },
     divider: {
         height: 1,
