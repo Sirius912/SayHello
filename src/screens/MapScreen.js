@@ -9,6 +9,10 @@ import axios from 'axios';
 import { Fontisto } from '@expo/vector-icons';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import { collection, onSnapshot, doc } from "firebase/firestore";
+import { db } from "../api/firebase";
+import { getAuth } from 'firebase/auth';
+import * as Font from 'expo-font';
 
 export default function MapScreen() {
   const [location, setLocation] = useState(null); // 현재 위치 저장
@@ -16,7 +20,10 @@ export default function MapScreen() {
   const [searchQuery, setSearchQuery] = useState(""); // 검색어 상태
   const [selectedMarker, setSelectedMarker] = useState(null); // 선택된 Marker 정보
   const [weatherData, setWeatherData] = useState(null); // 날씨 데이터 상태
-  const [regionName, setRegionName] = useState(""); // 지역 이름 상태태
+  const [regionName, setRegionName] = useState(""); // 지역 이름 상태
+  const [currentUserNickname, setCurrentUserNickname] = useState("");
+  const [contacts, setContacts] = useState([]);
+  const [fontsLoaded, setFontsLoaded] = useState(false);
   const bottomSheetModalRef = useRef(null);
 
   // 샘플 데이터 (나중에 수정해야함)
@@ -78,6 +85,46 @@ export default function MapScreen() {
       });
     })();
   }, []);
+
+  // Firestore 실시간 업데이트 설정
+  useEffect(() => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (!user) {
+      console.error("사용자가 로그인되어 있지 않습니다.");
+      return;
+    }
+
+    const userId = user.uid; // 현재 로그인한 사용자의 uid
+    const userDocRef = doc(db, "users", userId);
+    const contactsRef = collection(db, `users/${userId}/contacts`);
+
+    // 사용자 닉네임 가져오기
+    const unsubscribeUserDoc = onSnapshot(userDocRef, (docSnap) => {
+      if (docSnap.exists()) {
+        setCurrentUserNickname(docSnap.data().nickname || "Unknown"); // 닉네임 설정
+      } else {
+        console.error("사용자 문서를 찾을 수 없습니다.");
+      }
+    });
+
+    const unsubscribe = onSnapshot(contactsRef, (snapshot) => {
+      const contactsData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        name: doc.data().name || "No Name", // 이름 필드가 없을 경우 기본값 설정
+        image: doc.data().image || require('../../assets/default.jpg'),
+      }));
+      setContacts(contactsData);
+    });
+  
+    return () => {
+      unsubscribeUserDoc();
+      unsubscribe();
+    }; // 컴포넌트 언마운트 시 구독 해제
+  }, []);
+
+  
 
   const handleSheetChanges = useCallback((index) => {
     if (index === -1) {
@@ -182,7 +229,9 @@ export default function MapScreen() {
               {location && (
                 <Marker coordinate={location}>
                   <View style={[styles.markerContainer, styles.currentUserMarker]}>
-                    <Text style={[styles.markerText, styles.currentUserText]}>Me</Text>
+                    <Text style={[styles.markerText, styles.currentUserText]}>
+                      {currentUserNickname}
+                    </Text>
                   </View>
                 </Marker>
               )}
@@ -294,7 +343,9 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 30,
     fontWeight: 'bold',
-    padding: 16,
+    padding: 13,
+    marginBottom: -10,
+
   },
   searchContainer: {
     flexDirection: "row", // 검색창 및 버튼을 가로로 배치

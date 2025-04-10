@@ -5,6 +5,7 @@ import { collection, onSnapshot, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../api/firebase';
 import { getAuth } from 'firebase/auth';
 import { Swipeable } from 'react-native-gesture-handler';
+import * as Font from 'expo-font';
 
 const PeopleScreen = ({ navigation }) => {
 
@@ -12,6 +13,7 @@ const PeopleScreen = ({ navigation }) => {
     const [filteredContacts, setFilteredContacts] = useState([]); // 필터링된 데이터
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedButton, setSelectedButton] = useState('전체'); // 기본값 '전체'
+    const [fontsLoaded, setFontsLoaded] = useState(false);
 
     // Firestore 실시간 업데이트 설정
     useEffect(() => {
@@ -38,6 +40,24 @@ const PeopleScreen = ({ navigation }) => {
         return () => unsubscribe(); // 컴포넌트 언마운트 시 구독 해제
     }, []);
 
+    useEffect(() => {
+        async function loadFonts() {
+          await Font.loadAsync({
+            NanumSquareRoundEB: require('../../assets/fonts/NanumSquareRoundOTFEB.otf'), // 가장 굵게
+            NanumSquareRoundB: require('../../assets/fonts/NanumSquareRoundOTFB.otf'), // 두껍게
+            NanumSquareRoundR: require('../../assets/fonts/NanumSquareRoundOTFR.otf'), // 보통
+            NanumSquareRoundL: require('../../assets/fonts/NanumSquareRoundOTFL.otf'), // 얇게
+            GeumUnBohwa: require('../../assets/fonts/GeumUnBohwa.ttf'),
+          });
+          setFontsLoaded(true);
+        }
+        loadFonts();
+    }, []);
+
+    if (!fontsLoaded){
+      return null;
+    }
+
 
     // 검색 및 필터링
     const handleSearch = (text) => {
@@ -51,6 +71,7 @@ const PeopleScreen = ({ navigation }) => {
             setFilteredContacts(filtered);
         }
     };
+
 
     const handlePress = (buttonName) => {
         // console.log("선택된 버튼:", buttonName);
@@ -112,7 +133,7 @@ const PeopleScreen = ({ navigation }) => {
                 style={{ width: '100%', height: 30, justifyContent: 'center', alignItems: 'center' }}
             />
             <View style={styles.box}>
-                <Text style={{ fontSize: 30, fontWeight: 'bold' }}>주소록 설정</Text>
+                <Text style={styles.title}>주소록 설정</Text>
                 <View style={styles.searchContainer}>
                     <Ionicons name="search" size={20} color="#777" style={styles.icon} />
                     <TextInput
@@ -173,7 +194,7 @@ const PeopleScreen = ({ navigation }) => {
                     onPress={() => navigation.navigate('AddPersonScreen')}
                     style={styles.add_person_button}
                 >
-                    <Text style={{ textAlign: 'center', color: '#ffffff', fontSize: 20, fontWeight: '600' }}>새로운 사람 등록하기</Text>
+                    <Text style={styles.addPersonText}>새로운 사람 등록하기</Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
@@ -181,6 +202,12 @@ const PeopleScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+    title: {
+      fontSize: 30,
+      fontWeight: 'bold',
+      fontFamily: 'NanumSquareRoundEB',
+      marginBottom: 5,
+    },
     shadowView: {
         marginHorizontal: 0,
         marginTop: 5,
@@ -207,9 +234,9 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: "#333",
       },
-      icon: {
-        marginRight: 8,
-      },
+    icon: {
+      marginRight: 8,
+    },
     searchInput: {
         flex: 1,
         height: 40,
@@ -223,6 +250,13 @@ const styles = StyleSheet.create({
         paddingTop: 5,
         paddingBottom: 15,
         backgroundColor: 'white',
+    },
+    addPersonText: {
+      textAlign: 'center',
+      color: '#ffffff',
+      fontSize: 20,
+      fontWeight: '600',
+      fontFamily: 'NanumSquareRoundEB',
     },
     add_person_button: {
         backgroundColor: '#41BA6B',
@@ -239,7 +273,8 @@ const styles = StyleSheet.create({
         shadowRadius: 3.84,
     },
     buttonText: {
-        fontWeight: '600',
+      fontFamily: 'NanumSquareRoundB',
+      fontWeight: '600',
     },
     box: {
         backgroundColor: 'white',
@@ -260,19 +295,14 @@ const styles = StyleSheet.create({
         alignItems: 'flex-end',
         paddingRight: 10
     },
-    title: {
-        fontSize: 30,
-        fontWeight: "bold",
-        marginTop: -10,
-    },
     option: {
         padding: 5,
         alignItems: 'center',
         borderRadius: 10,
         borderWidth: 1,
         borderColor: '#cccccc',
-        marginRight: 8,        // space between buttons
-        paddingHorizontal: 12,       // space between text and border
+        marginRight: 8,
+        paddingHorizontal: 12,
         backgroundColor: '#fff',
     },
     photo: {
@@ -287,9 +317,10 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     selectedButton: {
-        backgroundColor: '#000',
+        backgroundColor: '#41BA6B',
     },
     selectedText: {
+        fontFamily: 'NanumSquareRoundEB',
         color: 'white',
     },
     rightActions: {
@@ -321,15 +352,18 @@ const styles = StyleSheet.create({
         marginLeft: 12,
     },
     contactName: {
-        fontSize: 18,
-        fontWeight: '600',
-        marginBottom: 4,
+      fontFamily: 'NanumSquareRoundEB',
+      fontSize: 18,
+      fontWeight: '600',
+      marginBottom: 4,
     },
     contactPhone: {
+        fontFamily: 'NanumSquareRoundR',
         fontSize: 16,
         color: '#6c757d',
     },
     contactRelationship: {
+        fontFamily: 'NanumSquareRoundB',
         fontSize: 14,
         fontWeight: '600',
         marginTop: 4,

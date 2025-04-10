@@ -11,7 +11,7 @@ import {
 } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
+import * as Font from 'expo-font';
 
 export default function LoginScreen({ navigation }) {
   const [userInfo, setUserInfo] = useState(null);
@@ -22,7 +22,8 @@ export default function LoginScreen({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false); // 모달 상태 관리
   const [isRemembered, setIsRemembered] = useState(false); // 로그인 상태 유지
   const [forgotPasswordVisible, setForgotPasswordVisible] = useState(false); // 비밀번호 재설정 모달 상태 관리
-  const { promptAsync, handleGoogleLogin, response } = useGoogleAuth();
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+  // const { promptAsync, handleGoogleLogin, response } = useGoogleAuth();
 
   useEffect(() => {
     const loadEmail = async () => {
@@ -35,6 +36,29 @@ export default function LoginScreen({ navigation }) {
     loadEmail();
   }, []);
 
+  useEffect(() => {
+    const loadFonts = async () => {
+      try {
+        await Font.loadAsync({
+          NanumSquareRoundEB: require('../../assets/fonts/NanumSquareRoundOTFEB.otf'),
+          NanumSquareRoundB: require('../../assets/fonts/NanumSquareRoundOTFB.otf'),
+          NanumSquareRoundR: require('../../assets/fonts/NanumSquareRoundOTFR.otf'),
+          NanumSquareRoundL: require('../../assets/fonts/NanumSquareRoundOTFL.otf'),
+        });
+        setFontsLoaded(true);
+      } catch (error) {
+        console.error('Font loading error:', error);
+      }
+    };
+  
+    loadFonts();
+  }, []);
+  
+
+  if (!fontsLoaded){
+    return <View><Text>Loading fonts...</Text></View>;
+  }
+
   // 로그인 상태 유지 데이터 저장 함수
   const saveLoginState = async (userCredential) => {
     if (isRemembered) {
@@ -46,22 +70,23 @@ export default function LoginScreen({ navigation }) {
   };
 
   // expo go 앱에서 지원 X 
-  useEffect(() => {
-    const processGoogleLogin = async () => {
-      if (response?.type === "success") {
-        try {
-          const result = await handleGoogleLogin();
-          if (result.success) {
-            navigation.replace('Main');
-          }
-        } catch (error) {
-          Alert.alert("로그인 실패", error.message);
-        }
-      }
-    };
+  // useEffect(() => {
+  //   const processGoogleLogin = async () => {
+  //     if (response?.type === "success") {
+  //       try {
+  //         const result = await handleGoogleLogin();
+  //         if (result.success) {
+  //           navigation.replace('Main');
+  //         }
+  //       } catch (error) {
+  //         Alert.alert("로그인 실패", error.message);
+  //       }
+  //     }
+  //   };
 
-    processGoogleLogin();
-  }, [response]);
+  //   processGoogleLogin();
+  // }, [response]);
+  
 
   const handleKakao = async () => {
     try {
@@ -147,7 +172,12 @@ export default function LoginScreen({ navigation }) {
           source={require('../../assets/headerTab_login.png')}
           style={{ width: '100%', height: 250, justifyContent: 'center', alignItems: 'center' }}
           resizeMode="cover">
-          <Text style={styles.title}>로그인</Text>
+          <Text style={styles.title}>SayHello</Text>
+          <Image
+            source={require('../../assets/bichon.png')} // 캐릭터 이미지 경로
+            style={styles.characterImage}
+            resizeMode="contain"
+          />
           <Text style={styles.subtitle}>
             사랑하는 사람들과 더 가까이 연결되며
             {'\n'}따뜻한 인사와 안부를 전하는 순간을 더욱 쉽게 만들어보세요
@@ -186,9 +216,15 @@ export default function LoginScreen({ navigation }) {
               thumbColor={isRemembered ? "#fff" : "#f4f3f4"}
             />
           </View>
-          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', flex:1, paddingRight: 15, marginBottom: 15,}}>
+          <View style={{flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            flex:1,
+            paddingRight: 15,
+            marginBottom: 15,
+          }}>
             <TouchableOpacity onPress={() => setForgotPasswordVisible(true)}>
-              <Text style={{fondSize: 15}}>비밀번호를 잃어버렸어요</Text>
+              <Text style={styles.forgotPassword}>비밀번호를 잃어버렸어요</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -200,9 +236,9 @@ export default function LoginScreen({ navigation }) {
 
         {/* 비밀번호 재설정 | 회원가입 */}
         <View style={styles.linkContainer}>
-          <Text>계정이 없으신가요? </Text>
+          <Text style={styles.forgotPassword}>계정이 없으신가요? </Text>
           <TouchableOpacity onPress={() => setModalVisible(true)}>
-            <Text style={[styles.link]}>지금 바로 회원가입해보세요!</Text>
+            <Text style={styles.link}>지금 바로 회원가입해보세요!</Text>
           </TouchableOpacity>
         </View>
 
@@ -226,7 +262,8 @@ export default function LoginScreen({ navigation }) {
               />
             </TouchableOpacity>
             {/* 구글 로그인 버튼 */}
-            <TouchableOpacity onPress={() => promptAsync()}>
+            {/* <TouchableOpacity onPress={() => promptAsync()}> */}
+            <TouchableOpacity>
               <Image
                 source={require('../../assets/google_login.png')} // 구글 로그인 이미지
                 style={styles.socialImage}
@@ -370,18 +407,28 @@ const styles = StyleSheet.create({
     backgroundColor: "#41BA6B",
     flex: 1,
   },
+  characterImage: {
+    position: 'absolute', // 독립적인 레이어로 설정
+    top: '50%',
+    left: '60%',
+    width: 60, // 이미지 너비
+    height: 60, // 이미지 높이
+    opacity: 0.7, 
+  },
   container: {
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
   },
   title: {
+    fontFamily: 'NanumSquareRoundEB',
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
     marginTop: 120,
   },
   subtitle: {
+    fontFamily: 'NanumSquareRoundB',
     fontSize: 15,
     lineHeight: 25,
     color: '#000',
@@ -395,6 +442,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   label: {
+    fontFamily: 'NanumSquareRoundB',
     fontSize: 14,
     fontWeight: 'bold',
     color: '#333',
@@ -424,6 +472,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   emailPasswordLabel: {
+    fontFaimily: 'NanumSquareRoundB',
     fontSize: 15,
     fontWeight: 'bold',
     color: '#333',
@@ -466,6 +515,10 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
   },
+  forgotPassword: {
+    fontsize: 15,
+    fontFamily: 'NanumSquareRoundR',
+  },
   socialButton: {
     paddingVertical: 10,
     borderRadius: 5,
@@ -480,6 +533,7 @@ const styles = StyleSheet.create({
     width: '48%',
   },
   buttonText: {
+    fontFamily: 'NanumSquareRoundEB',
     fontSize: 16,
     fontWeight: 'bold',
     color: '#FFFFFF',
@@ -499,6 +553,7 @@ const styles = StyleSheet.create({
     paddingVertical: 30,
   },
   modalTitle: {
+    fontFamily: 'NanumSquareRoundEB',
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 30,
@@ -510,12 +565,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   modalButtonText: {
+    fontFamily: 'NanumSquareRoundEB',
     color: '#fff'
   },
   modalButton: {
     backgroundColor: '#007BFF'
   },
   closeButton: {
+    fontFamily: 'NanumSquareRoundEB',
     marginTop: 5,
     borderWidth: 1,
     borderColor: '#ccc',
@@ -528,6 +585,7 @@ const styles = StyleSheet.create({
     color: 'red',
   },
   closeButtonLabel: {
+    fontFamily: 'NanumSquareRoundEB',
     color: 'red'
   },
   switchContainer: {
@@ -539,6 +597,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   switchLabel: {
+    fontFamily: 'NanumSquareRoundB',
     fontSize: 14,
     color: "#333",
     marginRight: 10,
@@ -551,6 +610,7 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   link: {
+    fontFamily: 'NanumSquareRoundEB',
     fontSize: 15,
     color: 'red',
     fontWeight: 'bold'
@@ -565,6 +625,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   socialLoginTitle: {
+    fontFamily: 'NanumSquareRoundB',
     fontSize: "15"
   },
   socialImage: {

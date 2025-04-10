@@ -18,6 +18,7 @@ import { db } from "../api/firebase";
 import { getAuth } from "firebase/auth";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ImageBackground } from 'react-native';
+import * as Font from 'expo-font';
 
 export default function HomeScreen() {
   const navigation = useNavigation();
@@ -25,6 +26,7 @@ export default function HomeScreen() {
   const [setLoading] = useState(true);
   const [contacts, setContacts] = useState([]);
   const [currentUserNickname, setCurrentUserNickname] = useState("");
+  const [fontsLoaded, setFontsLoaded] = useState(false);
 
   // 현재 위치 가져오기
   useEffect(() => {
@@ -83,6 +85,23 @@ export default function HomeScreen() {
       unsubscribe();
     }; // 컴포넌트 언마운트 시 구독 해제
   }, []);
+
+  useEffect(() => {
+    async function loadFonts() {
+      await Font.loadAsync({
+        NanumSquareRoundEB: require('../../assets/fonts/NanumSquareRoundOTFEB.otf'), // 가장 굵게
+        NanumSquareRoundB: require('../../assets/fonts/NanumSquareRoundOTFB.otf'), // 두껍게
+        NanumSquareRoundR: require('../../assets/fonts/NanumSquareRoundOTFR.otf'), // 보통
+        NanumSquareRoundL: require('../../assets/fonts/NanumSquareRoundOTFL.otf'), // 얇게
+      });
+      setFontsLoaded(true);
+  }
+  loadFonts();
+  }, []);
+
+  if (!fontsLoaded){
+    return null;
+  }
 
   const otherUsers = [
     {
@@ -301,7 +320,7 @@ export default function HomeScreen() {
                         onPress={() => navigation.navigate("Messages")}
                         style={styles.messageButton}
                       >
-                        <Text style={{ color: "#fff", fontWeight: "bold", textAlign: "center" }}>
+                        <Text style={{ color: "#fff", fontWeight: "bold", textAlign: "center", fontFamily: 'NanumSquareRoundEB' }}>
                           메시지 작성하기
                         </Text>
                       </TouchableOpacity>
@@ -323,7 +342,7 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   safeArea: {
-    backgroundColor: "#41BA6B",
+    backgroundColor: "white",
     flex: 1,
   },
   tabsContainer: {
@@ -384,6 +403,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   sectionTitle: {
+    fontFamily: 'NanumSquareRoundEB',
     fontSize: 24, // 텍스트 크기 조정
     fontWeight: "bold", // 텍스트 두께 설정
     color: "#333", // 텍스트 색상 설정
@@ -406,6 +426,7 @@ const styles = StyleSheet.create({
     borderRadius: 40, // 원형으로 유지
   },
   personName: {
+    fontFamily: 'NanumSquareRoundB',
     fontSize: 14, // 텍스트 크기 조정
     marginTop: 5,
     color: "#333",
@@ -414,6 +435,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   sender: {
+    fontFamily: 'NanumSquareRoundEB',
     fontSize: 17,
     fontWeight: "bold",
     color: "#333",
@@ -446,9 +468,11 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
   },
   title: {
-    fontSize: 15,
+    fontFamily: 'NanumSquareRoundB',
+    fontSize: 14,
     color: "gray",
     marginTop: 5,
+    marginLeft: 2,
   },
   messageButton: {
     marginTop: 10,
@@ -475,6 +499,7 @@ const styles = StyleSheet.create({
     borderWidth: 0,
   },
   markerText: {
+    fontFamily: 'NanumSquareRoundB',
     fontSize: 12,
     color: "#333",
     fontWeight: "bold",

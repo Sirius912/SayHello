@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Image, Alert, Modal, SafeAreaView, ImageBackground, FlatList } from 'react-native';
 import HealthInfoPicker from "../api/HealthInfoPicker";
 import { db } from '../api/firebase'; // Firebase 설정 파일 가져오기
@@ -7,6 +7,7 @@ import { getAuth } from "firebase/auth";
 import * as ImagePicker from 'expo-image-picker'; // 이미지 선택 라이브러리
 import { Feather } from '@expo/vector-icons';
 import AddressSearch from './AddressSearch';
+import * as Font from 'expo-font';
 
 export default function AddPersonScreen({ navigation }) {
   const [selectedLocation, setSelectedLocation] = useState(null);
@@ -17,7 +18,25 @@ export default function AddPersonScreen({ navigation }) {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [imageUri, setImageUri] = useState(null); // 이미지 URI 상태 추가
   const [isModalVisible, setModalVisible] = useState(false); // 모달 상태 관리
+  const [fontsLoaded, setFontsLoaded] = useState(false);
 
+  useEffect(() => {
+    async function loadFonts() {
+      await Font.loadAsync({
+        NanumSquareRoundEB: require('../../assets/fonts/NanumSquareRoundOTFEB.otf'), // 가장 굵게
+        NanumSquareRoundB: require('../../assets/fonts/NanumSquareRoundOTFB.otf'), // 두껍게
+        NanumSquareRoundR: require('../../assets/fonts/NanumSquareRoundOTFR.otf'), // 보통
+        NanumSquareRoundL: require('../../assets/fonts/NanumSquareRoundOTFL.otf'), // 얇게
+      });
+      setFontsLoaded(true);
+    }
+    loadFonts();
+  }, []);
+  
+  if (!fontsLoaded){
+    return null;
+  }
+  
   const pickImage = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (permissionResult.granted === false) {
@@ -229,7 +248,7 @@ export default function AddPersonScreen({ navigation }) {
               style={styles.add_person_button}
               onPress={handleSave}
             >
-              <Text style={{ color: '#ffffff', fontSize: 20 }}>저장하기</Text>
+              <Text style={styles.saveButtonText}>저장하기</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -241,6 +260,7 @@ export default function AddPersonScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   title: {
+    fontFamily: 'NanumSquareRoundEB',
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
@@ -264,6 +284,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   buttonText: {
+    fontFamily:'NanumSquareRoundB',
     fontWeight: '600',
   },
   divider: {
@@ -302,9 +323,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   selectedButton: {
-    backgroundColor: 'black',
+    backgroundColor: '#41BA6B',
   },
   selectedText: {
+    fontFamily: 'NanumSquareRoundB',
     color: 'white',
   },
   screen: {
@@ -316,15 +338,12 @@ const styles = StyleSheet.create({
 
   },
   text1: {
+    fontFamily: 'NanumSquareRoundEB',
     fontSize: 17,
     fontWeight: 'bold',
   },
-  text2: {
-    fontSize: 17,
-    marginVertical: 7,
-    color: '#777'
-  },
   type_input: {
+    fontFamily: 'NanumSquareRoundR',
     marginVertical: 7,
     fontSize: 16,
     color: 'gray'
@@ -336,6 +355,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   },
   label: {
+    fontFamily: 'NanumSquareRoundEB',
     fontSize: 16,
     fontWeight: 'bold',
     marginTop: 10,
@@ -366,8 +386,14 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   searchButtonText: {
+    fontFamily: 'NanumSquareRoundEB',
     color: '#fff',
     fontSize: 14,
     fontWeight: '600',
+  },
+  saveButtonText: {
+    color: '#ffffff',
+    fontSize: 20,
+    fontFamily: 'NanumSquareRoundEB',
   },
 });
