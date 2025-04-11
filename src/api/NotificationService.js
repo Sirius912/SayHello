@@ -11,6 +11,7 @@ export async function sendPushNotification(expoPushToken, message) {
         title: 'Say Hello',
         body: message,
         data: { someData: 'someValue' },
+        send_after: sendAfter,
     };
 
     console.log("푸시 알림 전송을 위한 Payload:", messagePayload);

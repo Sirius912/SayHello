@@ -10,6 +10,9 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "notification": {
+      "icon": "./assets/notification_icon.png"
+    },
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
