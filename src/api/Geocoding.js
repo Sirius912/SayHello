@@ -3,7 +3,6 @@ import { GOOGLE_MAPS_API_KEY } from "@env";
 
 export const fetchGeocodeData = async (address) => {
   try {
-    // Google Maps Geocoding API 호출
     const response = await axios.get("https://maps.googleapis.com/maps/api/geocode/json", {
       params: {
         address: address,

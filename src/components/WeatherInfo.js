@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Fontisto } from "@expo/vector-icons";
 import { icons, weatherDescriptions } from "../utils/data";
+import useFonts from "../hooks/useFonts";
 
 const WeatherInfo = ({ selectedMarker, weatherData, regionName }) => {
     if (!selectedMarker) {
@@ -11,13 +12,16 @@ const WeatherInfo = ({ selectedMarker, weatherData, regionName }) => {
             </View>
         );
     }
+    // console.log(weatherData.main);
+
+    const fontsLoaded = useFonts();
 
     return (
         <View style={styles.container}>
             {/* 마커 정보 */}
             <View style={styles.infoRow}>
-                <Text style={styles.markerTitle}>{selectedMarker.title}</Text>
-                <Text style={styles.markerDate}> / {selectedMarker.date}</Text>
+                <Text style={styles.infoTitle}>{selectedMarker.name}</Text>
+                <Text style={styles.regionName}> {regionName}</Text>
             </View>
 
             {/* 날씨 정보 */}
@@ -26,20 +30,22 @@ const WeatherInfo = ({ selectedMarker, weatherData, regionName }) => {
                     <>
                         <Fontisto
                             name={icons[weatherData?.weather[0]?.main]}
-                            size={40}
+                            size={30}
                             color="black"
+                            resizeMode="contain"
+                            alignSelf="center"
                         />
                         <Text style={styles.weatherDetail}>
-                            기온: {weatherData?.main?.temp ? `${Math.round(weatherData.main.temp)}°C` : "N/A"}
+                            🌡️ 기온: {weatherData?.main?.temp ? `${Math.round(weatherData.main.temp)}°C` : "N/A"}
                         </Text>
                         <Text style={styles.weatherDetail}>
-                            날씨: {weatherDescriptions[weatherData.weather[0].description]}
+                            🌦️ 날씨: {weatherDescriptions[weatherData.weather[0].description]}
                         </Text>
                         <Text style={styles.weatherDetail}>
-                            습도: {weatherData.main.humidity}%
+                            💧 습도: {weatherData.main.humidity}%
                         </Text>
                         <Text style={styles.weatherDetail}>
-                            풍속: {weatherData.wind.speed} m/s
+                            🌬️풍속: {weatherData.wind.speed} m/s
                         </Text>
                     </>
                 ) : (
@@ -48,8 +54,11 @@ const WeatherInfo = ({ selectedMarker, weatherData, regionName }) => {
             </View>
 
             {/* 지역 이름 및 설명 */}
-            <Text style={styles.regionName}>{regionName}</Text>
-            <Text style={styles.markerDescription}>{selectedMarker.description}</Text>
+            <View style={styles.regionContainer}>
+                <Text style={styles.markerDescription}>지진 7.1</Text>
+            </View>
+
+            {/* 선택 버튼 */}
             <TouchableOpacity style={styles.selectButton}>
                 <Text style={styles.selectButtonText}>선택</Text>
             </TouchableOpacity>
@@ -69,37 +78,52 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
     },
     infoTitle: {
+        fontFamily: "NanumSquareRoundEB",
         fontSize: 18,
         fontWeight: "bold",
         color: "#333",
         marginRight: 20,
     },
-    infoDescription: {
-        fontWeight: "bold",
-        color: "#333",
-    },
     weatherContainer: {
-        alignSelf: "flex-start",
+        alignSelf: "center",
         marginTop: 30,
-        marginLeft: 40
     },
     weatherDetail: {
-        alignSelf: "flex-start"
+        fontFamily: "NanumSquareRoundB",
+        fontSize: 16,
+        color: "#333",
+        marginVertical: 5,
+        textAlign: "center",
     },
-
-    infoDescription: {
-        fontSize: 14,
+    regionContainer: {
+        marginTop: 10,
+        paddingVertical: 10,
+        borderTopWidth: 1,
+        borderColor: "#ddd",
+    },
+    regionName: {
+        fontFamily: "NanumSquareRoundB",
+        fontSize: 15,
+        color: "#333",
+        fontWeight: "bold",
+        textAlign: "center",
+    },
+    markerDescription: {
+        fontFamily: "NanumSquareRoundEB",
+        fontSize: 16,
         color: "#666",
+        textAlign: "center",
     },
     selectButton: {
-        marginTop: 30,
-        paddingVertical: 10,
-        paddingHorizontal: 20,
+        marginTop: 10,
+        paddingVertical: 12,
+        paddingHorizontal: 25,
         backgroundColor: "#41BA6B",
-        borderRadius: 5,
-        marginLeft: 30,
+        borderRadius: 8,
+        alignSelf: "center",
     },
     selectButtonText: {
+        fontFamily: "NanumSquareRoundEB",
         color: "#fff",
         fontWeight: "bold",
     },

@@ -76,6 +76,7 @@ export default function HomeScreen() {
         id: doc.id,
         name: doc.data().name || "No Name", // 이름 필드가 없을 경우 기본값 설정
         image: doc.data().image || require('../../assets/default.jpg'),
+        coordinate: doc.data().coordinates
       }));
       setContacts(contactsData);
     });
@@ -171,12 +172,12 @@ export default function HomeScreen() {
                   )}
                   {/* 다른 사용자 마커 */}
                   {currentLocation &&
-                    otherUsers.map((user) => (
+                    contacts.map((user) => (
                       <Marker
                         key={user.id}
                         coordinate={{
-                          latitude: currentLocation.latitude + user.latitudeOffset, // 현재 위치에서 위도 오프셋 적용
-                          longitude: currentLocation.longitude + user.longitudeOffset, // 현재 위치에서 경도 오프셋 적용
+                          latitude: user.coordinate['latitude'],
+                          longitude: user.coordinate['longitude']
                         }}
                       >
                         <View style={styles.markerContainer}>
@@ -358,9 +359,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   personImage: {
-    width: 80, // 원형 이미지 너비 증가
-    height: 80, // 원형 이미지 높이 증가
-    borderRadius: 40, // 원형으로 유지
+    width: 80,
+    height: 80,
+    borderRadius: 35,
   },
   personName: {
     fontFamily: 'NanumSquareRoundB',

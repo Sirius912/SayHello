@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Image, Alert, Modal, SafeAreaView, ImageBackground, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Image, Alert, Modal, SafeAreaView, ImageBackground } from 'react-native';
 import HealthInfoPicker from "../components/HealthInfoPicker";
 import { db } from '../api/firebase'; // Firebase 설정 파일 가져오기
 import { collection, addDoc } from 'firebase/firestore';
@@ -8,6 +8,8 @@ import { pickImage } from "../utils/imagePicker";
 import { Feather } from '@expo/vector-icons';
 import AddressSearch from '../components/AddressSearch';
 import useFonts from '../hooks/useFonts';
+import { fetchGeocodeData } from "../api/Geocoding";
+import { GeoPoint } from "firebase/firestore";
 
 export default function AddPersonScreen({ navigation }) {
   const [selectedLocation, setSelectedLocation] = useState(null);
@@ -50,13 +52,19 @@ export default function AddPersonScreen({ navigation }) {
       await addDoc(collection(db, `users/${userId}/contacts`), {
         name: name,
         phone: phoneNumber,
-        location: selectedLocation || 'Unknown',
+        location: selectedLocation.address || 'Unknown',
+        coordinates: selectedLocation?.coordinates // EditPersonScreen.js에도 추가해야 함.
+        ? new GeoPoint(
+          selectedLocation.coordinates.latitude,
+          selectedLocation.coordinates.longitude 
+        ) : null,
         healthInfo: selectedHealthInfo || 'None',
         relationship: selectedRelationship || 'ETC',
         contactTerm: selectedContactTerm || '1개월',
-        image: imageUri || 'default_image_url',
+        image: imageUri || null,
       });
-      console.log(imageUri);
+
+      // console.log(imageUri);
       Alert.alert('알림', '지인이 성공적으로 추가되었습니다.');
       navigation.goBack();
     } catch (error) {
@@ -145,9 +153,18 @@ export default function AddPersonScreen({ navigation }) {
           {/* 모달 */}
           <Modal visible={isModalVisible} animationType="slide">
             <AddressSearch
-              onSelectAddress={(address) => {
-                setSelectedLocation(address); // 선택된 주소 저장
-                setModalVisible(false); // 모달 닫기
+              onSelectAddress={async (addressObj) => {
+                try {
+                  // 주소 → 위도/경도 변환
+                  const coordinates = await fetchGeocodeData(addressObj.address);
+                  setSelectedLocation({ 
+                    ...addressObj, 
+                    coordinates // 좌표 추가
+                  });
+                  setModalVisible(false);
+                } catch (error) {
+                  Alert.alert("오류", "주소 변환에 실패했습니다.");
+                }
               }}
             />
           </Modal>

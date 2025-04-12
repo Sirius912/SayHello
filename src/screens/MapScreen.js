@@ -86,9 +86,9 @@ export default function MapScreen() {
         id: doc.id,
         name: doc.data().name || "No Name",
         image: doc.data().image || require('../../assets/default.jpg'),
-        address: doc.data().address || "No Address",
+        location: doc.data().location || "No Address",
+        coordinate: doc.data().coordinates
       }));
-      console.log(contactsData),
       setContacts(contactsData);
     });
 
@@ -109,13 +109,13 @@ export default function MapScreen() {
   const handleMarkerPress = async (marker) => {
     setSelectedMarker(marker);
     const data = await fetchWeatherData(
-      location.latitude + marker.latitudeOffset,
-      location.longitude + marker.longitudeOffset
+      marker.coordinate['latitude'],
+      marker.coordinate['longitude']
     );
     setWeatherData(data);
     const region = await getRegionName(
-      location.latitude + marker.latitudeOffset,
-      location.longitude + marker.longitudeOffset
+      marker.coordinate['latitude'],
+      marker.coordinate['longitude']
     );
     setRegionName(region);
     bottomSheetModalRef.current?.present();
@@ -151,6 +151,7 @@ export default function MapScreen() {
               location={location}
               selectedMarker={selectedMarker}
               filteredMarkers={filteredMarkers}
+              contactsData={contacts}
               bottomSheetModalRef={bottomSheetModalRef}
               currentUserNickname={currentUserNickname}
               handleMarkerPress={handleMarkerPress}

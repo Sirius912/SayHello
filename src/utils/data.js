@@ -1,30 +1,3 @@
-export const otherUsers = [
-        {
-                id: 1,
-                name: "할아버지",
-                latitudeOffset: 0.001,
-                longitudeOffset: -0.001,
-        },
-        {
-                id: 2,
-                name: "부모님",
-                latitudeOffset: -0.001,
-                longitudeOffset: 0.001,
-        },
-        {
-                id: 3,
-                name: "형",
-                latitudeOffset: 0.002,
-                longitudeOffset: -0.002,
-        },
-        {
-                id: 4,
-                name: "제인",
-                latitudeOffset: -0.002,
-                longitudeOffset: 0.002,
-        },
-];
-
 export const newsData = [
         {
                 id: "1",
@@ -149,6 +122,15 @@ export const icons = {
         "Atmosphere": "cloudy-gusts",
         "Clear": "day-sunny",
         "Clouds": "cloudy",
+        "Mist": "fog",
+        "Smoke": "smoke",
+        "Haze": "day-haze",
+        "Dust": "dust",
+        "Fog": "Fog",
+        "Sand": "sandstorm",
+        "Ash": "volcano",
+        "Squall": "windy",
+        "Tornado": "tornado"
 }
 
 export const weatherDescriptions = {
@@ -188,4 +170,5 @@ export const weatherDescriptions = {
         "light shower snow": "약한 소나기성 눈",
         "shower snow": "소나기성 눈",
         "heavy shower snow": "많은 소나기성 눈",
+        "mist": "안개",
 }

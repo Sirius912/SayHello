@@ -6,11 +6,13 @@ export default function MapComponent({
     location,
     selectedMarker,
     filteredMarkers,
+    contactsData,
     bottomSheetModalRef,
     currentUserNickname,
     handleMarkerPress,
 }) {
 
+    // console.log(contactsData[0].coordinate['latitude']);
     return (
         <View style={styles.mapContainer}>
             <MapView
@@ -32,19 +34,19 @@ export default function MapComponent({
                 )}
 
                 {/* Marker 렌더링 */}
-                {filteredMarkers.map((marker) => (
+                {contactsData.map((marker) => (
                     <Marker
                         key={marker.id}
                         coordinate={{
-                            latitude: location.latitude + marker.latitudeOffset,
-                            longitude: location.longitude + marker.longitudeOffset,
+                            latitude: marker.coordinate['latitude'],
+                            longitude: marker.coordinate['longitude'],
                         }}
                         onPress={() => handleMarkerPress(marker)} // Marker 클릭 시 정보 저장
                     >
                         {/* 커스텀 Marker 스타일 */}
                         <View style={[styles.markerContainer]}>
                             <Text style={[styles.markerText]}>
-                                {marker.title}
+                                {marker.name}
                             </Text>
                         </View>
                     </Marker>
