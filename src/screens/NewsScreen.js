@@ -7,7 +7,7 @@ export default function WhatsUpScreen({ navigation }) {
   const fontsLoaded = useFonts();
   const [selectedCategory, setSelectedCategory] = useState("재해");
 
-  if (!fontsLoaded){
+  if (!fontsLoaded) {
     return null;
   }
 
@@ -19,6 +19,11 @@ export default function WhatsUpScreen({ navigation }) {
       />
       <View style={styles.box}>
         <Text style={styles.title}>주변 소식</Text>
+        <Image
+          source={require('../../assets/logo_image.png')} // 캐릭터 이미지 경로
+          style={styles.logoImage}
+          resizeMode="contain"
+        />
         <View style={styles.filterTabs}>
           {["재해", "날씨", "미세먼지"].map((category) => (
             <TouchableOpacity
@@ -79,10 +84,19 @@ const styles = StyleSheet.create({
     flex: 11
   },
   title: {
+    marginTop: 15,
     fontSize: 30,
     fontWeight: 'bold',
     fontFamily: 'NanumSquareRoundEB',
     marginBottom: 5,
+  },
+  logoImage: {
+    position: 'absolute',
+    top: '-1%',
+    left: '25%',
+    width: 30,
+    height: 30,
+    opacity: 1,
   },
   cardImageRow: {
     width: "100%",

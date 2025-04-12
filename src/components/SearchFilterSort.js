@@ -33,7 +33,7 @@ export default function SearchFilterSort({
     };
 
     const filterOptions = [
-        { label: "모두 보기", value: "all" },
+        { label: "기본", value: "all" },
         { label: "지진", value: "지진" },
         { label: "홍수", value: "홍수" },
         { label: "천둥", value: "천둥" },
@@ -52,6 +52,7 @@ export default function SearchFilterSort({
                 <TextInput
                     style={styles.searchInput}
                     placeholder="찾고자 하는 사람을 입력하세요"
+                    placeholderTextColor={"#999"}
                     value={searchQuery}
                     onChangeText={(text) => setSearchQuery(text)}
                 />
@@ -96,20 +97,20 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         borderRadius: 10,
         backgroundColor: "#f0f0f0",
-        marginHorizontal: 10,
+        // marginHorizontal: 10,
     },
     searchInput: {
         flex: 1,
         height: 40,
         paddingHorizontal: 10,
-        marginRight: 10,
+        // marginRight: 10,
         fontSize: 16,
     },
     filterSortRow: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginLeft: 10,
+        // marginLeft: 10,
     },
     filterSortContainer: {
         flexDirection: 'row',

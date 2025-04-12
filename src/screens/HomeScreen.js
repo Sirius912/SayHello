@@ -279,7 +279,7 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   safeArea: {
-    backgroundColor: "white",
+    backgroundColor: "#41BA6B",
     flex: 1,
   },
   tabsContainer: {

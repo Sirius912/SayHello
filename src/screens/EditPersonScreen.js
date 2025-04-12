@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Alert, Modal, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Alert, Modal, ImageBackground, Image } from 'react-native';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../api/firebase'; // Firebase 설정 파일
 import HealthInfoPicker from '../components/HealthInfoPicker';
@@ -44,7 +44,7 @@ export default function EditPersonScreen({ route, navigation }) {
                     setSelectedHealthInfo(data.healthInfo);
                     setSelectedRelationship(data.relationship);
                     setSelectedContactTerm(data.contactTerm.split(', '));
-                    setImageUri(data.imageUri);
+                    setImageUri(data.image);
                     // console.log("Fetched image URI:", data.imageUri);
                 } else {
                     Alert.alert('오류', '문서를 찾을 수 없습니다.');
@@ -59,6 +59,13 @@ export default function EditPersonScreen({ route, navigation }) {
 
         fetchContact();
     }, [contactId]);
+
+    const handlePickImage = async () => {
+        const uri = await pickImage();
+        if (uri) {
+            setImageUri(uri); // 선택된 이미지 URI를 상태로 저장
+        }
+    };
 
     // 저장 버튼 핸들러
     const handleSave = async () => {
@@ -98,9 +105,11 @@ export default function EditPersonScreen({ route, navigation }) {
 
     if (isLoading) {
         return (
-            <View style={styles.loadingContainer}>
-                <Text>Loading...</Text>
-            </View>
+            <SafeAreaView style={styles.safeArea}>
+                <View style={styles.loadingContainer}>
+                    <Text>Loading...</Text>
+                </View>
+            </SafeAreaView>
         );
     }
 
@@ -116,14 +125,17 @@ export default function EditPersonScreen({ route, navigation }) {
                 <View style={styles.screen}>
                     {/* 프로필 이미지 영역*/}
                     <View style={styles.profile_image_container}>
-                        <TouchableOpacity onPress={pickImage}>
+                        <TouchableOpacity onPress={handlePickImage}>
                             {imageUri ? (
                                 <Image source={{ uri: imageUri }} style={styles.profile_image} />
                             ) : (
-                                <View style={styles.profile_placeholder}>
-                                    <Feather name="camera" size={32} color="black" />
-                                </View>
+                                <Image source={require('../../assets/default.jpg')}
+                                    style={styles.profile_image}
+                                />
                             )}
+                            <View style={styles.profile_placeholder}>
+                                <Feather name="camera" size={30} color="black" />
+                            </View>
                         </TouchableOpacity>
                     </View>
 
@@ -311,8 +323,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderWidth: 1,
         borderColor: '#cccccc',
-        marginHorizontal: 4,        // space between butons
-        paddingHorizontal: 12       // space between text and border
+        marginHorizontal: 4,
+        paddingHorizontal: 12
     },
     profile_image_container: {
         alignItems: 'center',
@@ -321,13 +333,14 @@ const styles = StyleSheet.create({
     profile_image: {
         width: 100,
         height: 100,
-        borderRadius: 50,
+        borderRadius: 40,
     },
     profile_placeholder: {
+        position: 'absolute',
         width: 100,
         height: 100,
         borderRadius: 40,
-        backgroundColor: '#ddd',
+        backgroundColor: 'rgba(255, 255, 255, 0.4)',
         justifyContent: 'center',
         alignItems: 'center',
     },

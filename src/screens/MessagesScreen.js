@@ -1,22 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { StatusBar } from 'expo-status-bar';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Alert, Clipboard, SafeAreaView } from 'react-native';
 import useFonts from '../hooks/useFonts';
 import { messages } from '../utils/data'; // 메시지 데이터 가져오기
 
 export default function MessageScreen() {
-    const [selectedButton, setSelectedButton] = useState([]);
+    const [selectedButton, setSelectedButton] = useState(null);
 
     const fontsLoaded = useFonts();
 
-    if (!fontsLoaded){
-    return null;
+    if (!fontsLoaded) {
+        return null;
     }
 
     const handlePress = (item) => {
         setSelectedButton(prev => prev === item ? null : item);
     };
-
 
     const message = selectedButton ? messages[selectedButton] : "안부를 전달할 메시지 내용을 선택해주세요!";
 
@@ -34,6 +32,11 @@ export default function MessageScreen() {
             <View style={styles.box}>
                 <View style={{ alignItems: 'center' }}>
                     <Text style={styles.header_title}>안부 메시지 작성</Text>
+                    <Image
+                        source={require('../../assets/logo_image.png')} // 캐릭터 이미지 경로
+                        style={styles.logoImage}
+                        resizeMode="contain"
+                    />
                 </View>
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <View style={styles.shadowView}>
@@ -84,8 +87,8 @@ export default function MessageScreen() {
                                 ))}
                             </View>
                         </ScrollView>
-                        </View>
-                        <View style={styles.shadowView}>
+                    </View>
+                    <View style={styles.shadowView}>
 
                         <Text style={styles.text1}>메시지 미리보기</Text>
                         <View style={styles.divider}></View>
@@ -111,13 +114,23 @@ const styles = StyleSheet.create({
         backgroundColor: '#ffffff',
     },
     header_title: {
+        fontFamily: 'NanumSquareRoundEB',
         fontSize: 27,
         fontWeight: 'bold',
         marginBottom: 5,
     },
     box: {
+        flex: 1,
         backgroundColor: '#ffffff',
         padding: 15,
+    },
+    logoImage: {
+        position: 'absolute',
+        top: '-60%',
+        left: '68%',
+        width: 30,
+        height: 30,
+        opacity: 1,
     },
     buttonText: {
         fontFamily: 'NanumSquareRoundEB',
@@ -145,7 +158,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         shadowOpacity: 0.3,
-        shadowRadius: 4, 
+        shadowRadius: 4,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 1 },
     },
@@ -182,10 +195,9 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: '600',
         fontFamily: 'NanumSquareRoundEB',
-      },
+    },
     messageText: {
         padding: 5,
-        // backgroundColor: '#41BA6B',
         marginTop: 3,
         fontFamily: 'Mugunghwa',
         fontSize: 18,
@@ -198,7 +210,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     safeArea: {
-        backgroundColor: "#fff",
+        backgroundColor: "#41BA6B",
         flex: 1,
     },
     selectedButton: {

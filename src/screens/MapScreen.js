@@ -96,8 +96,6 @@ export default function MapScreen() {
     };
   }, []);
 
-
-
   const handleSheetChanges = useCallback((index) => {
     if (index === -1) {
       setSelectedMarker(null);
@@ -122,11 +120,20 @@ export default function MapScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff", }}>
+    <SafeAreaView edges={['top']} style={styles.safeArea}>
       <BottomSheetModalProvider>
+        <Image
+          source={require('../../assets/headerTab_v.png')}
+          style={{ width: '100%', height: 30, justifyContent: 'center', alignItems: 'center' }}
+        />
         <View style={styles.container}>
           {/* 검색창 및 필터/정렬 */}
           <Text style={styles.title}>지도</Text>
+          <Image
+            source={require('../../assets/logo_image.png')} // 캐릭터 이미지 경로
+            style={styles.logoImage}
+            resizeMode="contain"
+          />
           <SearchFilterSort
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
@@ -171,16 +178,29 @@ export default function MapScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
+    backgroundColor: "#41BA6B",
     flex: 1,
-    backgroundColor: "#fff",
-    padding: 16,
+  },
+  container: {
+    backgroundColor: 'white',
+        paddingTop: 0,
+        padding: 15,
+        paddingBottom: -15,
+        flex: 11
+  },
+  logoImage: {
+    position: 'absolute',
+    top: '-0.5%',
+    left: '13%',
+    width: 30,
+    height: 30,
+    opacity: 1,
   },
   title: {
+    marginTop: 15,
     fontSize: 30,
     fontWeight: 'bold',
-    padding: 13,
-    marginBottom: -10,
     fontFamily: 'NanumSquareRoundEB',
   },
 })

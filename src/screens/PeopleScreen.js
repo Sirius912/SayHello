@@ -40,8 +40,8 @@ const PeopleScreen = ({ navigation }) => {
         return () => unsubscribe(); // 컴포넌트 언마운트 시 구독 해제
     }, []);
 
-    if (!fontsLoaded){
-      return null;
+    if (!fontsLoaded) {
+        return null;
     }
 
 
@@ -120,6 +120,11 @@ const PeopleScreen = ({ navigation }) => {
             />
             <View style={styles.box}>
                 <Text style={styles.title}>주소록 설정</Text>
+                <Image
+                    source={require('../../assets/logo_image.png')} // 캐릭터 이미지 경로
+                    style={styles.logoImage}
+                    resizeMode="contain"
+                />
                 <View style={styles.searchContainer}>
                     <Ionicons name="search" size={20} color="#777" style={styles.icon} />
                     <TextInput
@@ -151,26 +156,26 @@ const PeopleScreen = ({ navigation }) => {
                 </View>
 
                 <View style={styles.shadowView}>
-                <ScrollView showsHorizontalScrollIndicator={false}>
-                    {filteredContacts.map((contact) => (
-                        <Swipeable
-                            key={contact.id}
-                            renderRightActions={() => renderRightActions(contact.id)}
-                        >
-                            <View style={styles.contactItem}>
-                                <Image
-                                    source={contact.image ? { uri: contact.image } : require('../../assets/default.jpg')} // 임시 이미지
-                                    style={styles.photo}
-                                />
-                                <View style={styles.contactInfo}>
-                                    <Text style={styles.contactName}>{contact.name}</Text>
-                                    <Text style={styles.contactPhone}>{contact.phone}</Text>
-                                    <Text style={styles.contactRelationship}>{contact.relationship || '기타'}</Text>
+                    <ScrollView showsHorizontalScrollIndicator={false}>
+                        {filteredContacts.map((contact) => (
+                            <Swipeable
+                                key={contact.id}
+                                renderRightActions={() => renderRightActions(contact.id)}
+                            >
+                                <View style={styles.contactItem}>
+                                    <Image
+                                        source={contact.image ? { uri: contact.image } : require('../../assets/default.jpg')} // 임시 이미지
+                                        style={styles.photo}
+                                    />
+                                    <View style={styles.contactInfo}>
+                                        <Text style={styles.contactName}>{contact.name}</Text>
+                                        <Text style={styles.contactPhone}>{contact.phone}</Text>
+                                        <Text style={styles.contactRelationship}>{contact.relationship || '기타'}</Text>
+                                    </View>
                                 </View>
-                            </View>
-                        </Swipeable>
-                    ))}
-                </ScrollView>
+                            </Swipeable>
+                        ))}
+                    </ScrollView>
                 </View>
             </View>
 
@@ -189,10 +194,19 @@ const PeopleScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
     title: {
-      fontSize: 30,
-      fontWeight: 'bold',
-      fontFamily: 'NanumSquareRoundEB',
-      marginBottom: 5,
+        marginTop: 15,
+        fontSize: 30,
+        fontWeight: 'bold',
+        fontFamily: 'NanumSquareRoundEB',
+        marginBottom: 5,
+    },
+    logoImage: {
+        position: 'absolute',
+        top: '-1%',
+        left: '30%',
+        width: 30,
+        height: 30,
+        opacity: 1,
     },
     shadowView: {
         marginHorizontal: 0,
@@ -205,7 +219,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
         flex: 1
-      },
+    },
     searchContainer: {
         flexDirection: "row",
         alignItems: "center",
@@ -219,9 +233,9 @@ const styles = StyleSheet.create({
         height: 40,
         fontSize: 16,
         color: "#333",
-      },
+    },
     icon: {
-      marginRight: 8,
+        marginRight: 8,
     },
     searchInput: {
         flex: 1,
@@ -238,11 +252,11 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
     },
     addPersonText: {
-      textAlign: 'center',
-      color: '#ffffff',
-      fontSize: 20,
-      fontWeight: '600',
-      fontFamily: 'NanumSquareRoundEB',
+        textAlign: 'center',
+        color: '#ffffff',
+        fontSize: 20,
+        fontWeight: '600',
+        fontFamily: 'NanumSquareRoundEB',
     },
     add_person_button: {
         backgroundColor: '#41BA6B',
@@ -259,8 +273,8 @@ const styles = StyleSheet.create({
         shadowRadius: 3.84,
     },
     buttonText: {
-      fontFamily: 'NanumSquareRoundB',
-      fontWeight: '600',
+        fontFamily: 'NanumSquareRoundB',
+        fontWeight: '600',
     },
     box: {
         backgroundColor: 'white',
@@ -338,10 +352,10 @@ const styles = StyleSheet.create({
         marginLeft: 12,
     },
     contactName: {
-      fontFamily: 'NanumSquareRoundEB',
-      fontSize: 18,
-      fontWeight: '600',
-      marginBottom: 4,
+        fontFamily: 'NanumSquareRoundEB',
+        fontSize: 18,
+        fontWeight: '600',
+        marginBottom: 4,
     },
     contactPhone: {
         fontFamily: 'NanumSquareRoundR',

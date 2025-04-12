@@ -11,7 +11,7 @@ import {
 } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import * as Font from 'expo-font';
+import useFonts from '../hooks/useFonts';
 
 export default function LoginScreen({ navigation }) {
   const [userInfo, setUserInfo] = useState(null);
@@ -22,7 +22,6 @@ export default function LoginScreen({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false); // 모달 상태 관리
   const [isRemembered, setIsRemembered] = useState(false); // 로그인 상태 유지
   const [forgotPasswordVisible, setForgotPasswordVisible] = useState(false); // 비밀번호 재설정 모달 상태 관리
-  const [fontsLoaded, setFontsLoaded] = useState(false);
   // const { promptAsync, handleGoogleLogin, response } = useGoogleAuth();
 
   useEffect(() => {
@@ -36,29 +35,12 @@ export default function LoginScreen({ navigation }) {
     loadEmail();
   }, []);
 
-  useEffect(() => {
-    const loadFonts = async () => {
-      try {
-        await Font.loadAsync({
-          NanumSquareRoundEB: require('../../assets/fonts/NanumSquareRoundOTFEB.otf'),
-          NanumSquareRoundB: require('../../assets/fonts/NanumSquareRoundOTFB.otf'),
-          NanumSquareRoundR: require('../../assets/fonts/NanumSquareRoundOTFR.otf'),
-          NanumSquareRoundL: require('../../assets/fonts/NanumSquareRoundOTFL.otf'),
-        });
-        setFontsLoaded(true);
-      } catch (error) {
-        console.error('Font loading error:', error);
-      }
-    };
-  
-    loadFonts();
-  }, []);
-  
+  const fontsLoaded = useFonts();
+
 
   if (!fontsLoaded){
-    return <View><Text>Loading fonts...</Text></View>;
+    return null;
   }
-
   // 로그인 상태 유지 데이터 저장 함수
   const saveLoginState = async (userCredential) => {
     if (isRemembered) {
@@ -174,8 +156,8 @@ export default function LoginScreen({ navigation }) {
           resizeMode="cover">
           <Text style={styles.title}>SayHello</Text>
           <Image
-            source={require('../../assets/bichon.png')} // 캐릭터 이미지 경로
-            style={styles.characterImage}
+            source={require('../../assets/logo_image.png')} // 캐릭터 이미지 경로
+            style={styles.logoImage}
             resizeMode="contain"
           />
           <Text style={styles.subtitle}>
@@ -407,13 +389,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#41BA6B",
     flex: 1,
   },
-  characterImage: {
+  logoImage: {
     position: 'absolute', // 독립적인 레이어로 설정
-    top: '50%',
-    left: '60%',
-    width: 60, // 이미지 너비
-    height: 60, // 이미지 높이
-    opacity: 0.7, 
+    top: '45%',
+    left: '55%',
+    width: 45, // 이미지 너비
+    height: 45, // 이미지 높이
+    opacity: 1, 
   },
   container: {
     justifyContent: 'center',

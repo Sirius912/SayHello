@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
         flex: 1,
         borderRadius: 8,
         overflow: "hidden",
-        paddingHorizontal: 10,
+        marginBottom: 10,
     },
     markerContainer: {
         backgroundColor: "#fff",
@@ -86,5 +86,4 @@ const styles = StyleSheet.create({
     currentUserText: {
         color: "#fff",
     },
-
 })

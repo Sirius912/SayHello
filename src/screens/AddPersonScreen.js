@@ -19,11 +19,16 @@ export default function AddPersonScreen({ navigation }) {
   const [imageUri, setImageUri] = useState(null); // 이미지 URI 상태 추가
   const [isModalVisible, setModalVisible] = useState(false); // 모달 상태 관리
   const fontsLoaded = useFonts();
-  
-  if (!fontsLoaded){
+
+  if (!fontsLoaded) {
     return null;
   }
-
+  const handlePickImage = async () => {
+    const uri = await pickImage();
+    if (uri) {
+      setImageUri(uri);
+    }
+  };
   // 저장 버튼 핸들러
   const handleSave = async () => {
     const auth = getAuth();
@@ -52,7 +57,6 @@ export default function AddPersonScreen({ navigation }) {
         imageUri: imageUri || 'default_image_url',
       });
       console.log(imageUri);
-      console.log(contactTerm);
       Alert.alert('알림', '지인이 성공적으로 추가되었습니다.');
       navigation.goBack();
     } catch (error) {
@@ -73,7 +77,7 @@ export default function AddPersonScreen({ navigation }) {
         <View style={styles.screen}>
           {/* 프로필 이미지 영역*/}
           <View style={styles.profile_image_container}>
-            <TouchableOpacity onPress={pickImage}>
+            <TouchableOpacity onPress={handlePickImage}>
               {imageUri ? (
                 <Image source={{ uri: imageUri }} style={styles.profile_image} />
               ) : (
@@ -254,7 +258,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   buttonText: {
-    fontFamily:'NanumSquareRoundB',
+    fontFamily: 'NanumSquareRoundB',
     fontWeight: '600',
   },
   divider: {
@@ -278,12 +282,12 @@ const styles = StyleSheet.create({
   profile_image: {
     width: 100,
     height: 100,
-    borderRadius: 50,
+    borderRadius: 40,
   },
   profile_placeholder: {
     width: 100,
     height: 100,
-    borderRadius: 50,
+    borderRadius: 40,
     backgroundColor: '#ddd',
     justifyContent: 'center',
     alignItems: 'center',
