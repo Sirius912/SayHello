@@ -54,7 +54,7 @@ export default function AddPersonScreen({ navigation }) {
         healthInfo: selectedHealthInfo || 'None',
         relationship: selectedRelationship || 'ETC',
         contactTerm: selectedContactTerm || '1개월',
-        imageUri: imageUri || 'default_image_url',
+        image: imageUri || 'default_image_url',
       });
       console.log(imageUri);
       Alert.alert('알림', '지인이 성공적으로 추가되었습니다.');

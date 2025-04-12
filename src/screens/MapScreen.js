@@ -86,7 +86,9 @@ export default function MapScreen() {
         id: doc.id,
         name: doc.data().name || "No Name",
         image: doc.data().image || require('../../assets/default.jpg'),
+        address: doc.data().address || "No Address",
       }));
+      console.log(contactsData),
       setContacts(contactsData);
     });
 

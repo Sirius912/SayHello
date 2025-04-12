@@ -2,7 +2,8 @@ import React from "react";
 import { Text, View, StyleSheet } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 
-export default function MapComponent({ location,
+export default function MapComponent({ 
+    location,
     selectedMarker,
     filteredMarkers,
     bottomSheetModalRef,
