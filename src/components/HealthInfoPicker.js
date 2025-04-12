@@ -17,29 +17,29 @@ const HealthInfoPicker = ({ onSelect }) => {
   ]);
 
   return (
-<View style={{ zIndex: 1000 }}>
-  <DropDownPicker
-    open={open}
-    value={value}
-    items={items}
-    setOpen={setOpen}
-    setValue={(val) => {
-      setValue(val);
-      onSelect(val);
-    }}
-    setItems={setItems}
-    placeholder="건강 정보 선택"
-    style={{
-      height: 40,
-      borderColor: "#ccc",
-      borderRadius: 10,
-    }}
-    containerStyle={{
-      marginBottom: 10,
-    }}
-    nestedScrollEnabled={true}  // 핵심!
-  />
-</View>
+    <View style={{ zIndex: 1000 }}>
+      <DropDownPicker
+        open={open}
+        value={value}
+        items={items}
+        setOpen={setOpen}
+        setValue={(val) => {
+          setValue(val);
+          onSelect(val);
+        }}
+        setItems={setItems}
+        placeholder="건강 정보 선택"
+        style={{
+          height: 40,
+          borderColor: "#ccc",
+          borderRadius: 10,
+        }}
+        containerStyle={{
+          marginBottom: 10,
+        }}
+        nestedScrollEnabled={true}  // 핵심!
+      />
+    </View>
 
   );
 };

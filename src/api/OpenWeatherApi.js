@@ -1,6 +1,5 @@
 import axios from "axios";
-
-const API_KEY = "153b735199ce98f4dbb364ac03613edf";
+import { OPENWEATHER_API_KEY } from '@env';
 
 export const fetchWeatherData = async (latitude, longitude) => {
   try {
@@ -10,7 +9,7 @@ export const fetchWeatherData = async (latitude, longitude) => {
         lat: latitude,
         lon: longitude,
         units: "metric",
-        appid: API_KEY,
+        appid: OPENWEATHER_API_KEY,
       },
     });
     return response.data;

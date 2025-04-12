@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Alert, Modal, ImageBackground } from 'react-native';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../api/firebase'; // Firebase 설정 파일
-import LocationPicker from '../api/LocationPicker';
-import HealthInfoPicker from '../api/HealthInfoPicker';
+import HealthInfoPicker from '../components/HealthInfoPicker';
 import { getAuth } from 'firebase/auth';
+import AddressSearch from '../components/AddressSearch';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { pickImage } from "../utils/imagePicker";
+import { Feather } from '@expo/vector-icons';
 
 export default function EditPersonScreen({ route, navigation }) {
     const { contactId } = route.params; // PeopleScreen에서 전달받은 연락처 ID
@@ -15,80 +18,83 @@ export default function EditPersonScreen({ route, navigation }) {
     const [selectedRelationship, setSelectedRelationship] = useState(null);
     const [selectedContactTerm, setSelectedContactTerm] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isModalVisible, setModalVisible] = useState(false); // 모달 상태 관리
+    const [imageUri, setImageUri] = useState(null);
 
     // Firestore에서 연락처 데이터 불러오기
     useEffect(() => {
         const fetchContact = async () => {
-          const auth = getAuth();
-          const user = auth.currentUser;
-      
-          if (!user) {
-            Alert.alert('오류', '로그인이 필요합니다.');
-            return;
-          }
-      
-          const userId = user.uid;
-          try {
-            const docRef = doc(db, `users/${userId}/contacts`, contactId);
-            const docSnap = await getDoc(docRef);
-            // console.log("Fetching contact:", contactId);
-            // console.log("Document path:", `users/${user.uid}/contacts/${contactId}`);
-            if (docSnap.exists()) {
-              const data = docSnap.data();
-              setName(data.name);
-              setPhoneNumber(data.phone);
-              setSelectedLocation(data.location);
-              setSelectedHealthInfo(data.healthInfo);
-              setSelectedRelationship(data.relationship);
-              setSelectedContactTerm(data.contactTerm.split(', '));
-            } else {
-              Alert.alert('오류', '문서를 찾을 수 없습니다.');
+            const auth = getAuth();
+            const user = auth.currentUser;
+
+            if (!user) {
+                Alert.alert('오류', '로그인이 필요합니다.');
+                return;
             }
-          } catch (error) {
-            console.error('Error fetching contact:', error);
-            Alert.alert('오류', '데이터를 불러오는 데 실패했습니다.');
-          } finally {
-            setIsLoading(false); // 로딩 상태 해제
-          }
+
+            const userId = user.uid;
+            try {
+                const docRef = doc(db, `users/${userId}/contacts`, contactId);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    setName(data.name);
+                    setPhoneNumber(data.phone);
+                    setSelectedLocation(data.location);
+                    setSelectedHealthInfo(data.healthInfo);
+                    setSelectedRelationship(data.relationship);
+                    setSelectedContactTerm(data.contactTerm.split(', '));
+                    setImageUri(data.imageUri);
+                    // console.log("Fetched image URI:", data.imageUri);
+                } else {
+                    Alert.alert('오류', '문서를 찾을 수 없습니다.');
+                }
+            } catch (error) {
+                console.error('Error fetching contact:', error);
+                Alert.alert('오류', '데이터를 불러오는 데 실패했습니다.');
+            } finally {
+                setIsLoading(false);
+            }
         };
-      
+
         fetchContact();
-      }, [contactId]);
+    }, [contactId]);
 
     // 저장 버튼 핸들러
     const handleSave = async () => {
         const auth = getAuth();
         const user = auth.currentUser;
-      
+
         if (!user) {
-          Alert.alert('오류', '로그인이 필요합니다.');
-          return;
+            Alert.alert('오류', '로그인이 필요합니다.');
+            return;
         }
-      
+
         const userId = user.uid;
-      
+
         if (!name || !phoneNumber) {
-          Alert.alert('오류', '이름과 전화번호는 필수 입력 항목입니다.');
-          return;
+            Alert.alert('오류', '이름과 전화번호는 필수 입력 항목입니다.');
+            return;
         }
-      
+
         try {
-          const docRef = doc(db, `users/${userId}/contacts`, contactId);
-          await updateDoc(docRef, {
-            name,
-            phone: phoneNumber,
-            location: selectedLocation,
-            healthInfo: selectedHealthInfo,
-            relationship: selectedRelationship,
-            contactTerm: selectedContactTerm.join(', '),
-          });
-          Alert.alert('성공', '변경 사항이 저장되었습니다.');
-          navigation.goBack();
+            const docRef = doc(db, `users/${userId}/contacts`, contactId);
+            await updateDoc(docRef, {
+                name,
+                phone: phoneNumber,
+                location: selectedLocation,
+                healthInfo: selectedHealthInfo,
+                relationship: selectedRelationship,
+                contactTerm: selectedContactTerm.join(', '),
+                imageUri: imageUri,
+            });
+            Alert.alert('성공', '변경 사항이 저장되었습니다.');
+            navigation.goBack();
         } catch (error) {
-          console.error('Error updating document:', error);
-          Alert.alert('오류', '저장에 실패했습니다.');
+            console.error('Error updating document:', error);
+            Alert.alert('오류', '저장에 실패했습니다.');
         }
-      };
+    };
 
     if (isLoading) {
         return (
@@ -99,182 +105,304 @@ export default function EditPersonScreen({ route, navigation }) {
     }
 
     return (
-        <View style={styles.screen}>
-            {/* 이름 입력 */}
-            <View style={styles.type_view}>
-                <Text style={styles.text1}>이름</Text>
-                <TextInput
-                    style={styles.type_input}
-                    placeholder='이름을 입력하세요.'
-                    value={name}
-                    onChangeText={setName}
-                />
-            </View>
-            <View style={styles.divider}></View>
-
-            {/* 전화번호 입력 */}
-            <View style={styles.type_view}>
-                <Text style={styles.text1}>전화번호</Text>
-                <TextInput
-                    style={styles.type_input}
-                    placeholder='전화번호를 입력하세요.'
-                    value={phoneNumber}
-                    onChangeText={setPhoneNumber}
-                    keyboardType="phone-pad"
-                />
-            </View>
-            <View style={styles.divider}></View>
-
-            {/* 위치 선택 */}
-            <View style={styles.type_view}>
-                <Text style={styles.text1}>지역</Text>
-                <LocationPicker 
-                    onSelect={setSelectedLocation} 
-                    initialValue={selectedLocation}
-                />
-            </View>
-            <View style={styles.divider}></View>
-
-            {/* 관계 선택 */}
-            <View>
-                <Text style={styles.sectionTitle}>관계</Text>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                    {['친구', '가족', '직장', '기타'].map((item) => (
-                        <TouchableOpacity
-                            key={item}
-                            style={[
-                                styles.option,
-                                selectedRelationship === item && styles.selectedButton
-                            ]}
-                            onPress={() => setSelectedRelationship(item)}
-                        >
-                            <Text style={[
-                                styles.buttonText,
-                                selectedRelationship === item && styles.selectedText
-                            ]}>
-                                {item}
-                            </Text>
+        <SafeAreaView edges={['top']} style={styles.safeArea}>
+            <ScrollView showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+                <ImageBackground
+                    source={require('../../assets/headerTab_round.png')}
+                    style={{ width: '100%', height: 150, justifyContent: 'center', alignItems: 'center' }}
+                    resizeMode="cover">
+                    <Text style={styles.title}>프로필 수정</Text>
+                </ImageBackground>
+                <View style={styles.screen}>
+                    {/* 프로필 이미지 영역*/}
+                    <View style={styles.profile_image_container}>
+                        <TouchableOpacity onPress={pickImage}>
+                            {imageUri ? (
+                                <Image source={{ uri: imageUri }} style={styles.profile_image} />
+                            ) : (
+                                <View style={styles.profile_placeholder}>
+                                    <Feather name="camera" size={32} color="black" />
+                                </View>
+                            )}
                         </TouchableOpacity>
-                    ))}
-                </ScrollView>
-            </View>
-            <View style={styles.divider}></View>
+                    </View>
 
-            {/* 건강 정보 선택 */}
-            <View style={styles.type_view}>
-                <Text style={styles.text1}>건강 정보</Text>
-                <HealthInfoPicker 
-                    onSelect={setSelectedHealthInfo} 
-                    initialValue={selectedHealthInfo}
-                />
-            </View>
-            <View style={styles.divider}></View>
+                    <View style={styles.divider}></View>
 
-            {/* 연락 주기 선택 */}
-            <View>
-                <Text style={styles.sectionTitle}>연락 주기</Text>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                    {['1일', '3일', '1주', '1개월', '3개월'].map((item) => (
-                        <TouchableOpacity
-                            key={item}
-                            style={[
-                                styles.option,
-                                selectedContactTerm.includes(item) && styles.selectedButton
-                            ]}
-                            onPress={() => toggleContactTerm(item)}
-                        >
-                            <Text style={[
-                                styles.buttonText,
-                                selectedContactTerm.includes(item) && styles.selectedText
-                            ]}>
-                                {item}
+                    {/* 이름 입력 섹션 */}
+                    <View style={styles.type_view}>
+                        <View style={{ flex: 1, justifyContent: 'center' }}>
+                            <Text style={styles.text1}>이름</Text>
+                        </View>
+                        <View style={{ flex: 2, justifyContent: 'center' }}>
+                            <TextInput
+                                style={styles.type_input}
+                                placeholder={name}
+                                value={name}
+                                onChangeText={setName}
+                            />
+                        </View>
+                    </View>
+                    <View style={styles.divider}></View>
+
+                    {/* 전화번호 입력 섹션 */}
+                    <View style={styles.type_view}>
+                        <View style={{ flex: 1, justifyContent: 'center' }}>
+                            <Text style={styles.text1}>전화번호</Text>
+                        </View>
+                        <View style={{ flex: 2, justifyContent: 'center' }}>
+                            <TextInput
+                                style={styles.type_input}
+                                placeholder='전화번호를 입력하세요.'
+                                value={phoneNumber}
+                                onChangeText={setPhoneNumber}
+                                keyboardType="phone-pad"
+                            />
+                        </View>
+                    </View>
+                    <View style={styles.divider}></View>
+
+                    {/* 지역 선택 섹션 */}
+                    <View style={styles.inputSection}>
+                        <View style={{ flex: 1, justifyContent: 'center' }}>
+                            <Text style={styles.label}>주소</Text>
+                        </View>
+                        <View style={styles.inputRow}>
+                            <Text style={styles.inputText}>
+                                {selectedLocation ? selectedLocation.address : '주소를 선택하세요'}
                             </Text>
-                        </TouchableOpacity>
-                    ))}
-                </ScrollView>
-            </View>
+                            <TouchableOpacity
+                                style={styles.searchButton}
+                                onPress={() => setModalVisible(true)}
+                            >
+                                <Text style={styles.searchButtonText}>주소 검색</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    <View style={styles.divider}></View>
 
-            {/* 저장 버튼 */}
-            <View style={styles.saveButtonContainer}>
-                <TouchableOpacity
-                    style={styles.saveButton}
-                    onPress={handleSave}
-                >
-                    <Text style={styles.saveButtonText}>변경 사항 저장</Text>
-                </TouchableOpacity>
-            </View>
-        </View>
+                    {/* 모달 */}
+                    <Modal visible={isModalVisible} animationType="slide">
+                        <AddressSearch
+                            onSelectAddress={(address) => {
+                                setSelectedLocation(address); // 선택된 주소 저장
+                                setModalVisible(false); // 모달 닫기
+                            }}
+                        />
+                    </Modal>
+                    {/* 관계 선택 섹션 */}
+                    <View>
+                        <Text style={{ fontSize: 17, fontWeight: 'bold', marginVertical: 9 }}>관계</Text>
+                        <ScrollView style={{ marginVertical: 7 }} horizontal={true} showsHorizontalScrollIndicator={false}>
+                            <View style={{ flexDirection: 'row' }}>
+                                {['친구', '가족', '직장', '기타'].map((item) => (
+                                    <TouchableOpacity
+                                        key={item}
+                                        style={[
+                                            styles.option,
+                                            selectedRelationship === item && styles.selectedButton
+                                        ]}
+                                        onPress={() => setSelectedRelationship(item)}
+                                    >
+                                        <Text style={[
+                                            styles.buttonText,
+                                            selectedRelationship === item && styles.selectedText
+                                        ]}>
+                                            {item}
+                                        </Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                        </ScrollView>
+                    </View>
+                    <View style={styles.divider}></View>
+
+                    {/* 건강 정보 선택 섹션 */}
+                    <View style={styles.type_view}>
+                        <View style={{ flex: 1, justifyContent: 'center' }}>
+                            <Text style={styles.text1}>건강 정보</Text>
+                        </View>
+                        <View style={{ flex: 2, justifyContent: 'center' }}>
+                            <HealthInfoPicker onSelect={setSelectedHealthInfo} />
+                        </View>
+                    </View>
+                    <View style={styles.divider}></View>
+
+                    {/* 연락 주기 선택 섹션 */}
+                    <View>
+                        <Text style={{ fontSize: 17, fontWeight: 'bold', marginVertical: 9 }}>연락 주기</Text>
+                        <ScrollView style={{ marginVertical: 7 }} horizontal={true} showsHorizontalScrollIndicator={false}>
+                            <View style={{ flexDirection: 'row' }}>
+                                {['1일', '3일', '1주', '1개월', '3개월'].map((item) => (
+                                    <TouchableOpacity
+                                        key={item}
+                                        style={[
+                                            styles.option,
+                                            selectedContactTerm == item && styles.selectedButton
+                                        ]}
+                                        onPress={() => setSelectedContactTerm(item)}
+                                    >
+                                        <Text style={[
+                                            styles.buttonText,
+                                            selectedContactTerm == item && styles.selectedText
+                                        ]}>
+                                            {item}
+                                        </Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                        </ScrollView>
+
+                    </View>
+
+                    {/* 저장 버튼 (기존 디자인 유지) */}
+                    <View style={styles.add_person_view}>
+                        <TouchableOpacity
+                            style={styles.add_person_button}
+                            onPress={handleSave}
+                        >
+                            <Text style={styles.saveButtonText}>저장하기</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </ScrollView>
+
+        </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
-    screen: {
-        flex: 1,
-        padding: 20,
-        backgroundColor: '#fff',
-    },
-    loadingContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    type_view: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginVertical: 10,
-    },
-    text1: {
-        flex: 1,
-        fontSize: 16,
+    title: {
+        fontFamily: 'NanumSquareRoundEB',
+        fontSize: 24,
         fontWeight: 'bold',
+        marginBottom: 10,
+        marginTop: 60,
     },
-    type_input: {
-        flex: 2,
-        borderBottomWidth: 1,
-        borderBottomColor: '#ddd',
-        paddingVertical: 5,
+    safeArea: {
+        backgroundColor: "#41BA6B",
+        flex: 1,
+    },
+    add_person_view: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        padding: 30,
+        backgroundColor: '#ffffff'
+    },
+    add_person_button: {
+        backgroundColor: '#41BA6B',
+        padding: 8,
+        borderRadius: 10,
+        paddingHorizontal: 18,
+        justifyContent: 'center'
+    },
+    buttonText: {
+        fontFamily: 'NanumSquareRoundB',
+        fontWeight: '600',
     },
     divider: {
         height: 1,
-        backgroundColor: '#eee',
-        marginVertical: 15,
-    },
-    sectionTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        marginBottom: 10,
+        backgroundColor: '#ddd',
+        marginVertical: 7,
     },
     option: {
-        paddingVertical: 8,
-        paddingHorizontal: 15,
-        borderRadius: 20,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        marginRight: 10,
-    },
-    selectedButton: {
-        backgroundColor: '#000',
-        borderColor: '#000',
-    },
-    selectedText: {
-        color: '#fff',
-    },
-    buttonText: {
-        fontSize: 14,
-    },
-    saveButtonContainer: {
-        marginTop: 30,
-        paddingHorizontal: 20,
-    },
-    saveButton: {
-        backgroundColor: '#000',
-        paddingVertical: 15,
+        padding: 5,
+        alignItems: 'center',
         borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#cccccc',
+        marginHorizontal: 4,        // space between butons
+        paddingHorizontal: 12       // space between text and border
+    },
+    profile_image_container: {
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    profile_image: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+    },
+    profile_placeholder: {
+        width: 100,
+        height: 100,
+        borderRadius: 40,
+        backgroundColor: '#ddd',
+        justifyContent: 'center',
         alignItems: 'center',
     },
-    saveButtonText: {
-        color: '#fff',
+    selectedButton: {
+        backgroundColor: '#41BA6B',
+    },
+    selectedText: {
+        fontFamily: 'NanumSquareRoundB',
+        color: 'white',
+    },
+    screen: {
+        flex: 1,
+        backgroundColor: '#fff',
+        paddingLeft: 20,
+        paddingRight: 20,
+        paddingBottom: 20,
+
+    },
+    text1: {
+        fontFamily: 'NanumSquareRoundEB',
+        fontSize: 17,
+        fontWeight: 'bold',
+    },
+    type_input: {
+        fontFamily: 'NanumSquareRoundR',
+        marginVertical: 7,
+        fontSize: 16,
+        color: 'gray'
+    },
+    type_view: {
+        flexDirection: 'row',
+    },
+    inputSection: {
+        flexDirection: 'row'
+    },
+    label: {
+        fontFamily: 'NanumSquareRoundEB',
         fontSize: 16,
         fontWeight: 'bold',
+        marginTop: 10,
+        marginBottom: 10,
+    },
+    inputRow: {
+        flex: 2,
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 8,
+        paddingHorizontal: 12,
+        paddingVertical: 10,
+        backgroundColor: '#f9f9f9',
+        alignSelf: 'flex-end',
+    },
+    inputText: {
+        flex: 1,
+        fontSize: 15,
+        color: '#333',
+    },
+    searchButton: {
+        marginLeft: 8,
+        backgroundColor: '#41BA6B',
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+        borderRadius: 6,
+    },
+    searchButtonText: {
+        fontFamily: 'NanumSquareRoundEB',
+        color: '#fff',
+        fontSize: 14,
+        fontWeight: '600',
+    },
+    saveButtonText: {
+        color: '#ffffff',
+        fontSize: 20,
+        fontFamily: 'NanumSquareRoundEB',
     },
 });

@@ -1,65 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, SafeAreaView, StatusBar, } from "react-native";
-import * as Font from 'expo-font';
-// 각 카테고리별 메시지 정의
-const messages = {
-  "재해": [
-    {
-      id: 1,
-      image: require("../../assets/earthquake.jpg"),
-      sender: "할아버지",
-      title: "지진 7.1도",
-      date: "2025-03-01",
-      desc: "강한 지진이 감지되었습니다. 즉시 안전한 장소로 대피하시고 뉴스를 확인하세요.",
-    },
-    {
-      id: 2,
-      image: require("../../assets/flood.jpg"),
-      sender: "제인",
-      title: "홍수",
-      date: "2025-02-28",
-      desc: "폭우로 인해 심각한 홍수가 발생했습니다. 저지대를 피해 높은 지대로 이동하세요.",
-    },
-  ],
-  "날씨": [
-    {
-      id: 3,
-      image: require("../../assets/snow.jpg"),
-      sender: "아빠",
-      title: "폭설 경보",
-      date: "2025-03-02",
-      desc: "(100mm 이상의 강수량 예상)",
-    },
-  ],
-  "미세먼지": [
-    {
-      id: 4,
-      image: require("../../assets/dust.jpg"),
-      sender: "보건소",
-      title: "미세먼지 경보",
-      date: "2025-03-03",
-      desc: "(야외 활동을 최소화하세요)",
-    },
-  ],
-};
+import useFonts from '../hooks/useFonts';
+import { info } from "../utils/data";
 
 export default function WhatsUpScreen({ navigation }) {
-  const [fontsLoaded, setFontsLoaded] = useState(false);
+  const fontsLoaded = useFonts();
   const [selectedCategory, setSelectedCategory] = useState("재해");
-
-  useEffect(() => {
-      async function loadFonts() {
-        await Font.loadAsync({
-          NanumSquareRoundEB: require('../../assets/fonts/NanumSquareRoundOTFEB.otf'), // 가장 굵게
-          NanumSquareRoundB: require('../../assets/fonts/NanumSquareRoundOTFB.otf'), // 두껍게
-          NanumSquareRoundR: require('../../assets/fonts/NanumSquareRoundOTFR.otf'), // 보통
-          NanumSquareRoundL: require('../../assets/fonts/NanumSquareRoundOTFL.otf'), // 얇게
-          GeumUnBohwa: require('../../assets/fonts/GeumUnBohwa.ttf'),
-        });
-        setFontsLoaded(true);
-      }
-      loadFonts();
-  }, []);
 
   if (!fontsLoaded){
     return null;
@@ -95,7 +41,7 @@ export default function WhatsUpScreen({ navigation }) {
           ))}
         </View>
         <ScrollView contentContainerStyle={styles.container}>
-          {messages[selectedCategory]?.map((msg) => (
+          {info[selectedCategory]?.map((msg) => (
             <View key={msg.id} style={styles.cardRowLayout}>
               <View style={styles.cardLeft}>
                 <Image source={msg.image} style={styles.cardImageRow} />

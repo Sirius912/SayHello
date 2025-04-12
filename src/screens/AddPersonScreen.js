@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Image, Alert, Modal, SafeAreaView, ImageBackground, FlatList } from 'react-native';
-import HealthInfoPicker from "../api/HealthInfoPicker";
+import HealthInfoPicker from "../components/HealthInfoPicker";
 import { db } from '../api/firebase'; // Firebase 설정 파일 가져오기
 import { collection, addDoc } from 'firebase/firestore';
 import { getAuth } from "firebase/auth";
-import * as ImagePicker from 'expo-image-picker'; // 이미지 선택 라이브러리
+import { pickImage } from "../utils/imagePicker";
 import { Feather } from '@expo/vector-icons';
-import AddressSearch from './AddressSearch';
-import * as Font from 'expo-font';
+import AddressSearch from '../components/AddressSearch';
+import useFonts from '../hooks/useFonts';
 
 export default function AddPersonScreen({ navigation }) {
   const [selectedLocation, setSelectedLocation] = useState(null);
@@ -18,43 +18,11 @@ export default function AddPersonScreen({ navigation }) {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [imageUri, setImageUri] = useState(null); // 이미지 URI 상태 추가
   const [isModalVisible, setModalVisible] = useState(false); // 모달 상태 관리
-  const [fontsLoaded, setFontsLoaded] = useState(false);
-
-  useEffect(() => {
-    async function loadFonts() {
-      await Font.loadAsync({
-        NanumSquareRoundEB: require('../../assets/fonts/NanumSquareRoundOTFEB.otf'), // 가장 굵게
-        NanumSquareRoundB: require('../../assets/fonts/NanumSquareRoundOTFB.otf'), // 두껍게
-        NanumSquareRoundR: require('../../assets/fonts/NanumSquareRoundOTFR.otf'), // 보통
-        NanumSquareRoundL: require('../../assets/fonts/NanumSquareRoundOTFL.otf'), // 얇게
-      });
-      setFontsLoaded(true);
-    }
-    loadFonts();
-  }, []);
+  const fontsLoaded = useFonts();
   
   if (!fontsLoaded){
     return null;
   }
-  
-  const pickImage = async () => {
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (permissionResult.granted === false) {
-      Alert.alert("알림", "사진 접근 권한이 필요합니다.");
-      return;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setImageUri(result.assets[0].uri); // 선택한 이미지 URI 저장
-    }
-  };
 
   // 저장 버튼 핸들러
   const handleSave = async () => {
@@ -81,8 +49,10 @@ export default function AddPersonScreen({ navigation }) {
         healthInfo: selectedHealthInfo || 'None',
         relationship: selectedRelationship || 'ETC',
         contactTerm: selectedContactTerm || '1개월',
-        image: imageUri || 'default_image_url',
+        imageUri: imageUri || 'default_image_url',
       });
+      console.log(imageUri);
+      console.log(contactTerm);
       Alert.alert('알림', '지인이 성공적으로 추가되었습니다.');
       navigation.goBack();
     } catch (error) {
@@ -248,7 +218,7 @@ export default function AddPersonScreen({ navigation }) {
               style={styles.add_person_button}
               onPress={handleSave}
             >
-              <Text style={styles.saveButtonText}>저장하기</Text>
+              <Text style={styles.saveButtonText}>등록하기</Text>
             </TouchableOpacity>
           </View>
         </View>

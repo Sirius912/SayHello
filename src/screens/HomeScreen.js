@@ -17,8 +17,8 @@ import { collection, onSnapshot, doc } from "firebase/firestore";
 import { db } from "../api/firebase";
 import { getAuth } from "firebase/auth";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ImageBackground } from 'react-native';
-import * as Font from 'expo-font';
+import useFonts from '../hooks/useFonts';
+import { newsData, otherUsers } from "../utils/data";
 
 export default function HomeScreen() {
   const navigation = useNavigation();
@@ -26,7 +26,7 @@ export default function HomeScreen() {
   const [setLoading] = useState(true);
   const [contacts, setContacts] = useState([]);
   const [currentUserNickname, setCurrentUserNickname] = useState("");
-  const [fontsLoaded, setFontsLoaded] = useState(false);
+  const fontsLoaded = useFonts();
 
   // 현재 위치 가져오기
   useEffect(() => {
@@ -86,73 +86,12 @@ export default function HomeScreen() {
     }; // 컴포넌트 언마운트 시 구독 해제
   }, []);
 
-  useEffect(() => {
-    async function loadFonts() {
-      await Font.loadAsync({
-        NanumSquareRoundEB: require('../../assets/fonts/NanumSquareRoundOTFEB.otf'), // 가장 굵게
-        NanumSquareRoundB: require('../../assets/fonts/NanumSquareRoundOTFB.otf'), // 두껍게
-        NanumSquareRoundR: require('../../assets/fonts/NanumSquareRoundOTFR.otf'), // 보통
-        NanumSquareRoundL: require('../../assets/fonts/NanumSquareRoundOTFL.otf'), // 얇게
-      });
-      setFontsLoaded(true);
-  }
-  loadFonts();
-  }, []);
-
-  if (!fontsLoaded){
-    return null;
-  }
-
-  const otherUsers = [
-    {
-      id: 1,
-      name: "할아버지",
-      latitudeOffset: 0.001,
-      longitudeOffset: -0.001,
-    },
-    {
-      id: 2,
-      name: "부모님",
-      latitudeOffset: -0.001,
-      longitudeOffset: 0.001,
-    },
-    {
-      id: 3,
-      name: "형",
-      latitudeOffset: 0.002,
-      longitudeOffset: -0.002,
-    },
-    {
-      id: 4,
-      name: "제인",
-      latitudeOffset: -0.002,
-      longitudeOffset: 0.002,
-    },
-  ];
-
-  const newsData = [
-    {
-      id: "1",
-      title: "지진 7.1",
-      sender: "할아버지",
-      image: require("../../assets/earthquake.jpg"),
-    },
-    {
-      id: "2",
-      title: "홍수",
-      sender: "제인",
-      image: require("../../assets/flood.jpg"),
-    },
-  ];
-
-  const isHorizontal = true; // 또는 false
-
   return (
     <SafeAreaView edges={['top']} style={styles.safeArea}>
       <View style={{ height: 60 }}>
         <Image
           source={require('../../assets/headerTab_double_v.png')}
-          style={{ width: '100%', flex: 1, justifyContent: 'center', alignItems: 'center' }}
+          style={{ width: '100%', flex: 1, justifyContent: 'center', alignItems: 'center'}}
         />
       </View>
       <ScrollView>
@@ -330,8 +269,6 @@ export default function HomeScreen() {
                 showsVerticalScrollIndicator={false}
               />
             </View>
-
-
           </View>
         </View>
       </ScrollView>
@@ -380,7 +317,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     borderWidth: 1,
     borderColor: "#ccc",
-    backgroundColor: '#E8F5E9',
+    backgroundColor: 'white',
     borderRadius: 20,
     marginHorizontal: 4,
     marginVertical: 10,

@@ -1,26 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Alert, Clipboard, SafeAreaView } from 'react-native';
-import * as Font from 'expo-font';
+import useFonts from '../hooks/useFonts';
+import { messages } from '../utils/data'; // 메시지 데이터 가져오기
 
 export default function MessageScreen() {
     const [selectedButton, setSelectedButton] = useState([]);
-    const [fontsLoaded, setFontsLoaded] = useState(false);
 
-    useEffect(() => {
-        async function loadFonts() {
-          await Font.loadAsync({
-            NanumSquareRoundEB: require('../../assets/fonts/NanumSquareRoundOTFEB.otf'), // 가장 굵게
-            NanumSquareRoundB: require('../../assets/fonts/NanumSquareRoundOTFB.otf'), // 두껍게
-            NanumSquareRoundR: require('../../assets/fonts/NanumSquareRoundOTFR.otf'), // 보통
-            NanumSquareRoundL: require('../../assets/fonts/NanumSquareRoundOTFL.otf'), // 얇게
-            GeumUnBohwa: require('../../assets/fonts/GeumUnBohwa.ttf'),
-            Mugunghwa: require('../../assets/fonts/radioFont.ttf'),
-          });
-          setFontsLoaded(true);
-        }
-        loadFonts();
-    }, []);
+    const fontsLoaded = useFonts();
 
     if (!fontsLoaded){
     return null;
@@ -30,30 +17,6 @@ export default function MessageScreen() {
         setSelectedButton(prev => prev === item ? null : item);
     };
 
-    const messages = {
-        '재해': `할아버지와 할머니께 😊
-지진 이후에 두 분 다 잘 계시죠? 많이 놀라셨을 텐데, 별일 없으셨길 정말 바라요!!
-오늘은 날씨가 좀 쌀쌀해요🥶 기온은 4도고, 비 올 확률은 2%밖에 안 되지만 습도가 68%라서 조금 습하게 느껴질 수도 있을 것 같아요.
-바람은 시속 2m로 살랑살랑 불고 있어요🍃 두 분 꼭 따뜻하게 입고 건강 잘 챙기세요🧣🧤
-항상 많이 사랑하고 곧 소식 들을 수 있으면 좋겠어요!💕
-몸 조심하시고 또 연락드릴게요! 😊💌`,
-
-        '날씨 보고': `할머니, 할아버지께 😊
-오늘의 날씨를 알려드립니다. 현재 기온은 18°C로 선선하며, 구름이 약간 낀 흐린 날씨입니다.☁
-강수 확률은 20%이며 미세먼지 수치는 '보통' 단계입니다. 산책하시기에 좋은 날씨지만, 가벼운 외투를 준비하시면 좋을 것 같습니다. 🥹
-항상 건강에 유의하시고, 다음에 뵐 때까지 행복한 일들만 가득하시길 바랍니다. 😊💌`,
-
-        '미세먼지': `사랑하는 할머니와 할아버지! 😊
-오늘 미세먼지 수치가 '나쁨' 수준으로 올라갔습니다. 외출 시 마스크를 꼭 착용하시고, 😷
-가능한 실내에서 보내시는 것이 좋을 것 같습니다. 공기청정기를 가동해두시고 창문은 닫아두세요. 🪟
-건강 관리에 특히 신경 써주시길 부탁드립니다. 항상 건강하세요! 😊💌`,
-
-        '없음': `사랑하는 할아버지, 😊
-항상 건강하신지요? 오늘은 특별한 소식 없이 안부를 전하고 싶어 편지를 씁니다. 
-요즘 날씨가 추워지고 있으니 감기 조심하시고, 건강 관리에 유의하세요.
-곧 찾아뵐 수 있기를 바라며, 그때까지 행복한 일들만 가득하시길 바랍니다.
-항상 건강하세요! 😊💌`
-    };
 
     const message = selectedButton ? messages[selectedButton] : "안부를 전달할 메시지 내용을 선택해주세요!";
 

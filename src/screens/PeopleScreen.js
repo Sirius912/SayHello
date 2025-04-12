@@ -5,7 +5,7 @@ import { collection, onSnapshot, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../api/firebase';
 import { getAuth } from 'firebase/auth';
 import { Swipeable } from 'react-native-gesture-handler';
-import * as Font from 'expo-font';
+import useFonts from '../hooks/useFonts';
 
 const PeopleScreen = ({ navigation }) => {
 
@@ -13,7 +13,7 @@ const PeopleScreen = ({ navigation }) => {
     const [filteredContacts, setFilteredContacts] = useState([]); // 필터링된 데이터
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedButton, setSelectedButton] = useState('전체'); // 기본값 '전체'
-    const [fontsLoaded, setFontsLoaded] = useState(false);
+    const fontsLoaded = useFonts();
 
     // Firestore 실시간 업데이트 설정
     useEffect(() => {
@@ -38,20 +38,6 @@ const PeopleScreen = ({ navigation }) => {
         });
 
         return () => unsubscribe(); // 컴포넌트 언마운트 시 구독 해제
-    }, []);
-
-    useEffect(() => {
-        async function loadFonts() {
-          await Font.loadAsync({
-            NanumSquareRoundEB: require('../../assets/fonts/NanumSquareRoundOTFEB.otf'), // 가장 굵게
-            NanumSquareRoundB: require('../../assets/fonts/NanumSquareRoundOTFB.otf'), // 두껍게
-            NanumSquareRoundR: require('../../assets/fonts/NanumSquareRoundOTFR.otf'), // 보통
-            NanumSquareRoundL: require('../../assets/fonts/NanumSquareRoundOTFL.otf'), // 얇게
-            GeumUnBohwa: require('../../assets/fonts/GeumUnBohwa.ttf'),
-          });
-          setFontsLoaded(true);
-        }
-        loadFonts();
     }, []);
 
     if (!fontsLoaded){
@@ -308,9 +294,9 @@ const styles = StyleSheet.create({
     photo: {
         width: 60,
         height: 60,
-        borderRadius: 35,
+        borderRadius: 20,
         borderWidth: 1,
-        borderColor: '#000000',
+        borderColor: 'white',
     },
     safeArea: {
         backgroundColor: "#41BA6B",
@@ -324,7 +310,7 @@ const styles = StyleSheet.create({
         color: 'white',
     },
     rightActions: {
-        backgroundColor: "#E8F5E9",
+        backgroundColor: "white",
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',

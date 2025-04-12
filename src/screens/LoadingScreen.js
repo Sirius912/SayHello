@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, SafeAreaView, Image } from 'react-native';
+import { View, StyleSheet, SafeAreaView, Image } from 'react-native';
 
 export default function LoadingScreen({ navigation }) {
   useEffect(() => {
