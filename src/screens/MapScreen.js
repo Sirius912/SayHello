@@ -13,6 +13,7 @@ import { collection, onSnapshot, doc } from "firebase/firestore";
 import { db } from "../api/firebase";
 import { getAuth } from 'firebase/auth';
 import * as Font from 'expo-font';
+import { Dropdown } from "react-native-element-dropdown";
 
 export default function MapScreen() {
   const [location, setLocation] = useState(null); // 현재 위치 저장
@@ -25,6 +26,8 @@ export default function MapScreen() {
   const [contacts, setContacts] = useState([]);
   const [fontsLoaded, setFontsLoaded] = useState(false);
   const bottomSheetModalRef = useRef(null);
+  const [filterValue, setFilterValue] = useState(null);
+  const [sortValue, setSortValue] = useState(null);
 
   // 샘플 데이터 (나중에 수정해야함)
   const markers = [
@@ -62,9 +65,44 @@ export default function MapScreen() {
     },
   ];
 
+  const filterOptions = [
+    { label: "모두 보기", value: "all" },
+    { label: "지진", value: "지진" },
+    { label: "홍수", value: "홍수" },
+    { label: "천둥", value: "천둥" },
+    { label: "폭염", value: "폭염" },
+  ];
+
+  const sortOptions = [
+    { label: "최신순", value: "latest" },
+    { label: "오래된순", value: "oldest" },
+  ];
+
   const filteredMarkers = markers.filter((marker) =>
     marker.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
+  
+  const handleFilterChange = (value) => {
+    setFilterValue(value);
+    if (value === "all") {
+      setFilteredMarkers(markers);
+    } else {
+      const filtered = markers.filter((marker) => marker.description === value);
+      setFilteredMarkers(filtered);
+    }
+  };
+
+  const handleSortChange = (value) => {
+    setSortValue(value);
+    const sorted = [...markers].sort((a, b) => {
+      if (value === "latest") {
+        return new Date(b.date) - new Date(a.date);
+      } else {
+        return new Date(a.date) - new Date(b.date);
+      }
+    });
+    setFilteredMarkers(sorted);
+  };
 
   useEffect(() => {
     (async () => {
@@ -182,6 +220,45 @@ export default function MapScreen() {
     "Clouds": "cloudy",
   }
 
+  const weatherDescriptions = {
+    "clear sky": "맑은 하늘",
+    "few clouds": "구름 조금",
+    "scattered clouds": "흩어진 구름",
+    "broken clouds": "조각 구름",
+    "overcast clouds": "흐린 구름",
+    "light rain": "약한 비",
+    "moderate rain": "보통 비",
+    "heavy intensity rain": "강한 비",
+    "very heavy rain": "매우 강한 비",
+    "extreme rain": "극심한 비",
+    "freezing rain": "얼어붙는 비",
+    "light intensity shower rain": "약한 소나기성 비",
+    "shower rain": "소나기성 비",
+    "heavy intensity shower rain": "강한 소나기성 비",
+    "ragged shower rain": "불규칙적인 소나기성 비",
+    "thunderstorm with light rain": "약한 비를 동반한 뇌우",
+    "thunderstorm with rain": "비를 동반한 뇌우",
+    "thunderstorm with heavy rain": "강한 비를 동반한 뇌우",
+    "light thunderstorm": "약한 뇌우",
+    "thunderstorm": "뇌우",
+    "heavy thunderstorm": "강한 뇌우",
+    "ragged thunderstorm": "불규칙한 뇌우",
+    "thunderstorm with light drizzle": "약한 이슬비를 동반한 뇌우",
+    "thunderstorm with drizzle": "이슬비를 동반한 뇌우",
+    "thunderstorm with heavy drizzle": "강한 이슬비를 동반한 뇌우",
+    "light snow": "약한 눈",
+    "snow": "눈",
+    "heavy snow": "많은 눈",
+    "sleet": "진눈깨비",
+    "light shower sleet": "약한 소나기성 진눈깨비",
+    "shower sleet": "소나기성 진눈깨비",
+    "light rain and snow": "약한 비와 눈",
+    "rain and snow": "비와 눈",
+    "light shower snow": "약한 소나기성 눈",
+    "shower snow": "소나기성 눈",
+    "heavy shower snow": "많은 소나기성 눈",
+  }
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff", }}>
       <BottomSheetModalProvider>
@@ -202,14 +279,26 @@ export default function MapScreen() {
           <View style={styles.filterSortRow}>
             <View style={styles.filterSortContainer}>
               {/* 필터 버튼 */}
-              <TouchableOpacity style={styles.filterButton}>
-                <Text style={styles.filterButtonText}>필터</Text>
-              </TouchableOpacity>
+              <Dropdown
+                data={filterOptions}
+                labelField="label"
+                valueField="value"
+                placeholder="필터"
+                value={filterValue}
+                onChange={(item) => handleFilterChange(item.value)}
+                style={styles.dropdown}
+              />
 
               {/* 정렬 버튼 */}
-              <TouchableOpacity style={styles.sortButton}>
-                <Text style={styles.sortButtonText}>정렬</Text>
-              </TouchableOpacity>
+              <Dropdown
+                data={sortOptions}
+                labelField="label"
+                valueField="value"
+                placeholder="정렬"
+                value={sortValue}
+                onChange={(item) => handleSortChange(item.value)}
+                style={styles.dropdown}
+              />
             </View>
 
             {/* 결과 개수 */}
@@ -295,7 +384,7 @@ export default function MapScreen() {
                             기온: {weatherData?.main?.temp ? `${Math.round(weatherData.main.temp)}°C` : "N/A"}
                           </Text>
                           <Text style={styles.weatherDetail}>
-                            날씨: {weatherData.weather[0].description}
+                            날씨: {weatherDescriptions[weatherData.weather[0].description]}
                           </Text>
                           <Text style={styles.weatherDetail}>
                             습도: {weatherData.main.humidity}%
@@ -377,7 +466,6 @@ const styles = StyleSheet.create({
   filterSortContainer: {
     flexDirection: 'row', // 필터와 정렬 버튼을 가로로 배치
     alignItems: 'center',
-    marginBottom: 10,
   },
   filterButton: {
     paddingHorizontal: 15,
@@ -404,9 +492,11 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   resultCount: {
-    fontSize: 14,
+    fontSize: 16,
     color: "#666",
+    fontWeight: "bold",
     marginRight: 10,
+    marginBottom: 10,
   },
   map: {
     flex: 0.6, // Marker 선택 시 지도 크기 조정
@@ -480,16 +570,28 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   selectButton: {
-    alignSelf: "flex-start",
+    // alignSelf: "",
     marginTop: 30,
     paddingVertical: 10,
     paddingHorizontal: 20,
-    backgroundColor: "#000",
+    backgroundColor: "#41BA6B",
     borderRadius: 5,
     marginLeft: 30,
   },
   selectButtonText: {
     color: "#fff",
     fontWeight: "bold",
+  },
+  dropdown: {
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    width: 75,
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    backgroundColor: "white",
+    borderRadius: 8,
+    marginRight: 10,
   },
 })

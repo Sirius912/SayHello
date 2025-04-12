@@ -37,6 +37,7 @@
     "react-native-chat-bubble": "^1.0.0",
     "react-native-dotenv": "^3.4.11",
     "react-native-dropdown-picker": "^5.4.6",
+    "react-native-element-dropdown": "^2.12.4",
     "react-native-geolocation-service": "^5.3.1",
     "react-native-gesture-handler": "~2.20.2",
     "react-native-maps": "^1.20.1",
