@@ -7,19 +7,15 @@ Organized by YONSEI University, The Korean Association for Policy Studies. Spons
 In a world where everything changes day by day, some people still spend their time feeling isolated. Our app was designed to help bridge that gap — enabling users to easily reach out to others nearby and foster real connections.
 
 
-## 📱 App Flow
-![Image](https://github.com/user-attachments/assets/84d61521-42c9-4cd1-941e-f9f678722e06)
-
-
 ## ⏲️ Development Period
 March 6, 2025 ~ April 13, 2025
 
 
-## 👨‍💻 About the Developer 
-- **Jieun Kang**: Front-end, Video editing
+## 👨‍💻 Team Members
+- **Jieun Kang**: Front-end, video editing
 - **Taehoo Kim**: Front-end, database
 - **Hyunji Shim**: Video editing
-- **Sunah Son**: UX UI Designer, Video editing
+- **Sunah Son**: UI/UX Designer, video editing
 
 
 ## 🛠️ Development Environment
@@ -27,7 +23,7 @@ March 6, 2025 ~ April 13, 2025
 - **Node.js**: v22.14.0
 - **Package Manager**: npm v
 - **React Native**: 
-- **Version Control**: GitHub
+- **Version Control**: Git, GitHub
 - **Mobile Testing**: Expo Go (iOS)
 
 
@@ -40,12 +36,20 @@ March 6, 2025 ~ April 13, 2025
 - **Development Tools**: Expo Go
 
 
+## 📱 App Flow
+![Image](https://github.com/user-attachments/assets/84d61521-42c9-4cd1-941e-f9f678722e06)
+
+
 ## ✨ Key Features
 - Users can easily use the app by signing up or logging in via social media accounts.
 - If location permissions are granted, users can receive information about the registered person’s region, such as weather, air quality, and disaster updates.
 - In case of a disaster, users can view nearby shelters around the registered person’s location and can send shelter information to others via a "Send" button.
 - Users can set up customized messages by registering their name, phone number, location, health information, and contact frequency.
 - The app features an intuitive and user-friendly design, making it accessible to everyone.
+
+
+## 💡 Finalized ERD for This Project
+![Image](https://github.com/user-attachments/assets/9883b5b5-da74-42bf-b30d-563bd03c4d0d)
 
 
 ## 🚀 Getting Started
