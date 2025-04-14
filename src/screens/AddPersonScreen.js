@@ -8,7 +8,7 @@ import { pickImage } from "../utils/imagePicker";
 import { Feather } from '@expo/vector-icons';
 import AddressSearch from '../components/AddressSearch';
 import useFonts from '../hooks/useFonts';
-import { fetchGeocodeData } from "../api/Geocoding";
+import { fetchGeocodeData } from "../api";
 import { GeoPoint } from "firebase/firestore";
 
 export default function AddPersonScreen({ navigation }) {

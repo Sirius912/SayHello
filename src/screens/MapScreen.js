@@ -1,15 +1,11 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { View, StyleSheet, Text, TextInput, TouchableOpacity, Image } from "react-native";
+import { View, StyleSheet, Text, Image } from "react-native";
 import * as Location from "expo-location";
 import { BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { fetchWeatherData } from "../api";
-import { GOOGLE_MAPS_API_KEY } from '@env';
-import axios from 'axios';
-import { Fontisto } from '@expo/vector-icons';
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
 import { collection, onSnapshot, doc } from "firebase/firestore";
-import { db } from "../api/firebase";
+import { db } from "../api";
 import { getAuth } from 'firebase/auth';
 import SearchFilterSort from "../components/SearchFilterSort";
 import MapComponent from "../components/MapComponent";

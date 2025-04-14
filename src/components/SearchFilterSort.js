@@ -9,7 +9,7 @@ export default function SearchFilterSort({
     sortValue, setSortValue,
     filteredMarkers
 }) {
-    
+
     const handleFilterChange = (value) => {
         setFilterValue(value);
         if (value === "all") {
@@ -83,7 +83,9 @@ export default function SearchFilterSort({
                 </View>
 
                 {/* 결과 개수 */}
-                <Text style={styles.resultCount}>{filteredMarkers.length} results</Text>
+                <Text style={styles.resultCount}>
+                    {filteredMarkers.length}개의 결과
+                </Text>
             </View>
         </View>
     );

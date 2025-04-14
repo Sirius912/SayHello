@@ -75,7 +75,6 @@ export default function LoginScreen({ navigation }) {
       const result = await handleKakaoLogin();
       if (result.success) {
         setUserInfo(result.user);
-        Alert.alert("로그인 성공!", `사용자 정보: ${result.user.properties.nickname}`);
         navigation.replace('Main');
       }
     } catch (error) {
@@ -91,7 +90,6 @@ export default function LoginScreen({ navigation }) {
         await saveLoginState(userCredential);
       }
       const user = userCredential.user;
-      // Alert.alert('로그인 성공!', `${user.uid.nickname}님 안녕하세요!`);
       navigation.replace('Main');
     } catch (error) {
       console.error("로그인 실패:", error); // 전체 오류 로그 출력
