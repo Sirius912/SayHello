@@ -1,6 +1,8 @@
 # ASIA IMPACT HACKATHON 2025 - SAY HELLO
 To develop **innovative solutions** that help **address social issues**.
+
 Organized by YONSEI Univ., The Koran Association for Policy Studies.
+
 Sponsored by Google.
 
 ## 👨‍🏫 Project Introduction
