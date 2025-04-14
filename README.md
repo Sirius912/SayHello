@@ -12,7 +12,7 @@ Mar 6th, 2025 ~ Apr 13th, 2025
 - **Jieun Kang**: Front-end, Video editing
 - **Taehoo Kim**: Front-end, database
 - **Hyunji Shim**: Video editing
-- **SunA Son**: UX UI Designer, Video editing
+- **Sunah Son**: UX UI Designer, Video editing
 
 ## 🛠️ Development Environment
 - **IDE**: Visual Studio Code
@@ -31,3 +31,6 @@ Mar 6th, 2025 ~ Apr 13th, 2025
 - **Development Tools**: Expo Go
 
 ## ✨ Key Features
+
+## 📱 App Flow
+![Image](https://github.com/user-attachments/assets/84d61521-42c9-4cd1-941e-f9f678722e06)
