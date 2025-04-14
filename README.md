@@ -41,7 +41,11 @@ March 6, 2025 ~ April 13, 2025
 
 
 ## ✨ Key Features
-- Social Login
+- Users can easily use the app by signing up or logging in via social media accounts.
+- If location permissions are granted, users can receive information about the registered person’s region, such as weather, air quality, and disaster updates.
+- In case of a disaster, users can view nearby shelters around the registered person’s location and can send shelter information to others via a "Send" button.
+- Users can set up customized messages by registering their name, phone number, location, health information, and contact frequency.
+- The app features an intuitive and user-friendly design, making it accessible to everyone.
 
 
 ## 🚀 Getting Started
