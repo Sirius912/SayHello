@@ -18,24 +18,6 @@ March 6, 2025 ~ April 13, 2025
 - **Sunah Son**: UI/UX Designer, video editing
 
 
-## 🛠️ Development Environment
-- **IDE**: Visual Studio Code
-- **Node.js**: v22.14.0
-- **Package Manager**: npm v
-- **React Native**: 
-- **Version Control**: Git, GitHub
-- **Mobile Testing**: Expo Go (iOS)
-
-
-## 💻 Tech Stack
-- **Framework**: React Native
-- **Language**: JavaScript, TypeScript
-- **Navigation**: React Navigation
-- **Networking**: Axios, Fetch API
-- **Database**: Firebase, AsyncStorage
-- **Development Tools**: Expo Go
-
-
 ## 📱 App Flow
 ![Image](https://github.com/user-attachments/assets/84d61521-42c9-4cd1-941e-f9f678722e06)
 
@@ -62,7 +44,7 @@ March 6, 2025 ~ April 13, 2025
    ```bash
    npm install
    ```
-4. Start the project for the first time (required)
+4. Start the project (required)
    ```bash
    npm start
    ```
@@ -71,3 +53,21 @@ March 6, 2025 ~ April 13, 2025
    npx expo start
    ```
 ⚠️ Note: You must run `npm start` at least once before using `npx expo start`.
+
+
+## 🛠️ Development Environment
+- **IDE**: Visual Studio Code
+- **Node.js**: v22.14.0
+- **Package Manager**: npm v
+- **React Native**: 
+- **Version Control**: Git, GitHub
+- **Mobile Testing**: Expo Go (iOS)
+
+
+## 💻 Tech Stack
+- **Framework**: React Native
+- **Language**: JavaScript, TypeScript
+- **Navigation**: React Navigation
+- **Networking**: Axios, Fetch API
+- **Database**: Firebase, AsyncStorage
+- **Development Tools**: Expo Go
