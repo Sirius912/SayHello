@@ -8,7 +8,7 @@ In a world where everything changes day by day, some people still spend their ti
 
 
 ## ⏲️ Development Period
-March 6, 2025 ~ April 13, 2025
+March 6, 2025 - April 13, 2025
 
 
 ## 👨‍💻 Team Members
@@ -58,8 +58,8 @@ March 6, 2025 ~ April 13, 2025
 ## 🛠️ Development Environment
 - **IDE**: Visual Studio Code
 - **Node.js**: v22.14.0
-- **Package Manager**: npm v
-- **React Native**: 
+- **Package Manager**: npm 10.9.2
+- **React Native**: 0.76.7
 - **Version Control**: Git, GitHub
 - **Mobile Testing**: Expo Go (iOS)
 
