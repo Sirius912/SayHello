@@ -1,22 +1,39 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Alert, Clipboard, SafeAreaView } from 'react-native';
 import useFonts from '../hooks/useFonts';
-import { messages } from '../utils/data'; // 메시지 데이터 가져오기
+import { fetchOpenAIMessage } from '../api/openai';
 
 export default function MessageScreen() {
     const [selectedButton, setSelectedButton] = useState(null);
-
+    const [message, setMessage] = useState("안부를 전달할 메시지 내용을 선택해주세요!");
     const fontsLoaded = useFonts();
+    const [loading, setLoading] = useState(false);
 
     if (!fontsLoaded) {
         return null;
     }
 
-    const handlePress = (item) => {
-        setSelectedButton(prev => prev === item ? null : item);
-    };
+    const handlePress = async (item) => {
+        if (selectedButton === item) {
+            setSelectedButton(null);
+            setMessage("안부를 전달할 메시지 내용을 선택해주세요!");
+            return;
+        }
 
-    const message = selectedButton ? messages[selectedButton] : "안부를 전달할 메시지 내용을 선택해주세요!";
+        setSelectedButton(item);
+        setLoading(true);
+
+        try {
+            const generatedMessage = await fetchOpenAIMessage(item);
+            setMessage(generatedMessage);
+        } catch (error) {
+            console.error(error);
+            Alert.alert('오류', '메시지 생성 중 문제가 발생했습니다.');
+            setMessage("메시지를 생성할 수 없습니다.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const copyToClipboard = () => {
         Clipboard.setString(message);
@@ -79,6 +96,7 @@ export default function MessageScreen() {
                                             selectedButton == item && styles.selectedButton,
                                         ]}
                                         onPress={() => handlePress(item)}
+                                        disabled={loading}
                                     >
                                         <Text style={[styles.buttonText, selectedButton === item && styles.selectedText,]}>
                                             {item}
@@ -92,13 +110,16 @@ export default function MessageScreen() {
 
                         <Text style={styles.text1}>메시지 미리보기</Text>
                         <View style={styles.divider}></View>
-                        <View>
-                            <Text style={styles.messageText}>{message}</Text>
-                        </View>
+                        {loading ? (
+                            <ActivityIndicator size="large" color="#41BA6B" />
+                        ) : (
+                            <ScrollView>
+                                <Text style={styles.messageText}>{message}</Text>
+                            </ScrollView>
+                        )}
                     </View>
                     <View style={styles.copy_view}>
-                        <TouchableOpacity
-                            style={styles.copy_button} onPress={copyToClipboard}>
+                        <TouchableOpacity style={styles.copy_button} onPress={copyToClipboard} disabled={loading}>
                             <Text style={styles.copyText}>복사</Text>
                         </TouchableOpacity>
                     </View>
